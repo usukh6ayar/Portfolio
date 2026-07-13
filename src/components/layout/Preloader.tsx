@@ -8,40 +8,58 @@ import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { EASE } from "@/lib/easings";
 
+const SESSION_KEY = "portfolio-preloader-seen";
+
 /**
- * Intentional preloader: mono counter + lime progress.
+ * Theatrical counter only once per browser session.
+ * Return visits and case-study navigation skip the show.
  */
 export function Preloader() {
   const t = useTranslations("common");
   const { isReady, setReady } = useApp();
   const reduced = useReducedMotion();
   const [visible, setVisible] = useState(true);
-  const [count, setCount] = useState(0);
   const barRef = useRef<HTMLDivElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
 
-    document.documentElement.style.overflow = "hidden";
-
-    if (reduced) {
-      const timer = window.setTimeout(() => {
-        setCount(100);
-        setVisible(false);
-        setReady();
-        document.documentElement.style.overflow = "";
-      }, 80);
-      return () => {
-        window.clearTimeout(timer);
-        document.documentElement.style.overflow = "";
-      };
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem(SESSION_KEY) === "1";
+    } catch {
+      seen = false;
     }
 
+    // Instant path: already seen this session, or reduced motion
+    if (seen || reduced) {
+      try {
+        sessionStorage.setItem(SESSION_KEY, "1");
+      } catch {
+        /* ignore */
+      }
+      const timer = window.setTimeout(() => {
+        if (countRef.current) countRef.current.textContent = "100";
+        setVisible(false);
+        setReady();
+      }, 0);
+      return () => window.clearTimeout(timer);
+    }
+
+    document.documentElement.style.overflow = "hidden";
+
     const counter = { value: 0 };
+    let lastShown = -1;
     const tl = gsap.timeline({
       onComplete: () => {
+        try {
+          sessionStorage.setItem(SESSION_KEY, "1");
+        } catch {
+          /* ignore */
+        }
         window.setTimeout(() => {
           setVisible(false);
           setReady();
@@ -50,12 +68,18 @@ export function Preloader() {
       },
     });
 
+    // Update counter via DOM — avoid React re-render every tick
     tl.to(counter, {
       value: 100,
       duration: 1.35,
       ease: "power2.inOut",
       onUpdate: () => {
-        setCount(Math.round(counter.value));
+        const n = Math.round(counter.value);
+        if (n === lastShown) return;
+        lastShown = n;
+        if (countRef.current) {
+          countRef.current.textContent = String(n).padStart(3, "0");
+        }
       },
     });
 
@@ -95,8 +119,11 @@ export function Preloader() {
             </p>
 
             <div className="flex w-full items-end justify-between gap-4">
-              <span className="font-mono text-4xl font-medium tabular-nums tracking-tight text-foreground">
-                {String(count).padStart(3, "0")}
+              <span
+                ref={countRef}
+                className="font-mono text-4xl font-medium tabular-nums tracking-tight text-foreground"
+              >
+                000
               </span>
               <span className="mb-1 font-mono text-xs text-muted">%</span>
             </div>

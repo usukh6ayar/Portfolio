@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
 /**
  * Clash Display — Latin display headlines
  * Cyrillic glyphs fall through to Manrope (see globals.css stack).
+ * Weights limited to what the UI actually uses (no Bold/700).
  */
 export const clashDisplay = localFont({
   src: [
@@ -22,15 +23,11 @@ export const clashDisplay = localFont({
       weight: "600",
       style: "normal",
     },
-    {
-      path: "../fonts/ClashDisplay-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
   ],
   variable: "--font-clash",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
+  preload: true,
 });
 
 /**
@@ -39,8 +36,10 @@ export const clashDisplay = localFont({
  */
 export const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600"],
   variable: "--font-manrope",
   display: "swap",
+  preload: true,
 });
 
 /**
@@ -48,8 +47,10 @@ export const manrope = Manrope({
  */
 export const inter = Inter({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600"],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
 });
 
 /**
@@ -57,6 +58,8 @@ export const inter = Inter({
  */
 export const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "500"],
   variable: "--font-jetbrains",
   display: "swap",
+  preload: false,
 });

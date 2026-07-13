@@ -19,6 +19,7 @@ export function CaseStudyLink({ href, className }: CaseStudyLinkProps) {
   return (
     <Link
       href={href}
+      data-cursor="case"
       className={cn(
         "group/cta inline-flex items-center gap-2",
         "text-sm font-medium tracking-tight text-foreground",

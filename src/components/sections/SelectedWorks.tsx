@@ -10,7 +10,6 @@ import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
 import { CaseStudyLink } from "@/components/work/CaseStudyLink";
-import { HoverFollowLabel } from "@/components/ui/HoverFollowLabel";
 import { PROJECTS, STACKED_ORDER, type ProjectId } from "@/lib/projects";
 import { cn } from "@/lib/cn";
 
@@ -73,7 +72,7 @@ export function SelectedWorks() {
           );
         }
 
-        // Image: mask reveal + tiny settle scale
+        // Image: opacity + transform only (clip-path was costly for little gain)
         if (media) {
           gsap.fromTo(
             media,
@@ -81,14 +80,12 @@ export function SelectedWorks() {
               opacity: 0,
               y: 24,
               scale: 0.985,
-              clipPath: "inset(6% 6% 6% 6% round 24px)",
             },
             {
               opacity: 1,
               y: 0,
               scale: 1,
-              clipPath: "inset(0% 0% 0% 0% round 24px)",
-              duration: 1.05,
+              duration: 0.95,
               ease: "power3.out",
               scrollTrigger: {
                 trigger: media,
@@ -151,7 +148,6 @@ function ProjectRow({
   reduced: boolean;
 }) {
   const t = useTranslations("work");
-  const tCursor = useTranslations("cursor");
   const project = PROJECTS[id];
   const title = t(`projects.${id}.title`);
   const category = t(`projects.${id}.category`);
@@ -196,6 +192,7 @@ function ProjectRow({
       >
         <Link
           href={project.href}
+          data-cursor="project"
           className="transition-colors duration-300 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
         >
           {title}
@@ -252,21 +249,15 @@ function ProjectRow({
         data-project-part
         className={cn(!reduced && "opacity-0")}
       >
-        <HoverFollowLabel label={tCursor("caseStudy")} className="block">
-          <Link
-            href={project.href}
-            className="block"
-            tabIndex={-1}
-            aria-label={t("viewCaseStudy")}
-          >
-            <ProjectMedia
-              id={id}
-              title={title}
-              size="hero"
-              cursorLabel={false}
-            />
-          </Link>
-        </HoverFollowLabel>
+        <Link
+          href={project.href}
+          className="block"
+          tabIndex={-1}
+          aria-label={t("viewCaseStudy")}
+          data-cursor="project"
+        >
+          <ProjectMedia id={id} title={title} size="hero" />
+        </Link>
       </div>
     </div>
   );

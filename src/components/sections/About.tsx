@@ -25,8 +25,7 @@ type Principle = {
 
 /**
  * About — editorial story before any work.
- * Portrait + path + principles + focus + now.
- * Production section: calm, human, product-engineer tone.
+ * Portrait · Story · Timeline · Principles · Now
  */
 export function About() {
   const t = useTranslations("about");
@@ -40,7 +39,6 @@ export function About() {
 
   const story = t.raw("story") as string[];
   const timeline = t.raw("timeline") as TimelineItem[];
-  const focus = t.raw("focus") as string[];
   const principles = t.raw("principles") as Principle[];
 
   useEffect(() => {
@@ -61,26 +59,51 @@ export function About() {
       return;
     }
 
+    // Continuous scrub parallax only on fine-pointer desktops
+    const canParallax = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches;
+
     const ctx = gsap.context(() => {
       if (imageWrap) {
-        gsap.fromTo(
-          imageWrap,
-          { opacity: 0, clipPath: "inset(8% 8% 8% 8% round 24px)" },
-          {
-            opacity: 1,
-            clipPath: "inset(0% 0% 0% 0% round 24px)",
-            duration: 1.05,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: imageWrap,
-              start: "top 86%",
-              once: true,
+        // Desktop: soft mask reveal. Mobile: opacity/transform only.
+        if (canParallax) {
+          gsap.fromTo(
+            imageWrap,
+            { opacity: 0, clipPath: "inset(8% 8% 8% 8% round 24px)" },
+            {
+              opacity: 1,
+              clipPath: "inset(0% 0% 0% 0% round 24px)",
+              duration: 1.05,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: imageWrap,
+                start: "top 86%",
+                once: true,
+              },
             },
-          },
-        );
+          );
+        } else {
+          gsap.fromTo(
+            imageWrap,
+            { opacity: 0, y: 18 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: imageWrap,
+                start: "top 88%",
+                once: true,
+              },
+            },
+          );
+        }
       }
 
-      if (imageInner && imageWrap) {
+      // Skip scrub parallax on touch — listeners/scrub never initialize
+      if (canParallax && imageInner && imageWrap) {
         gsap.fromTo(
           imageInner,
           { y: -5 },
@@ -239,22 +262,10 @@ export function About() {
                 ))}
             </div>
 
-            <blockquote
-              data-about-text
-              className={cn(
-                "relative mt-9 max-w-[32rem] border-l border-accent/55 pl-5 sm:mt-11 sm:pl-6",
-                !reduced && "opacity-0",
-              )}
-            >
-              <p className="font-display text-lg font-medium leading-snug tracking-tight text-foreground/95 sm:text-[1.25rem]">
-                “{t("quote")}”
-              </p>
-            </blockquote>
-
             {/* Path */}
             <div
               data-about-block
-              className={cn("mt-14 sm:mt-16", !reduced && "opacity-0")}
+              className={cn("mt-12 sm:mt-14", !reduced && "opacity-0")}
             >
               <p className="mb-6 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
                 {t("pathLabel")}
@@ -323,43 +334,11 @@ export function About() {
               </ul>
             </div>
 
-            {/* Focus */}
-            <div
-              data-about-block
-              className={cn("mt-14 sm:mt-16", !reduced && "opacity-0")}
-            >
-              <div className="mb-5 flex items-end justify-between gap-4 border-b border-border pb-4">
-                <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
-                  {t("focusLabel")}
-                </p>
-                <p className="font-mono text-[0.625rem] text-muted/75">
-                  {t("focusHint")}
-                </p>
-              </div>
-              <ul className="flex flex-wrap gap-2">
-                {Array.isArray(focus) &&
-                  focus.map((item) => (
-                    <li key={item}>
-                      <span
-                        className={cn(
-                          "inline-flex items-center rounded-lg",
-                          "border border-border bg-surface-1",
-                          "px-3.5 py-2 text-sm tracking-tight text-foreground/90",
-                          "transition-colors duration-300 hover:border-border-strong hover:bg-surface-2",
-                        )}
-                      >
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-
             {/* Now */}
             <aside
               data-about-block
               className={cn(
-                "mt-14 sm:mt-16",
+                "mt-12 sm:mt-14",
                 "rounded-[1.35rem] border border-border bg-surface-1 p-6 sm:p-7",
                 !reduced && "opacity-0",
               )}

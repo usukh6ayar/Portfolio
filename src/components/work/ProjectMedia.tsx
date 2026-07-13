@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import type { ProjectId } from "@/lib/projects";
 import { PROJECTS } from "@/lib/projects";
-import { HoverFollowLabel } from "@/components/ui/HoverFollowLabel";
 import { cn } from "@/lib/cn";
 
 const TONE: Record<(typeof PROJECTS)[ProjectId]["tone"], string> = {
@@ -22,13 +21,11 @@ type ProjectMediaProps = {
   className?: string;
   size?: "hero" | "card";
   priority?: boolean;
-  /** Cursor pill on hover — Preview / Open. Empty string disables. */
-  cursorLabel?: string | false;
 };
 
 /**
- * Product screenshot surface. Native cursor + optional lagging pill label.
- * Image uses opacity/scale only on hover — no distortion.
+ * Product screenshot surface.
+ * Cursor labels live in CustomCursor via data-cursor on parent links.
  */
 export function ProjectMedia({
   id,
@@ -36,19 +33,13 @@ export function ProjectMedia({
   className,
   size = "card",
   priority = false,
-  cursorLabel,
 }: ProjectMediaProps) {
   const t = useTranslations("work");
-  const tCursor = useTranslations("cursor");
   const project = PROJECTS[id];
   const alt = t("imageAlt", { title });
   const tint = TONE[project.tone];
-  const label =
-    cursorLabel === false
-      ? null
-      : cursorLabel ?? (project.image ? tCursor("open") : tCursor("preview"));
 
-  const figure = (
+  return (
     <motion.figure
       layoutId={`project-media-${id}`}
       className={cn(
@@ -75,8 +66,8 @@ export function ProjectMedia({
             fill
             sizes={
               size === "hero"
-                ? "(max-width: 1024px) 100vw, 90vw"
-                : "(max-width: 1024px) 100vw, 70vw"
+                ? "(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
+                : "(max-width: 768px) 100vw, (max-width: 1280px) 55vw, 720px"
             }
             priority={priority}
             className={cn(
@@ -92,14 +83,6 @@ export function ProjectMedia({
       <figcaption className="sr-only">{alt}</figcaption>
     </motion.figure>
   );
-
-  if (!label) return figure;
-
-  return (
-    <HoverFollowLabel label={label} className="block w-full">
-      {figure}
-    </HoverFollowLabel>
-  );
 }
 
 function Placeholder({ title, tint }: { title: string; tint: string }) {
@@ -113,7 +96,7 @@ function Placeholder({ title, tint }: { title: string; tint: string }) {
       aria-label={t("imagePlaceholder")}
     >
       <div
-        className="pointer-events-none absolute inset-0"
+        className="absolute inset-0"
         style={{
           background: `radial-gradient(ellipse 90% 55% at 50% 0%, ${tint} 0%, transparent 72%)`,
         }}

@@ -12,6 +12,8 @@
   --color-text: #f5f5f0;
   --color-muted: #8a8a85;
   --color-accent: #b8f300;
+  /* Text on acid lime — never light/white (contrast) */
+  --color-on-accent: #0a0a0a;
   --color-accent-secondary: #a78bfa;
   --color-border: rgba(245, 245, 240, 0.08);
   --color-border-strong: rgba(245, 245, 240, 0.14);
@@ -59,6 +61,7 @@
   --color-surface-2: var(--color-surface-2);
   --color-muted: var(--color-muted);
   --color-accent: var(--color-accent);
+  --color-on-accent: var(--color-on-accent);
   --color-accent-secondary: var(--color-accent-secondary);
   --color-border: var(--color-border);
   --color-border-strong: var(--color-border-strong);
@@ -107,6 +110,16 @@ html.lenis body {
   overflow: hidden;
 }
 
+/*
+ * Custom cursor — hide OS pointer while active.
+ * Universal * catches links, buttons, Tailwind cursor-pointer, etc.
+ * Class is only set when fine-pointer + not reduced-motion (see CustomCursor).
+ */
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100dvh;
@@ -120,8 +133,13 @@ body {
 
 /* Selection */
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
-  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  color: var(--color-on-accent);
+}
+
+/* Utility: any control filled with accent */
+.text-on-accent {
+  color: var(--color-on-accent);
 }
 
 /* Focus — visible, product-grade */
@@ -153,7 +171,7 @@ button {
   color: inherit;
   background: none;
   border: none;
-  cursor: pointer;
+  cursor: pointer; /* native only; overridden by html.has-custom-cursor * */
 }
 
 /* ==========================================================================
@@ -214,7 +232,7 @@ button {
   padding-inline: var(--page-gutter);
 }
 
-/* Subtle page grain — almost invisible atmosphere */
+/* Subtle page grain — static tiled SVG noise (no animation, no live filter) */
 .grain::before {
   content: "";
   pointer-events: none;
@@ -222,10 +240,14 @@ button {
   inset: 0;
   z-index: 9998;
   opacity: var(--grain-opacity);
+  /* Pre-baked fractalNoise in data-URI — painted once as a tile, not refiltered */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 180px 180px;
   mix-blend-mode: overlay;
+  /* Paint isolation only — avoid size containment collapsing the fixed layer */
+  contain: paint;
+  transform: translateZ(0);
 }
 
 /* Continuous story flow — soft vertical rhythm between chapters */

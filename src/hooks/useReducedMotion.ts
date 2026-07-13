@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 
 /**
  * Subscribes to prefers-reduced-motion.
- * When true: skip theatrical motion, keep instant state changes.
+ * Initializes from window when available so expensive systems
+ * (Lenis, cursor) do not flash-init before the first effect.
  */
 export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");

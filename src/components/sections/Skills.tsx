@@ -10,20 +10,23 @@ import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type SkillGroup = {
+type Capability = {
+  index: string;
   title: string;
-  items: string[];
+  description: string;
+  tech: string[];
 };
 
 /**
- * Skills / stack — visual product labels, not a résumé list.
+ * Capabilities — what I build, not a tech badge wall.
+ * Anchor remains #stack for nav compatibility.
  */
 export function Skills() {
   const t = useTranslations("skills");
   const { isReady } = useApp();
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
-  const groups = t.raw("groups") as SkillGroup[];
+  const groups = t.raw("groups") as Capability[];
 
   useEffect(() => {
     if (!isReady || !rootRef.current || reduced) return;
@@ -39,7 +42,7 @@ export function Skills() {
           opacity: 1,
           y: 0,
           duration: 0.75,
-          stagger: 0.06,
+          stagger: 0.07,
           ease: "power3.out",
           scrollTrigger: {
             trigger: root,
@@ -57,18 +60,34 @@ export function Skills() {
     <section
       id="stack"
       ref={rootRef}
-      className="relative z-0 scroll-mt-[var(--nav-height)] bg-background pb-[var(--section-y)] pt-4 sm:pt-6"
+      className="relative z-0 scroll-mt-[var(--nav-height)] border-t border-border bg-background pb-[var(--section-y)] pt-[var(--section-y)]"
       aria-labelledby="skills-heading"
     >
       <div className="container-page">
         <div className="max-w-xl">
-          <h2 id="skills-heading" className="sr-only">
+          <p
+            data-skills-reveal
+            className={cn(
+              "font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted",
+              !reduced && "opacity-0",
+            )}
+          >
+            {t("label")}
+          </p>
+          <h2
+            id="skills-heading"
+            data-skills-reveal
+            className={cn(
+              "mt-3 font-display text-[clamp(1.85rem,3.8vw,3rem)] font-semibold tracking-[-0.035em] text-foreground",
+              !reduced && "opacity-0",
+            )}
+          >
             {t("headline")}
           </h2>
           <p
             data-skills-reveal
             className={cn(
-              "text-[var(--text-body-sm)] leading-relaxed text-muted sm:text-base",
+              "mt-4 text-[var(--text-body-sm)] leading-relaxed text-muted sm:text-base",
               !reduced && "opacity-0",
             )}
           >
@@ -76,28 +95,37 @@ export function Skills() {
           </p>
         </div>
 
-        <ul className="mt-12 grid grid-cols-1 gap-6 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+        <ul className="mt-12 divide-y divide-border border-t border-border sm:mt-16">
           {Array.isArray(groups) &&
             groups.map((group) => (
               <li
                 key={group.title}
                 data-skills-reveal
                 className={cn(
-                  "rounded-[1.15rem] border border-border bg-surface-1 p-6",
+                  "grid grid-cols-1 gap-4 py-8 sm:grid-cols-12 sm:gap-8 sm:py-10",
                   !reduced && "opacity-0",
                 )}
               >
-                <p className="text-caption text-muted">{group.title}</p>
-                <ul className="mt-5 flex flex-col gap-2.5">
-                  {group.items.map((item) => (
-                    <li
-                      key={item}
-                      className="border-t border-border pt-2.5 text-sm tracking-tight text-foreground/90 first:border-t-0 first:pt-0"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                <div className="sm:col-span-1">
+                  <span className="font-mono text-[0.7rem] tabular-nums tracking-wide text-accent">
+                    {group.index}
+                  </span>
+                </div>
+                <div className="sm:col-span-4">
+                  <h3 className="font-display text-xl font-semibold tracking-tight text-foreground sm:text-[1.35rem]">
+                    {group.title}
+                  </h3>
+                </div>
+                <div className="sm:col-span-7">
+                  <p className="max-w-[34rem] text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
+                    {group.description}
+                  </p>
+                  {Array.isArray(group.tech) && (
+                    <p className="mt-4 font-mono text-[0.65rem] tracking-wide text-muted/80">
+                      {group.tech.join(" · ")}
+                    </p>
+                  )}
+                </div>
               </li>
             ))}
         </ul>

@@ -7,16 +7,14 @@ import { Contact } from "@/components/sections/Contact";
 import { SectionBridge } from "@/components/layout/SectionBridge";
 
 /**
- * Continuous narrative:
- * Hero → About → Featured → Selected Works → Skills → Contact
- * SectionBridge softens each handoff so chapters read as one story.
+ * Story: Hero → About → Featured → Works → Capabilities → Contact
+ * Bridges only where chapter weight needs a deliberate handoff.
  */
 export default function HomePage() {
   return (
     <div className="section-flow">
       <Hero />
 
-      <SectionBridge next="about" />
       <About />
 
       <SectionBridge next="featured" />
@@ -25,7 +23,6 @@ export default function HomePage() {
       <SectionBridge next="work" />
       <SelectedWorks />
 
-      <SectionBridge next="skills" />
       <Skills />
 
       <SectionBridge next="contact" />

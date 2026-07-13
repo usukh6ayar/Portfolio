@@ -10,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Smooth scroll via Lenis, kept in sync with GSAP ScrollTrigger.
+ * Single animation loop: gsap.ticker drives Lenis.raf.
  * Disabled entirely when prefers-reduced-motion is set.
  */
 export function LenisProvider({ children }: { children: ReactNode }) {
@@ -20,21 +21,30 @@ export function LenisProvider({ children }: { children: ReactNode }) {
     if (reducedMotion) {
       lenisRef.current?.destroy();
       lenisRef.current = null;
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-      ScrollTrigger.clearScrollMemory?.();
+      // Do not kill all ScrollTriggers here — reduced path still uses
+      // once:true reveals with instant set(). Refresh only.
       ScrollTrigger.refresh();
       return;
     }
 
+    // Coarser touch: shorter inertia so scrolling feels native-adjacent
+    const finePointer = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches;
+
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: finePointer ? 1.1 : 0.85,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      touchMultiplier: 1.2,
+      // Touch devices: lighter smoothing; avoid fighting native feel
+      touchMultiplier: finePointer ? 1.2 : 1,
+      syncTouch: !finePointer,
+      syncTouchLerp: 0.075,
     });
 
     lenisRef.current = lenis;
 
+    // One scroller proxy path: Lenis → ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
     const ticker = (time: number) => {
@@ -46,9 +56,10 @@ export function LenisProvider({ children }: { children: ReactNode }) {
     (window as Window & { __lenis?: Lenis }).__lenis = lenis;
 
     // Let layout settle, then refresh triggers
-    requestAnimationFrame(() => ScrollTrigger.refresh());
+    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
 
     return () => {
+      cancelAnimationFrame(raf);
       gsap.ticker.remove(ticker);
       lenis.destroy();
       lenisRef.current = null;

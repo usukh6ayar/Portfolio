@@ -11,8 +11,10 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
+import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { scrollToHash } from "@/components/providers/LenisProvider";
-import { NAV_ITEMS, SITE, SOCIAL_ITEMS } from "@/lib/constants";
+import { SITE } from "@/lib/constants";
+import { PROJECTS } from "@/lib/projects";
 import { EASE } from "@/lib/easings";
 import { cn } from "@/lib/cn";
 
@@ -24,88 +26,161 @@ type CommandItem = {
   action: () => void;
 };
 
-function openMailto(href: string) {
-  const anchor = document.createElement("a");
-  anchor.href = href;
-  anchor.rel = "noopener";
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
+function openExternal(href: string) {
+  window.open(href, "_blank", "noopener,noreferrer");
+}
+
+async function copyText(value: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+  } catch {
+    const el = document.createElement("textarea");
+    el.value = value;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    el.remove();
+  }
 }
 
 export function CommandPalette() {
   const t = useTranslations("command");
-  const tNav = useTranslations("nav");
-  const tSocial = useTranslations("social");
   const tCommon = useTranslations("common");
   const { isCommandOpen, closeCommand } = useApp();
+  const { locale, setLocale } = useLocaleSwitch();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
   const wasOpen = useRef(false);
 
   const items = useMemo<CommandItem[]>(() => {
-    const navGroup = t("groupNavigate");
-    const connectGroup = t("groupConnect");
+    const navigate = t("groupNavigate");
+    const projects = t("groupProjects");
+    const actions = t("groupActions");
 
-    const nav: CommandItem[] = NAV_ITEMS.map((link) => ({
-      id: `nav-${link.href}`,
-      label: tNav(link.key),
-      hint: link.href,
-      group: navGroup,
-      action: () => {
-        scrollToHash(link.href);
-        closeCommand();
-      },
-    }));
+    const go = (hash: string) => {
+      scrollToHash(hash);
+      closeCommand();
+    };
 
-    const social: CommandItem[] = SOCIAL_ITEMS.map((s) => ({
-      id: `social-${s.key}`,
-      label: tSocial(s.key),
-      hint: s.external ? t("external") : undefined,
-      group: connectGroup,
-      action: () => {
-        if (s.href.startsWith("mailto:")) {
-          openMailto(s.href);
-        } else {
-          window.open(s.href, "_blank", "noopener,noreferrer");
-        }
-        closeCommand();
-      },
-    }));
-
-    const meta: CommandItem[] = [
+    return [
+      // Navigate
       {
-        id: "home",
-        label: t("backToTop"),
-        hint: t("home"),
-        group: navGroup,
+        id: "nav-about",
+        label: t("about"),
+        hint: "#about",
+        group: navigate,
+        action: () => go("#about"),
+      },
+      {
+        id: "nav-featured",
+        label: t("featured"),
+        hint: "#featured",
+        group: navigate,
+        action: () => go("#featured"),
+      },
+      {
+        id: "nav-stack",
+        label: t("stack"),
+        hint: "#stack",
+        group: navigate,
+        action: () => go("#stack"),
+      },
+      {
+        id: "nav-contact",
+        label: t("contact"),
+        hint: "#contact",
+        group: navigate,
+        action: () => go("#contact"),
+      },
+      // Projects
+      {
+        id: "proj-sparkxp",
+        label: t("sparkxp"),
+        hint: "/work/sparkxp",
+        group: projects,
         action: () => {
-          const lenis = (
-            window as Window & {
-              __lenis?: { scrollTo: (n: number) => void };
-            }
-          ).__lenis;
-          if (lenis) lenis.scrollTo(0);
-          else window.scrollTo({ top: 0, behavior: "smooth" });
+          window.location.href = PROJECTS.sparkxp.href;
           closeCommand();
         },
       },
       {
-        id: "email",
-        label: t("email", { name: SITE.name }),
-        hint: SITE.email,
-        group: connectGroup,
+        id: "proj-beauty",
+        label: t("beautyCorner"),
+        hint: "/work/beauty-corner",
+        group: projects,
         action: () => {
-          openMailto(`mailto:${SITE.email}`);
+          window.location.href = PROJECTS["beauty-corner"].href;
+          closeCommand();
+        },
+      },
+      {
+        id: "proj-qr",
+        label: t("qrMenu"),
+        hint: "/work/qr-menu",
+        group: projects,
+        action: () => {
+          window.location.href = PROJECTS["qr-menu"].href;
+          closeCommand();
+        },
+      },
+      {
+        id: "proj-ai",
+        label: t("aiImageStudio"),
+        hint: "/work/ai-image-studio",
+        group: projects,
+        action: () => {
+          window.location.href = PROJECTS["ai-image-studio"].href;
+          closeCommand();
+        },
+      },
+      // Actions
+      {
+        id: "act-copy-email",
+        label: copied ? t("emailCopied") : t("copyEmail"),
+        hint: SITE.email,
+        group: actions,
+        action: () => {
+          void copyText(SITE.email).then(() => {
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 1600);
+          });
+        },
+      },
+      {
+        id: "act-github",
+        label: t("openGitHub"),
+        hint: "github.com",
+        group: actions,
+        action: () => {
+          openExternal("https://github.com");
+          closeCommand();
+        },
+      },
+      {
+        id: "act-linkedin",
+        label: t("openLinkedIn"),
+        hint: "linkedin.com",
+        group: actions,
+        action: () => {
+          openExternal("https://linkedin.com");
+          closeCommand();
+        },
+      },
+      {
+        id: "act-lang",
+        label: t("switchLanguage"),
+        hint: locale === "en" ? "EN → МН" : "МН → EN",
+        group: actions,
+        action: () => {
+          setLocale(locale === "en" ? "mn" : "en");
           closeCommand();
         },
       },
     ];
-
-    return [...meta, ...nav, ...social];
-  }, [closeCommand, t, tNav, tSocial]);
+  }, [closeCommand, t, locale, setLocale, copied]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -127,6 +202,7 @@ export function CommandPalette() {
       const timer = window.setTimeout(() => {
         setQuery("");
         setActive(0);
+        setCopied(false);
         inputRef.current?.focus();
       }, 0);
       return () => window.clearTimeout(timer);

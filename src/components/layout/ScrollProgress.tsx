@@ -1,52 +1,93 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useSpring } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
  * Thin top scroll progress bar — lime accent, transform-only.
+ * No React state on scroll; updates scaleX via DOM.
  */
 export function ScrollProgress() {
   const { isReady } = useApp();
   const reduced = useReducedMotion();
-  const [progress, setProgress] = useState(0);
-  const scaleX = useSpring(0, { stiffness: 120, damping: 28, mass: 0.35 });
+  const barRef = useRef<HTMLDivElement>(null);
+  const currentRef = useRef(0);
+  const targetRef = useRef(0);
+  const rafRef = useRef(0);
 
   useEffect(() => {
     if (!isReady) return;
+    const bar = barRef.current;
+    if (!bar) return;
 
-    const update = () => {
+    const readProgress = () => {
       const scrollTop = window.scrollY;
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      const next = max > 0 ? Math.min(Math.max(scrollTop / max, 0), 1) : 0;
-      setProgress(next);
+      const max =
+        document.documentElement.scrollHeight - window.innerHeight;
+      return max > 0 ? Math.min(Math.max(scrollTop / max, 0), 1) : 0;
+    };
+
+    const paint = (value: number) => {
+      bar.style.transform = `scaleX(${value})`;
+    };
+
+    const tick = () => {
+      rafRef.current = 0;
+      const target = targetRef.current;
       if (reduced) {
-        scaleX.jump(next);
-      } else {
-        scaleX.set(next);
+        currentRef.current = target;
+        paint(target);
+        return;
+      }
+      // Light lerp — smooth without Framer spring overhead
+      const cur = currentRef.current;
+      const next = cur + (target - cur) * 0.18;
+      currentRef.current = Math.abs(target - next) < 0.001 ? target : next;
+      paint(currentRef.current);
+      if (currentRef.current !== target) {
+        rafRef.current = window.requestAnimationFrame(tick);
       }
     };
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+    const onScroll = () => {
+      targetRef.current = readProgress();
+      if (!rafRef.current) {
+        rafRef.current = window.requestAnimationFrame(tick);
+      }
     };
-  }, [isReady, reduced, scaleX]);
+
+    const onResize = () => {
+      targetRef.current = readProgress();
+      if (reduced) {
+        currentRef.current = targetRef.current;
+        paint(targetRef.current);
+      } else if (!rafRef.current) {
+        rafRef.current = window.requestAnimationFrame(tick);
+      }
+    };
+
+    targetRef.current = readProgress();
+    currentRef.current = targetRef.current;
+    paint(currentRef.current);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
+    };
+  }, [isReady, reduced]);
 
   if (!isReady) return null;
 
   return (
-    <motion.div
+    <div
+      ref={barRef}
       className="scroll-progress"
-      style={{ scaleX }}
+      style={{ transform: "scaleX(0)" }}
       aria-hidden
-      data-progress={progress.toFixed(2)}
     />
   );
 }

@@ -10,7 +10,6 @@ import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { HoverFollowLabel } from "@/components/ui/HoverFollowLabel";
 import { FEATURED_ID, PROJECTS } from "@/lib/projects";
 import { cn } from "@/lib/cn";
 
@@ -23,7 +22,6 @@ gsap.registerPlugin(ScrollTrigger);
  */
 export function FeaturedProject() {
   const t = useTranslations("work");
-  const tCursor = useTranslations("cursor");
   const { isReady } = useApp();
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
@@ -94,6 +92,7 @@ export function FeaturedProject() {
             >
               <Link
                 href={href}
+                data-cursor="project"
                 className="transition-colors duration-300 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
               >
                 {t("featured.title")}
@@ -117,17 +116,19 @@ export function FeaturedProject() {
           data-featured-part
           className={cn("mt-12 sm:mt-14 md:mt-16", !reduced && "opacity-0")}
         >
-          <HoverFollowLabel label={tCursor("explore")} className="block">
-            <Link href={href} className="block" aria-label={t("viewCaseStudy")}>
-              <ProjectMedia
-                id={id}
-                title={t("featured.title")}
-                size="hero"
-                priority
-                cursorLabel={false}
-              />
-            </Link>
-          </HoverFollowLabel>
+          <Link
+            href={href}
+            className="block"
+            aria-label={t("viewCaseStudy")}
+            data-cursor="project"
+          >
+            <ProjectMedia
+              id={id}
+              title={t("featured.title")}
+              size="hero"
+              priority
+            />
+          </Link>
         </div>
 
         {/* Problem / Solution / Outcome / Tech */}
@@ -175,9 +176,11 @@ export function FeaturedProject() {
           data-featured-part
           className={cn("mt-12 sm:mt-14", !reduced && "opacity-0")}
         >
-          <MagneticButton href={href} variant="primary">
-            {t("viewCaseStudy")}
-          </MagneticButton>
+          <span data-cursor="case" className="inline-block">
+            <MagneticButton href={href} variant="primary">
+              {t("viewCaseStudy")}
+            </MagneticButton>
+          </span>
         </div>
       </div>
     </section>

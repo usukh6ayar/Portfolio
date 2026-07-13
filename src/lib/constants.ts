@@ -30,6 +30,11 @@ export const SOCIAL_ITEMS = [
     external: true,
   },
   {
+    key: "instagram" as const,
+    href: "https://instagram.com/usukh6ayar",
+    external: true,
+  },
+  {
     key: "email" as const,
     href: `mailto:${SITE.email}`,
     external: false,

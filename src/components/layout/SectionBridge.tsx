@@ -52,44 +52,77 @@ export function SectionBridge({ next, className }: SectionBridgeProps) {
       return;
     }
 
+    // Scrubbed handoff on fine pointer; one-shot reveal on touch (cheaper)
+    const finePointer = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches;
+
     const ctx = gsap.context(() => {
-      // Timeline scrubbed across the bridge zone — calm handoff
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: root,
-          start: "top 92%",
-          end: "center 48%",
-          scrub: 0.65,
-          invalidateOnRefresh: true,
-        },
-      });
+      if (finePointer) {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: root,
+            start: "top 92%",
+            end: "center 48%",
+            scrub: 0.65,
+            invalidateOnRefresh: true,
+          },
+        });
 
-      if (glow) {
-        gsap.set(glow, { opacity: 0 });
-        tl.to(glow, { opacity: 1, duration: 0.45, ease: "none" }, 0);
-      }
+        if (glow) {
+          gsap.set(glow, { opacity: 0 });
+          tl.to(glow, { opacity: 1, duration: 0.45, ease: "none" }, 0);
+        }
 
-      if (line) {
-        gsap.set(line, { scaleX: 0, transformOrigin: "left center" });
-        tl.to(line, { scaleX: 1, duration: 0.5, ease: "none" }, 0.05);
-      }
+        if (line) {
+          gsap.set(line, { scaleX: 0, transformOrigin: "left center" });
+          tl.to(line, { scaleX: 1, duration: 0.5, ease: "none" }, 0.05);
+        }
 
-      if (label) {
-        gsap.set(label, { opacity: 0, y: 22 });
-        tl.to(
-          label,
-          { opacity: 1, y: 0, duration: 0.45, ease: "none" },
-          0.12,
-        );
-      }
+        if (label) {
+          gsap.set(label, { opacity: 0, y: 22 });
+          tl.to(
+            label,
+            { opacity: 1, y: 0, duration: 0.45, ease: "none" },
+            0.12,
+          );
+        }
 
-      if (title) {
-        gsap.set(title, { opacity: 0, y: 32 });
-        tl.to(
-          title,
-          { opacity: 0.92, y: 0, duration: 0.55, ease: "none" },
-          0.18,
-        );
+        if (title) {
+          gsap.set(title, { opacity: 0, y: 32 });
+          tl.to(
+            title,
+            { opacity: 0.92, y: 0, duration: 0.55, ease: "none" },
+            0.18,
+          );
+        }
+      } else {
+        // Mobile: single once:true timeline — no continuous scrub work
+        if (line) gsap.set(line, { scaleX: 0, transformOrigin: "left center" });
+        if (label) gsap.set(label, { opacity: 0, y: 16 });
+        if (title) gsap.set(title, { opacity: 0, y: 20 });
+        if (glow) gsap.set(glow, { opacity: 0 });
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: root,
+              start: "top 90%",
+              once: true,
+            },
+          })
+          .to(glow, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0)
+          .to(line, { scaleX: 1, duration: 0.55, ease: "power2.out" }, 0.05)
+          .to(
+            label,
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+            0.1,
+          )
+          .to(
+            title,
+            { opacity: 0.92, y: 0, duration: 0.55, ease: "power2.out" },
+            0.15,
+          );
       }
     }, root);
 
