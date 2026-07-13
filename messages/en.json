@@ -1,0 +1,298 @@
+{
+  "meta": {
+    "title": "Usukhbayar — Full-stack Developer",
+    "description": "Full-stack developer who designs thoughtfully and ships real products. Founder of Hustle Hive LLC. Based in Ulaanbaatar, Mongolia."
+  },
+  "nav": {
+    "primary": "Primary",
+    "work": "Work",
+    "about": "About",
+    "stack": "Stack",
+    "contact": "Contact",
+    "search": "Search",
+    "openCommand": "Open command palette",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menu": "Menu"
+  },
+  "lang": {
+    "switcher": "Language",
+    "en": "EN",
+    "mn": "МН",
+    "enFull": "English",
+    "mnFull": "Монгол"
+  },
+  "common": {
+    "availability": "Available for Freelance",
+    "name": "Usukhbayar",
+    "location": "Ulaanbaatar, Mongolia",
+    "loading": "Loading",
+    "close": "Close"
+  },
+  "hero": {
+    "eduMeta": "CS · NUM · 2027",
+    "roleLabel": "Full-stack Developer · Founder",
+    "statement": {
+      "line1": "I design thoughtfully—",
+      "line2Before": "but I ",
+      "line2Accent": "build and ship",
+      "line3": "real products."
+    },
+    "subcopy": "Self-taught full-stack & mobile developer. Founder of Hustle Hive LLC. Building education and consumer products from Ulaanbaatar.",
+    "ctaWork": "View selected work",
+    "ctaContact": "Get in touch",
+    "stackHint": "React Native · Next.js · NestJS",
+    "stats": {
+      "focusLabel": "Focus",
+      "focusValue": "Product engineering",
+      "basedLabel": "Based",
+      "basedValue": "Ulaanbaatar",
+      "companyLabel": "Company",
+      "companyValue": "Hustle Hive LLC"
+    },
+    "scrollHint": "Scroll to explore"
+  },
+  "about": {
+    "label": "About",
+    "headline": "Thoughtful design. Practical engineering.",
+    "intro": "I'm Usukhbayar. I build software from Ulaanbaatar — web, mobile, and the product calls in between.",
+    "story": [
+      "CS student at the National University of Mongolia, class of 2027. I learned to ship by building, not by waiting for a course to cover it.",
+      "Through Hustle Hive LLC I work on education tools and consumer apps. The bar is simple: software people open again — not demos that only look good once.",
+      "I design carefully, then cut what doesn't serve the user. Clear interfaces. Maintainable code. Ship when it's ready."
+    ],
+    "quote": "Clear to use. Solid underneath. Built for real people.",
+    "pathLabel": "Path",
+    "principlesLabel": "Principles",
+    "principles": [
+      {
+        "title": "Ship real software",
+        "detail": "Demos are fine for learning. Products have to hold up for real people."
+      },
+      {
+        "title": "Clarity over cleverness",
+        "detail": "Interfaces and code should be understandable first — clever second."
+      },
+      {
+        "title": "Own the full path",
+        "detail": "From problem to production: design, engineering, and the decisions in between."
+      }
+    ],
+    "focusLabel": "Current focus",
+    "focusHint": "Daily tools",
+    "focus": [
+      "React",
+      "Next.js",
+      "React Native",
+      "TypeScript",
+      "Product Design",
+      "UI Engineering"
+    ],
+    "nowLabel": "Now",
+    "nowTitle": "What I'm building toward",
+    "nowBody": "Shipping education and consumer products through Hustle Hive, while finishing my CS degree. Open to freelance and roles where product craft matters.",
+    "nowMeta": "Ulaanbaatar · Available for freelance",
+    "portraitMeta": "Product · Engineering",
+    "portraitAlt": "Usukhbayar — portrait",
+    "portraitPlaceholder": "Portrait",
+    "portraitPath": "public/images/portrait.jpg",
+    "timeline": [
+      {
+        "year": "2023",
+        "title": "Started from zero",
+        "detail": "Taught myself the basics by shipping small projects and reading whatever broke."
+      },
+      {
+        "year": "2024",
+        "title": "Left the tutorials behind",
+        "detail": "Moved from practice apps to work that had to hold up for real users."
+      },
+      {
+        "year": "2025",
+        "title": "Committed to one stack",
+        "detail": "Went deep on React, Next.js, React Native, and TypeScript across web and mobile."
+      },
+      {
+        "year": "Today",
+        "title": "Building products end to end",
+        "detail": "Running Hustle Hive and taking ideas from problem to production."
+      }
+    ]
+  },
+  "work": {
+    "label": "Selected Works",
+    "headline": "More products.",
+    "intro": "Supporting work — real software with clear problems, not a gallery of mockups.",
+    "viewCaseStudy": "View Case Study",
+    "problem": "Problem",
+    "solution": "Solution",
+    "outcome": "Outcome",
+    "stackLabel": "Tech stack",
+    "imageAlt": "{title} product screenshot",
+    "imagePlaceholder": "Screenshot coming soon",
+    "featured": {
+      "label": "Featured project",
+      "id": "sparkxp",
+      "title": "SparkXP",
+      "category": "Education · Product",
+      "year": "—",
+      "summary": "An education product built to turn learning into a clear, structured experience — for people who need progress, not noise.",
+      "problem": "Learners and schools often juggle scattered tools: content in one place, practice in another, progress nowhere useful.",
+      "solution": "SparkXP brings learning flows into one product — structured paths, practice, and visibility designed to ship and stay usable.",
+      "outcome": "Measured results will be listed when they exist — not invented for the page.",
+      "stack": ["TypeScript", "React", "Next.js"]
+    },
+    "projects": {
+      "sparkxp": {
+        "title": "SparkXP",
+        "category": "Education · Product",
+        "year": "—",
+        "summary": "Education product for structured learning experiences — clear paths from intent to progress.",
+        "stack": ["TypeScript", "React", "Next.js"]
+      },
+      "beauty-corner": {
+        "title": "Beauty Corner",
+        "category": "Mobile · Booking",
+        "year": "—",
+        "summary": "Salon booking from discovery to appointments — React Native client with a Node and PostgreSQL backend.",
+        "stack": ["React Native", "Node.js", "PostgreSQL"]
+      },
+      "qr-menu": {
+        "title": "QR Menu",
+        "category": "Web · Hospitality",
+        "year": "—",
+        "summary": "Contactless digital menus for venues — scan, browse, order without paper or friction.",
+        "stack": ["Next.js", "TypeScript", "Node.js"]
+      },
+      "ai-image-studio": {
+        "title": "AI Image Studio",
+        "category": "AI · Creative tools",
+        "year": "—",
+        "summary": "A focused studio for generating and iterating images with AI — built for speed and clarity, not clutter.",
+        "stack": ["Next.js", "TypeScript", "AI"]
+      }
+    },
+    "caseStudy": {
+      "back": "All work",
+      "overview": "Overview",
+      "role": "Role",
+      "stack": "Stack",
+      "problem": "Problem",
+      "solution": "Solution",
+      "outcome": "Outcome",
+      "gallery": "Gallery",
+      "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
+      "sparkxp": {
+        "role": "Product · Engineering",
+        "overview": "SparkXP is an education product focused on structured learning — reducing tool sprawl and making progress visible.",
+        "problem": "Learning tools are often fragmented. Content, practice, and progress live in different places, so the experience feels noisy and hard to trust.",
+        "solution": "Design and ship a single product surface for paths, practice, and clarity — calm UI, maintainable stack, built to be used day to day.",
+        "outcome": "Outcome metrics will be added when measured results are available — not before."
+      },
+      "beauty-corner": {
+        "role": "Full-stack · Mobile",
+        "overview": "Beauty Corner is a salon booking product covering discovery, scheduling, and day-to-day operations.",
+        "problem": "Salons and clients still rely on calls and ad-hoc messaging to book — slow for staff, unclear for customers.",
+        "solution": "A React Native app with a Node/PostgreSQL backend for browsing, booking, and running appointments in one flow.",
+        "outcome": "Results will be documented with real usage details when available."
+      },
+      "qr-menu": {
+        "role": "Full-stack",
+        "overview": "QR Menu replaces paper menus with a fast, scannable digital experience for hospitality venues.",
+        "problem": "Printed menus are slow to update, costly to reprint, and weak during peak hours or contact-sensitive contexts.",
+        "solution": "A web product where guests scan a QR code and get a current menu without installing an app.",
+        "outcome": "Case metrics pending real deployment notes."
+      },
+      "ai-image-studio": {
+        "role": "Product · Engineering",
+        "overview": "AI Image Studio is a focused tool for generating and refining images with AI — oriented around a clear workflow.",
+        "problem": "Many AI image tools overwhelm with options. The path from prompt to usable output gets buried in UI.",
+        "solution": "A studio layout that prioritizes generation, iteration, and export — practical defaults, minimal chrome.",
+        "outcome": "Measured outcomes will be listed when they exist."
+      }
+    }
+  },
+  "skills": {
+    "label": "Stack",
+    "headline": "Tools I reach for.",
+    "intro": "Not a badge wall — the stack I use to design, build, and ship products end to end.",
+    "groups": [
+      {
+        "title": "Product UI",
+        "items": ["React", "Next.js", "TypeScript", "Tailwind CSS"]
+      },
+      {
+        "title": "Mobile",
+        "items": ["React Native", "Expo"]
+      },
+      {
+        "title": "Backend",
+        "items": ["Node.js", "NestJS", "Express", "PostgreSQL"]
+      },
+      {
+        "title": "State & craft",
+        "items": ["Zustand", "GSAP", "Framer Motion"]
+      }
+    ]
+  },
+  "contact": {
+    "label": "Contact",
+    "headline": "Let's build something real.",
+    "body": "Open to freelance, collaborations, and roles where product quality matters. Tell me what you're shipping.",
+    "ctaEmail": "Email me",
+    "ctaAvailability": "Available for freelance",
+    "localTime": "Local time · Ulaanbaatar",
+    "footnote": "I read every message. Prefer a short brief over a long pitch."
+  },
+  "command": {
+    "title": "Command palette",
+    "placeholder": "Jump to section, open links…",
+    "noMatches": "No matches",
+    "groupNavigate": "Navigate",
+    "groupConnect": "Connect",
+    "backToTop": "Back to top",
+    "home": "Home",
+    "email": "Email {name}",
+    "external": "External",
+    "hint": "↑↓ navigate · ↵ select",
+    "close": "Close command palette"
+  },
+  "social": {
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "email": "Email"
+  },
+  "footer": {
+    "rights": "Built with care in Ulaanbaatar."
+  },
+  "cursor": {
+    "viewProject": "View Project →",
+    "explore": "Explore →",
+    "caseStudy": "Case Study →",
+    "preview": "Preview",
+    "open": "Open"
+  },
+  "transitions": {
+    "next": "Next",
+    "about": {
+      "label": "About",
+      "title": "Thoughtful design. Practical engineering."
+    },
+    "featured": {
+      "label": "Featured project",
+      "title": "SparkXP"
+    },
+    "work": {
+      "label": "Selected works",
+      "title": "More products."
+    },
+    "skills": {
+      "label": "Stack",
+      "title": "Tools I reach for."
+    },
+    "contact": {
+      "label": "Contact",
+      "title": "Let's build something real."
+    }
+  }
+}

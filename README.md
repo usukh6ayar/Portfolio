@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Usukhbayar — Portfolio
 
-## Getting Started
+Premium product-engineer portfolio. Dark, minimal, editorial.
 
-First, run the development server:
+**Stack:** Next.js (App Router) · TypeScript · Tailwind CSS · GSAP · Framer Motion · Lenis
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Design system (Acid Signal, refined)
+
+| Token | Value |
+|--------|--------|
+| Background | `#0A0A0A` |
+| Surface 1 | `#111111` |
+| Surface 2 | `#181818` |
+| Text | `#F5F5F0` |
+| Muted | `#8A8A85` |
+| Accent | `#B8F300` |
+| Secondary | `#A78BFA` (sparingly) |
+
+**Type:** Clash Display · Geist · JetBrains Mono
+
+## i18n (next-intl)
+
+English (default) + Mongolian. Client-side only — no `/en` or `/mn` routes.
+
+```
+messages/
+  en.json
+  mn.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Library: **next-intl** (SPA mode, no locale URL segments)
+- Switcher in nav: **EN | МН**
+- Preference in `localStorage` (`portfolio-locale`)
+- First visit: browser language → English fallback
+- Fonts: Clash Display + Manrope (Cyrillic display) · Inter (body, Cyrillic) · JetBrains Mono
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Phase 1 (current)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Design tokens + global styles
+- Typography setup
+- Sticky navigation + scroll progress
+- Preloader
+- Lenis smooth scroll
+- Hero + About sections
+- EN / МН i18n
+- Command palette (`⌘K`)
+- Magnetic CTAs
+- Reduced-motion support
 
-## Learn More
+## Develop
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Email / social URLs in `src/lib/constants.ts` are placeholders — replace before launch.
+- Case study content waits on real screenshots and project details.
+- No WebGL in v1 (performance + a11y first).
