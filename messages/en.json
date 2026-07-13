@@ -55,10 +55,10 @@
   "about": {
     "label": "About",
     "headline": "Thoughtful design. Practical engineering.",
-    "intro": "I'm Usukhbayar. I build software from Ulaanbaatar — web, mobile, and the product calls in between.",
+    "intro": "I'm Usukhbayar. I build software from Ulaanbaatar — web, mobile, and the product decisions in between.",
     "story": [
-      "CS student at the National University of Mongolia, class of 2027. I learned to ship by building, not by waiting for a course to cover it.",
-      "Through Hustle Hive LLC I work on education tools and consumer apps. The bar is simple: software people open again — not demos that only look good once.",
+      "CS student at the National University of Mongolia (2027). I learned to ship by building, not by waiting for a syllabus to catch up.",
+      "Through Hustle Hive LLC I work on education and consumer products. The bar is simple: software people open again — not demos that look good once.",
       "I design carefully, then cut what doesn't serve the user. Clear interfaces. Maintainable code. Ship when it's ready."
     ],
     "quote": "Clear to use. Solid underneath. Built for real people.",
@@ -90,7 +90,7 @@
     ],
     "nowLabel": "Now",
     "nowTitle": "What I'm building toward",
-    "nowBody": "Shipping education and consumer products through Hustle Hive, while finishing my CS degree. Open to freelance and roles where product craft matters.",
+    "nowBody": "Shipping education and consumer products through Hustle Hive while finishing my CS degree. Open to freelance and roles where product craft matters.",
     "nowMeta": "Ulaanbaatar · Available for freelance",
     "portraitMeta": "Product · Engineering",
     "portraitAlt": "Usukhbayar — portrait",
@@ -100,7 +100,7 @@
       {
         "year": "2023",
         "title": "Started from zero",
-        "detail": "Taught myself the basics by shipping small projects and reading whatever broke."
+        "detail": "Self-taught foundations — small projects, broken things, and the habit of finishing."
       },
       {
         "year": "2024",
@@ -114,8 +114,8 @@
       },
       {
         "year": "Today",
-        "title": "Building products end to end",
-        "detail": "Running Hustle Hive and taking ideas from problem to production."
+        "title": "Building end to end",
+        "detail": "Running Hustle Hive — taking ideas from problem to production."
       }
     ]
   },
