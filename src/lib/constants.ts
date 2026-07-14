@@ -45,6 +45,6 @@ export const CONTENT_MAX = 1440;
 
 /** Portrait asset config (not copy) */
 export const PORTRAIT = {
-  hasPortrait: false,
+  hasPortrait: true,
   src: "/images/portrait.jpg",
 } as const;
