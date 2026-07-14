@@ -218,7 +218,7 @@ To add a screenshot: place the asset under `public/`, set `image` on the project
 
 - Portrait (`PORTRAIT.hasPortrait` is currently `false`)
 - Project product screenshots (`image: null` for all projects — placeholders render)
-- Production contact details (email marked as placeholder in `src/lib/constants.ts`; GitHub / LinkedIn hrefs are stubs; Instagram is configured)
+- Production contact details (email configured in `src/lib/constants.ts`; GitHub / LinkedIn hrefs are stubs; Instagram is configured)
 - Configured canonical URL in metadata: `https://usukhbayar.dev` (`SITE.url`) — replace or confirm before public launch if needed
 
 No WebGL in this version by design.

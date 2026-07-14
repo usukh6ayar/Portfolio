@@ -5,7 +5,7 @@
 
 export const SITE = {
   name: "Usukhbayar",
-  email: "hello@usukhbayar.dev", // placeholder — replace with real email
+  email: "usukhbayrgan@gmail.com",
   url: "https://usukhbayar.dev",
 } as const;
 

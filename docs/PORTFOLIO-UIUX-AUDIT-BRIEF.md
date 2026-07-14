@@ -312,7 +312,7 @@ Layout: 4-column card grid on large screens; intro line above.
    - Hairline top/bottom borders  
    - Hover: acid lime fill L→R, text near-black, arrow diagonal  
    - Cursor label: “Say hello ↗”  
-   - Action: `mailto:hello@usukhbayar.dev` (placeholder email — replace for launch)  
+   - Action: `mailto:usukhbayrgan@gmail.com`  
 5. Typographic links: Email · GitHub · LinkedIn · **Instagram** (`instagram.com/usukh6ayar`)  
 6. **Footer integrated in Contact** (not a separate visual orphan):  
    - Name + “Frontend & Mobile Developer”  
@@ -344,7 +344,7 @@ Intent: one continuous editorial magazine story, not stacked independent pages.
 | Real portrait | Placeholder (set `PORTRAIT.hasPortrait` + image path when ready) |
 | Project screenshots | Mostly abstract UI placeholders |
 | Project years / outcomes / metrics | Often “—” or honest “will list when measured” — **do not invent KPIs** |
-| Email | Placeholder `hello@usukhbayar.dev` |
+| Email | `usukhbayrgan@gmail.com` |
 | GitHub / LinkedIn URLs | Placeholders in config (Instagram is set) |
 | Case study deep copy | Scaffolded; real research/results still needed |
 
