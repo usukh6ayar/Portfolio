@@ -114,19 +114,19 @@
       "title": "SparkXP",
       "category": "Education · Product",
       "year": "—",
-      "summary": "An education product built to turn learning into a clear, structured experience — for people who need progress, not noise.",
-      "problem": "Learners and schools often juggle scattered tools: content in one place, practice in another, progress nowhere useful.",
-      "solution": "SparkXP brings learning flows into one product — structured paths, practice, and visibility designed to ship and stay usable.",
-      "outcome": "Measured results will be listed when they exist — not invented for the page.",
-      "stack": ["TypeScript", "React", "Next.js"]
+      "summary": "A gamified English-learning app for Mongolian students and schools — lessons, spaced-repetition practice, and an AI buddy that keeps learners coming back.",
+      "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
+      "solution": "SparkXP turns learning into a game: structured lessons, vocabulary with spaced repetition, XP, streaks, and leaderboards, plus an AI buddy for text and voice practice — with classes and assignments for teachers.",
+      "outcome": "Shipped to production as a React Native app backed by a NestJS API and an admin dashboard; measured results will be added as they land.",
+      "stack": ["React Native", "Expo", "NestJS", "PostgreSQL"]
     },
     "projects": {
       "sparkxp": {
         "title": "SparkXP",
         "category": "Education · Product",
         "year": "—",
-        "summary": "Education product for structured learning experiences — clear paths from intent to progress.",
-        "stack": ["TypeScript", "React", "Next.js"]
+        "summary": "Gamified English learning for Mongolian students and schools — lessons, practice, and an AI buddy.",
+        "stack": ["React Native", "Expo", "NestJS", "PostgreSQL"]
       },
       "beauty-corner": {
         "title": "Beauty Corner",
@@ -160,12 +160,13 @@
       "outcome": "Outcome",
       "gallery": "Gallery",
       "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
+      "galleryNote": "Brand and in-app artwork from SparkXP. Product screens will be added as they are captured.",
       "sparkxp": {
-        "role": "Product · Frontend",
-        "overview": "SparkXP is an education product focused on structured learning — reducing tool sprawl and making progress visible.",
-        "problem": "Learning tools are often fragmented. Content, practice, and progress live in different places, so the experience feels noisy and hard to trust.",
-        "solution": "Design and ship a single product surface for paths, practice, and clarity — calm UI, maintainable stack, built to be used day to day.",
-        "outcome": "Outcome metrics will be added when measured results are available — not before."
+        "role": "Product · Frontend · Mobile",
+        "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play.",
+        "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
+        "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks, and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API, PostgreSQL, and Redis, with an admin dashboard for teachers and content.",
+        "outcome": "Shipped to production for students, teachers, and admins; measured results will be added as they land."
       },
       "beauty-corner": {
         "role": "Frontend · Mobile",
