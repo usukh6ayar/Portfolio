@@ -15,20 +15,32 @@ export const ALL_PROJECT_IDS = [FEATURED_ID, ...STACKED_ORDER] as const;
 
 export type ProjectId = (typeof ALL_PROJECT_IDS)[number];
 
+export type GalleryImage = {
+  src: string;
+  /** CSS object-position for cover cropping (default center) */
+  position?: string;
+};
+
 export type ProjectMeta = {
   id: ProjectId;
   href: string;
   /** Product screenshot — full bleed, not a device mock */
   image: string | null;
   tone: "lime" | "violet" | "cool" | "warm" | "neutral";
+  /** Case-study gallery — brand / in-app artwork, in display order */
+  gallery?: GalleryImage[];
 };
 
 export const PROJECTS: Record<ProjectId, ProjectMeta> = {
   sparkxp: {
     id: "sparkxp",
     href: "/work/sparkxp",
-    image: null,
-    tone: "lime",
+    image: "/images/work/sparkxp-hero.webp",
+    tone: "violet",
+    gallery: [
+      { src: "/images/work/sparkxp-island.webp" },
+      { src: "/images/work/sparkxp-quiz.webp", position: "right center" },
+    ],
   },
   "beauty-corner": {
     id: "beauty-corner",

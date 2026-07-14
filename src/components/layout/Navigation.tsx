@@ -24,15 +24,16 @@ export function Navigation() {
   const { isReady } = useApp();
   const { locale, setLocale } = useLocaleSwitch();
   const reduced = useReducedMotion();
-  const [scrolled, setScrolled] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.scrollY > 24;
-  });
+  // Always false on first render so SSR and client hydration match; the
+  // effect below syncs the real scroll position immediately after mount.
+  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     // Only re-render when the threshold is crossed — not every scroll frame
     let last = window.scrollY > 24;
+    // Sync the actual scroll state post-hydration (e.g. reloaded while scrolled)
+    setScrolled(last);
     const onScroll = () => {
       const next = window.scrollY > 24;
       if (next !== last) {
