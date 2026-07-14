@@ -106,36 +106,6 @@ export function CommandPalette() {
           closeCommand();
         },
       },
-      {
-        id: "proj-beauty",
-        label: t("beautyCorner"),
-        hint: "/work/beauty-corner",
-        group: projects,
-        action: () => {
-          window.location.href = PROJECTS["beauty-corner"].href;
-          closeCommand();
-        },
-      },
-      {
-        id: "proj-qr",
-        label: t("qrMenu"),
-        hint: "/work/qr-menu",
-        group: projects,
-        action: () => {
-          window.location.href = PROJECTS["qr-menu"].href;
-          closeCommand();
-        },
-      },
-      {
-        id: "proj-ai",
-        label: t("aiImageStudio"),
-        hint: "/work/ai-image-studio",
-        group: projects,
-        action: () => {
-          window.location.href = PROJECTS["ai-image-studio"].href;
-          closeCommand();
-        },
-      },
       // Actions
       {
         id: "act-copy-email",

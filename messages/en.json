@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Usukhbayar — Product Engineer · Frontend & Mobile",
-    "description": "Product engineer focused on frontend and mobile. Designs thoughtfully, ships real products. Based in Ulaanbaatar, Mongolia."
+    "title": "Usukhbayar — Full-Stack Developer",
+    "description": "Full-stack developer building frontend and mobile products. Designs thoughtfully, ships real products. Based in Ulaanbaatar, Mongolia."
   },
   "nav": {
     "primary": "Primary",
@@ -30,12 +30,12 @@
     "close": "Close"
   },
   "hero": {
-    "roleLabel": "Product Engineer · Frontend & Mobile",
+    "roleLabel": "Full-Stack Developer",
     "statement": {
-      "line1": "I design thoughtfully—",
-      "line2Before": "but I ",
-      "line2Accent": "build and ship",
-      "line3": "real products."
+      "line1": "I design,",
+      "line2Before": "",
+      "line2Accent": "build, and ship",
+      "line3": "products people actually use."
     },
     "subcopy": "Frontend and mobile products with a product mindset — clear interfaces, solid engineering, shipped for real use.",
     "ctaWork": "View selected work",
@@ -45,10 +45,10 @@
   "about": {
     "label": "About",
     "headline": "Thoughtful design. Practical engineering.",
-    "intro": "I'm Usukhbayar — a product engineer based in Ulaanbaatar. I focus on frontend and mobile, and I care most about software people actually use.",
+    "intro": "I'm Usukhbayar — a full-stack developer based in Ulaanbaatar. I focus on frontend and mobile, and I care most about software people actually use.",
     "story": [
       "CS student at the National University of Mongolia (class of 2027). Self-taught by shipping — not by waiting for a syllabus to catch up.",
-      "Through Hustle Hive LLC I build education and consumer products end to end. The bar is simple: something people open again."
+      "At Retro Mind LLC I work full-stack, leading a small team of two, building products end to end. The bar is simple: something people open again."
     ],
     "pathLabel": "Path",
     "principlesLabel": "Principles",
@@ -68,32 +68,37 @@
     ],
     "nowLabel": "Now",
     "nowTitle": "What I'm building toward",
-    "nowBody": "Shipping products through Hustle Hive while finishing my degree. Open to product roles and selected freelance work where craft matters.",
+    "nowBody": "Building full-stack products at Retro Mind while finishing my degree. Open to full-stack roles and selected freelance work where craft matters.",
     "nowMeta": "Ulaanbaatar · Open to opportunities",
-    "portraitMeta": "Product · Frontend · Mobile",
+    "portraitMeta": "Full-Stack · Frontend · Mobile",
     "portraitAlt": "Usukhbayar — portrait",
     "portraitPlaceholder": "Portrait",
     "portraitPath": "public/images/portrait.jpg",
     "timeline": [
       {
-        "year": "2023",
+        "year": "2020",
         "title": "Started from zero",
         "detail": "Self-taught foundations — small projects and the habit of finishing."
       },
       {
-        "year": "2024",
-        "title": "Left the tutorials behind",
-        "detail": "Moved to work that had to hold up for real users."
+        "year": "2022",
+        "title": "Started university",
+        "detail": "Enrolled in CS at the National University of Mongolia."
+      },
+      {
+        "year": "2023",
+        "title": "First dev job",
+        "detail": "Joined Nomin Holding LLC as a mobile developer."
       },
       {
         "year": "2025",
-        "title": "Focused on product stack",
-        "detail": "Went deep on React, Next.js, React Native, and TypeScript."
+        "title": "Went full-stack",
+        "detail": "Focused on the product stack end to end — React, Next.js, React Native, TypeScript, and the backend behind them."
       },
       {
         "year": "Today",
-        "title": "Building end to end",
-        "detail": "Running Hustle Hive — ideas from problem to production."
+        "title": "Design to done",
+        "detail": "At Retro Mind LLC — building everything from design through to shipped, leading a small team."
       }
     ]
   },
@@ -127,27 +132,6 @@
         "year": "—",
         "summary": "Gamified English learning for Mongolian students and schools — lessons, practice, and an AI buddy.",
         "stack": ["React Native", "Expo", "NestJS", "PostgreSQL"]
-      },
-      "beauty-corner": {
-        "title": "Beauty Corner",
-        "category": "Mobile · Booking",
-        "year": "—",
-        "summary": "Salon booking from discovery to appointments — React Native client with a Node and PostgreSQL backend.",
-        "stack": ["React Native", "Node.js", "PostgreSQL"]
-      },
-      "qr-menu": {
-        "title": "QR Menu",
-        "category": "Web · Hospitality",
-        "year": "—",
-        "summary": "Contactless digital menus for venues — scan, browse, order without paper or friction.",
-        "stack": ["Next.js", "TypeScript", "Node.js"]
-      },
-      "ai-image-studio": {
-        "title": "AI Image Studio",
-        "category": "AI · Creative tools",
-        "year": "—",
-        "summary": "A focused studio for generating and iterating images with AI — built for speed and clarity, not clutter.",
-        "stack": ["Next.js", "TypeScript", "AI"]
       }
     },
     "caseStudy": {
@@ -167,27 +151,6 @@
         "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
         "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks, and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API, PostgreSQL, and Redis, with an admin dashboard for teachers and content.",
         "outcome": "In active development across the student, teacher, and admin experiences; measured results will be added once it launches."
-      },
-      "beauty-corner": {
-        "role": "Frontend · Mobile",
-        "overview": "Beauty Corner is a salon booking product covering discovery, scheduling, and day-to-day operations.",
-        "problem": "Salons and clients still rely on calls and ad-hoc messaging to book — slow for staff, unclear for customers.",
-        "solution": "A React Native app with a Node/PostgreSQL backend for browsing, booking, and running appointments in one flow.",
-        "outcome": "Results will be documented with real usage details when available."
-      },
-      "qr-menu": {
-        "role": "Product · Frontend",
-        "overview": "QR Menu replaces paper menus with a fast, scannable digital experience for hospitality venues.",
-        "problem": "Printed menus are slow to update, costly to reprint, and weak during peak hours or contact-sensitive contexts.",
-        "solution": "A web product where guests scan a QR code and get a current menu without installing an app.",
-        "outcome": "Case metrics pending real deployment notes."
-      },
-      "ai-image-studio": {
-        "role": "Product · Frontend",
-        "overview": "AI Image Studio is a focused tool for generating and refining images with AI — oriented around a clear workflow.",
-        "problem": "Many AI image tools overwhelm with options. The path from prompt to usable output gets buried in UI.",
-        "solution": "A studio layout that prioritizes generation, iteration, and export — practical defaults, minimal chrome.",
-        "outcome": "Measured outcomes will be listed when they exist."
       }
     }
   },
@@ -206,7 +169,7 @@
         "index": "02",
         "title": "Mobile Products",
         "description": "Cross-platform mobile apps with product-grade UX — booking, learning, and consumer flows.",
-        "tech": ["React Native", "Expo", "TypeScript"]
+        "tech": ["React Native", "Expo", "TypeScript", "Redux", "Firebase", "Flutter"]
       },
       {
         "index": "03",
@@ -230,9 +193,9 @@
       "accent": "useful",
       "line2After": "."
     },
-    "body": "Open to product roles and selected freelance work — frontend, mobile, and product-minded shipping.",
+    "body": "Open to full-stack roles and selected freelance work — frontend, mobile, and product-minded shipping.",
     "cta": "Start a project",
-    "role": "Product Engineer · Frontend & Mobile",
+    "role": "Full-Stack Developer",
     "footerConnect": "Connect",
     "footerLocation": "Based",
     "localTime": "UB",

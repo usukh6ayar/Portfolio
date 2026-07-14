@@ -5,11 +5,12 @@
 
 export const FEATURED_ID = "sparkxp" as const;
 
-export const STACKED_ORDER = [
-  "beauty-corner",
-  "qr-menu",
-  "ai-image-studio",
-] as const;
+/**
+ * Secondary "Selected Works" projects. Empty for now — SparkXP is the only
+ * live project. Add real project ids here (and their copy in messages/*.json
+ * + entries in PROJECTS below) to bring the Selected Works section back.
+ */
+export const STACKED_ORDER = [] as const;
 
 export const ALL_PROJECT_IDS = [FEATURED_ID, ...STACKED_ORDER] as const;
 
@@ -41,24 +42,6 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
       { src: "/images/work/sparkxp-island.webp" },
       { src: "/images/work/sparkxp-quiz.webp", position: "right center" },
     ],
-  },
-  "beauty-corner": {
-    id: "beauty-corner",
-    href: "/work/beauty-corner",
-    image: null,
-    tone: "violet",
-  },
-  "qr-menu": {
-    id: "qr-menu",
-    href: "/work/qr-menu",
-    image: null,
-    tone: "cool",
-  },
-  "ai-image-studio": {
-    id: "ai-image-studio",
-    href: "/work/ai-image-studio",
-    image: null,
-    tone: "warm",
   },
 };
 

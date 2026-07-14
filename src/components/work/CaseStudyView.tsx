@@ -31,7 +31,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
           transition={{ duration: 0.45, ease: EASE.outExpo }}
         >
           <Link
-            href="/#work"
+            href="/#featured"
             className="inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-muted transition-colors hover:text-foreground"
           >
             <span aria-hidden>←</span>
