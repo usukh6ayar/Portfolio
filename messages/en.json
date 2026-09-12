@@ -217,7 +217,7 @@
           {
             "name": "Director",
             "surface": "director",
-            "detail": "Sees the whole kindergarten — attendance, groups, staff and reports — and runs the ESIS console: readiness per service, read-only dry runs, sync history and the audit log."
+            "detail": "Sees the whole kindergarten — attendance, groups, staff and reports — and runs the ESIS console: pulls child, staff and institution records from Mongolia’s national education system across 39 wired services, with readiness per service, read-only dry runs, sync history and an audit log."
           },
           {
             "name": "Teacher",
@@ -227,7 +227,7 @@
           {
             "name": "Cook",
             "surface": "cook",
-            "detail": "Owns the kitchen: the weekly menu, ingredients and technology cards with calories per portion, stock levels and food orders."
+            "detail": "Owns the kitchen: the weekly menu, ingredients, and technology cards with calories per portion, stock levels and food orders. Product types and food categories are pulled from the ESIS reference catalogue rather than typed by hand."
           },
           {
             "name": "Parent",
