@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
 import { ProjectLinks } from "@/components/work/ProjectLinks";
+import { CaseStudyGallery } from "@/components/work/CaseStudyGallery";
 
 import type { ProjectId } from "@/lib/projects";
 import { FEATURED_ID, PROJECTS } from "@/lib/projects";
@@ -70,7 +70,6 @@ type CaseStudyViewProps = {
 export function CaseStudyView({ id }: CaseStudyViewProps) {
   const t = useTranslations("work");
   const tc = useTranslations("work.caseStudy");
-  const ts = useTranslations("work.surfaces");
   const tb = useTranslations("work.buddy");
   const project = PROJECTS[id];
   const title = t(`projects.${id}.title`);
@@ -186,35 +185,17 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
 
             <section>
               <h2 className="text-caption text-muted">{tc("gallery")}</h2>
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {project.gallery?.length ? (
-                  project.gallery.map((img, i) => (
-                    <figure key={img.src}>
-                      <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-border bg-surface-1">
-                        <Image
-                          src={img.src}
-                          alt={t("imageAlt", { title })}
-                          fill
-                          sizes="(max-width: 640px) 100vw, 480px"
-                          style={{ objectPosition: img.position ?? "center" }}
-                          className="object-cover"
-                          priority={i === 0}
-                        />
-                      </div>
-                      {img.surface && (
-                        <figcaption className="mt-3 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                          {ts(img.surface)}
-                        </figcaption>
-                      )}
-                    </figure>
-                  ))
-                ) : (
-                  <>
-                    <div className="aspect-[4/3] rounded-[1.25rem] border border-border bg-surface-1" />
-                    <div className="aspect-[4/3] rounded-[1.25rem] border border-border bg-surface-2" />
-                  </>
-                )}
-              </div>
+              {project.gallery?.length ? (
+                <CaseStudyGallery
+                  images={project.gallery}
+                  alt={t("imageAlt", { title })}
+                />
+              ) : (
+                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="aspect-[4/3] rounded-[1.25rem] border border-border bg-surface-1" />
+                  <div className="aspect-[4/3] rounded-[1.25rem] border border-border bg-surface-2" />
+                </div>
+              )}
               <p className="mt-4 max-w-[36rem] text-sm leading-relaxed text-muted">
                 {project.gallery?.length ? tc("galleryNote") : tc("placeholderNote")}
               </p>
