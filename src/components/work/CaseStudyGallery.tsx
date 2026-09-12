@@ -5,25 +5,30 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { GalleryImage } from "@/lib/projects";
+import { PHONE_CROPS, PhoneCutout, cropKey } from "@/components/work/PhoneCutout";
 import { cn } from "@/lib/cn";
 
 type Surface = NonNullable<GalleryImage["surface"]> | "all";
-const captionKey = (src: string) => src.split("/").pop()!.replace(/\.webp$/, "");
 
+/**
+ * A grid of every screen, filtered by surface. Clicking one lifts it into a
+ * lightbox that shows a single shot as large as the viewport allows, with
+ * arrows and dot indicators to move through the set.
+ *
+ * Phone shots are cut out of their rendered plate rather than shown on it —
+ * the device stands on the page with no box behind it.
+ */
 export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt: string }) {
   const ts = useTranslations("work.surfaces");
   const tg = useTranslations("work.gallery");
   const [surface, setSurface] = useState<Surface>("all");
-  const [cursor, setCursor] = useState(0);
   const [open, setOpen] = useState<number | null>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
-  const surfaces = [...new Set(images.flatMap((image) => image.surface ? [image.surface] : []))];
-  const shots = images.map((image, index) => ({ ...image, index }))
+
+  const surfaces = [...new Set(images.flatMap((image) => (image.surface ? [image.surface] : [])))];
+  const shots = images
+    .map((image, index) => ({ ...image, index }))
     .filter((image) => surface === "all" || image.surface === surface);
-  const active = shots[Math.min(cursor, shots.length - 1)];
-  const activeCaption = tg(`captions.${captionKey(active.src)}`);
-  const step = (delta: number) =>
-    setCursor((i) => (i + delta + shots.length) % shots.length);
 
   const close = () => {
     setOpen(null);
@@ -33,87 +38,65 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
   return (
     <div className="mt-6">
       {surfaces.length > 1 && (
-        <div role="group" aria-label={tg("filter")} className="mb-6 flex flex-wrap gap-2">
+        <div role="group" aria-label={tg("filter")} className="mb-7 flex flex-wrap gap-2">
           {(["all", ...surfaces] as Surface[]).map((value) => (
-            <button key={value} type="button" aria-pressed={surface === value} onClick={() => { setSurface(value); setCursor(0); }}
+            <button key={value} type="button" aria-pressed={surface === value}
+              onClick={() => setSurface(value)}
               className={cn("inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm transition-colors",
-                surface === value ? "border-foreground bg-foreground text-background" : "border-border text-muted hover:border-border-strong hover:text-foreground")}>
+                surface === value
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border text-muted hover:border-border-strong hover:text-foreground")}>
               {value === "all" ? tg("all") : ts(value)}
-              <span className="font-mono text-[0.625rem] opacity-60">{value === "all" ? images.length : images.filter((image) => image.surface === value).length}</span>
+              <span className="font-mono text-[0.625rem] opacity-60">
+                {value === "all" ? images.length : images.filter((image) => image.surface === value).length}
+              </span>
             </button>
           ))}
         </div>
       )}
-      {/* One shot at a time, large: a grid of small thumbnails made the phone
-          screens unreadable and the dashboards worse. Text sits beside it, the
-          dots below carry the position, and clicking lifts it into the
-          lightbox. */}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] lg:gap-12">
-        <div className="order-2 flex flex-col justify-center lg:order-1">
-          {active.surface && (
-            <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-accent/80">
-              {ts(active.surface)}
-            </p>
-          )}
-          <p className="mt-2 font-display text-xl font-medium tracking-[-0.02em]">
-            {activeCaption}
-          </p>
 
-          <div className="mt-6 flex items-center gap-3">
-            <button type="button" onClick={() => step(-1)} aria-label={tg("previous")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-accent/40 hover:text-accent">←</button>
-            <button type="button" onClick={() => step(1)} aria-label={tg("next")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-accent/40 hover:text-accent">→</button>
-            <span aria-live="polite" aria-atomic="true" className="ml-1 font-mono text-[0.6875rem] text-muted">
-              {cursor + 1} / {shots.length}
-            </span>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-x-6 gap-y-9 sm:grid-cols-2">
+        {shots.map((shot) => {
+          const key = cropKey(shot.src);
+          const caption = tg(`captions.${key}`);
+          const crop = PHONE_CROPS[key];
+          return (
+            <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
+              onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
+              className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
+              {/* One height band across the grid: devices fill it, browser
+                  shots fit their width inside it, and the rows stay level. */}
+              <div className="flex h-[clamp(14rem,26vw,20rem)] items-center justify-center">
+                {crop ? (
+                  <PhoneCutout src={shot.src} alt={`${alt} — ${caption}`} crop={crop}
+                    sizes="(max-width: 640px) 60vw, 260px"
+                    className="h-full shadow-[0_30px_60px_-30px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.04]" />
+                ) : (
+                  <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 460px"
+                    className="max-h-full w-auto rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.03]" />
+                )}
+              </div>
 
-        <div className="order-1 lg:order-2">
-          <button type="button" ref={openerRef}
-            aria-label={tg("open", { surface: activeCaption })}
-            onClick={() => setOpen(active.index)}
-            onKeyDown={(event) => {
-              if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
-              if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
-            }}
-            className="group/shot flex h-[clamp(18rem,52vh,34rem)] w-full items-center justify-center lg:justify-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
-            {/* App shots are one phone on a wide plate: a tall crop fills the
-                frame with the device instead of its margins. */}
-            <div className={cn(
-              "relative h-full overflow-hidden rounded-xl shadow-[0_34px_80px_-40px_rgba(0,0,0,0.95)]",
-              "transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.02]",
-              active.surface === "app" ? "aspect-[9/14]" : "aspect-[4/3]",
-            )}>
-              <Image key={active.src} src={active.src} alt={`${alt} — ${activeCaption}`} fill priority
-                sizes="(max-width: 1024px) 92vw, 760px"
-                className="object-cover object-center motion-safe:animate-[gallery-fade_420ms_cubic-bezier(0.16,1,0.3,1)]" />
-            </div>
-          </button>
-
-          <div role="tablist" aria-label={tg("filter")} className="mt-5 flex flex-wrap items-center justify-center gap-1.5 lg:justify-start">
-            {shots.map((shot, i) => (
-              <button key={shot.src} type="button" role="tab" aria-selected={i === cursor}
-                aria-label={tg(`captions.${captionKey(shot.src)}`)}
-                onClick={() => setCursor(i)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  i === cursor ? "w-7 bg-accent" : "w-1.5 bg-border-strong hover:bg-muted",
-                )} />
-            ))}
-          </div>
-        </div>
+              <p className="mt-4 flex items-baseline gap-2 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
+                {shot.surface && <span className="text-accent/70">{ts(shot.surface)}</span>}
+                <span className="truncate text-muted">{caption}</span>
+                <span aria-hidden className="ml-auto text-muted/60 transition-colors group-hover/shot:text-accent">↗</span>
+              </p>
+            </button>
+          );
+        })}
       </div>
+
       {open !== null && createPortal(
         <GalleryDialog images={images} index={open} alt={alt} onClose={close}
           onStep={(delta) => {
             const position = shots.findIndex((shot) => shot.index === open);
-            const next = (position + delta + shots.length) % shots.length;
-            setCursor(next);
-            setOpen(shots[next].index);
+            setOpen(shots[(position + delta + shots.length) % shots.length].index);
           }}
-          position={shots.findIndex((shot) => shot.index === open) + 1} total={shots.length} />,
+          onJump={(position) => setOpen(shots[position].index)}
+          shots={shots}
+          position={shots.findIndex((shot) => shot.index === open)} />,
         document.body,
       )}
     </div>
@@ -121,14 +104,17 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
 }
 
 /** Native modal semantics provide focus trapping and keep the background inert. */
-function GalleryDialog({ images, index, alt, onClose, onStep, position, total }: {
+function GalleryDialog({ images, index, alt, onClose, onStep, onJump, shots, position }: {
   images: GalleryImage[]; index: number; alt: string; onClose: () => void;
-  onStep: (delta: number) => void; position: number; total: number;
+  onStep: (delta: number) => void; onJump: (position: number) => void;
+  shots: (GalleryImage & { index: number })[]; position: number;
 }) {
   const tg = useTranslations("work.gallery");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const shown = images[index];
-  const caption = tg(`captions.${captionKey(shown.src)}`);
+  const key = cropKey(shown.src);
+  const caption = tg(`captions.${key}`);
+  const crop = PHONE_CROPS[key];
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -155,28 +141,38 @@ function GalleryDialog({ images, index, alt, onClose, onStep, position, total }:
       onCancel={(event) => { event.preventDefault(); close(); }}
       onKeyDown={(event) => {
         if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-          event.preventDefault(); onStep(event.key === "ArrowRight" ? 1 : -1);
+          event.preventDefault();
+          onStep(event.key === "ArrowRight" ? 1 : -1);
         }
       }}>
       {/* Anywhere off the shot closes it — the controls stop the bubble. */}
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-4 sm:p-8"
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-3 sm:p-6"
         onClick={(event) => { if (event.target === event.currentTarget) close(); }}>
-        {/* Enlarged, an app plate is still mostly empty backdrop — the phone
-            is cropped to fill the height instead. */}
-        {shown.surface === "app" ? (
-          <div className="gallery-shot relative aspect-[9/14] h-[min(78dvh,46rem)] max-w-[92vw] overflow-hidden rounded-xl shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]">
-            <Image src={shown.src} alt={`${alt} — ${caption}`} fill sizes="(max-width: 1280px) 60vw, 600px"
-              loading="eager" className="object-cover object-center" />
-          </div>
+        {crop ? (
+          <PhoneCutout src={shown.src} alt={`${alt} — ${caption}`} crop={crop} priority
+            sizes="(max-width: 1280px) 60vw, 640px"
+            className="gallery-shot h-[min(84dvh,58rem)] max-w-[92vw] shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         ) : (
           <Image src={shown.src} alt={`${alt} — ${caption}`} width={1760} height={1320}
-            sizes="(max-width: 1280px) 92vw, 1200px" loading="eager"
-            className="gallery-shot h-auto max-h-[78dvh] w-auto max-w-[min(92vw,78rem)] rounded-xl object-contain shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
+            sizes="(max-width: 1280px) 94vw, 1400px" loading="eager"
+            className="gallery-shot h-auto max-h-[84dvh] w-auto max-w-[min(94vw,88rem)] rounded-xl object-contain shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         )}
-        <p className="flex items-center gap-3 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
-          <span className="text-foreground/80">{caption}</span>
-          <span aria-live="polite" aria-atomic="true">{position} / {total}</span>
-        </p>
+
+        <div className="flex flex-col items-center gap-3">
+          <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-foreground/80">
+            {caption}
+          </p>
+          {/* Dot indicators, as on the reference: the active one stretches. */}
+          <div role="tablist" aria-label={tg("filter")} className="flex flex-wrap items-center justify-center gap-1.5">
+            {shots.map((shot, i) => (
+              <button key={shot.src} type="button" role="tab" aria-selected={i === position}
+                aria-label={tg(`captions.${cropKey(shot.src)}`)}
+                onClick={() => onJump(i)}
+                className={cn("h-1.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  i === position ? "w-7 bg-accent" : "w-1.5 bg-white/25 hover:bg-white/50")} />
+            ))}
+          </div>
+        </div>
       </div>
 
       <button type="button" onClick={close} aria-label={tg("close")}

@@ -3,15 +3,12 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { ProjectId } from "@/lib/projects";
+import { PHONE_CROPS, PhoneCutout } from "@/components/work/PhoneCutout";
 import { cn } from "@/lib/cn";
 
-/** The app plate a single phone is cut out of. */
-const PHONE_SOURCE = {
-  src: "/images/work/sparkxp-app-hero.webp",
-  width: 1760,
-  height: 990,
-};
-const PHONE = { key: "sparkxp-app-home", x: 680, y: 25, width: 402, height: 874 };
+/** The plate a single phone is cut out of, measured in PhoneCutout. */
+const PHONE_SRC = "/images/work/sparkxp-app-hero.webp";
+const PHONE_KEY = "sparkxp-app-home";
 
 type Panel = {
   key: string;
@@ -114,37 +111,22 @@ export function ProjectShowcase({
         {showcase.phone && (
           <div
             className={cn(
-              "absolute inset-y-[4%] left-1/2 z-10 -translate-x-1/2",
+              "absolute inset-y-[4%] left-1/2 z-10 flex -translate-x-1/2 justify-center",
               lift,
             )}
           >
-            <div
-              className="relative h-full overflow-hidden bg-black shadow-[0_30px_70px_-20px_rgba(0,0,0,0.95)]"
-              style={{
-                aspectRatio: `${PHONE.width} / ${PHONE.height}`,
-                borderRadius: "15% / 7%",
-              }}
-            >
-              <Image
-                src={PHONE_SOURCE.src}
-                alt={t(PHONE.key)}
-                width={PHONE_SOURCE.width}
-                height={PHONE_SOURCE.height}
-                priority={priority}
-                sizes={
-                  size === "hero"
-                    ? "(max-width: 1280px) 100vw, 1280px"
-                    : "(max-width: 1024px) 100vw, 720px"
-                }
-                className="absolute !max-w-none"
-                style={{
-                  width: `${(PHONE_SOURCE.width / PHONE.width) * 100}%`,
-                  height: `${(PHONE_SOURCE.height / PHONE.height) * 100}%`,
-                  left: `${(-PHONE.x / PHONE.width) * 100}%`,
-                  top: `${(-PHONE.y / PHONE.height) * 100}%`,
-                }}
-              />
-            </div>
+            <PhoneCutout
+              src={PHONE_SRC}
+              alt={t(PHONE_KEY)}
+              crop={PHONE_CROPS["sparkxp-app-hero"]}
+              priority={priority}
+              sizes={
+                size === "hero"
+                  ? "(max-width: 1280px) 40vw, 420px"
+                  : "(max-width: 1024px) 40vw, 260px"
+              }
+              className="h-full shadow-[0_30px_70px_-20px_rgba(0,0,0,0.95)]"
+            />
           </div>
         )}
       </div>
