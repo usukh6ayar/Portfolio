@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { scrollToHash } from "@/components/providers/LenisProvider";
@@ -21,19 +22,22 @@ export function Navigation() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const tLang = useTranslations("lang");
-  const { isReady } = useApp();
+  const { isReady, openCommand } = useApp();
+  const pathname = usePathname();
   const { locale, setLocale } = useLocaleSwitch();
   const reduced = useReducedMotion();
   // Always false on first render so SSR and client hydration match; the
   // effect below syncs the real scroll position immediately after mount.
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState<string | null>(null);
+  const currentHref = pathname === "/" ? activeHref : null;
 
   useEffect(() => {
     // Only re-render when the threshold is crossed — not every scroll frame
     let last = window.scrollY > 24;
     // Sync the actual scroll state post-hydration (e.g. reloaded while scrolled)
-    setScrolled(last);
+    const initialFrame = window.requestAnimationFrame(() => setScrolled(last));
     const onScroll = () => {
       const next = window.scrollY > 24;
       if (next !== last) {
@@ -42,8 +46,54 @@ export function Navigation() {
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.cancelAnimationFrame(initialFrame);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const sections = [
+      { id: "top", href: "#top" },
+      { id: "about", href: "#about" },
+      { id: "featured", href: "#featured" },
+      { id: "work", href: "#featured" },
+      { id: "stack", href: "#stack" },
+      { id: "contact", href: "#contact" },
+    ]
+      .map((item) => ({ ...item, element: document.getElementById(item.id) }))
+      .filter((item) => item.element);
+
+    let frame = 0;
+    const updateActive = () => {
+      frame = 0;
+      const marker = window.scrollY + Math.min(window.innerHeight * 0.34, 320);
+      let next = "#top";
+
+      for (const section of sections) {
+        if ((section.element?.offsetTop ?? Number.POSITIVE_INFINITY) <= marker) {
+          next = section.href;
+        }
+      }
+
+      setActiveHref((current) => (current === next ? current : next));
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActive);
+    };
+
+    requestUpdate();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -54,9 +104,18 @@ export function Navigation() {
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [mobileOpen]);
+
   const handleNav = (href: string) => {
     setMobileOpen(false);
-    scrollToHash(href);
+    if (pathname === "/") scrollToHash(href);
   };
 
   /** Show only the language you can switch *to* */
@@ -89,9 +148,10 @@ export function Navigation() {
       >
         {/* Brand */}
         <a
-          href="#top"
+          href={pathname === "/" ? "#top" : "/"}
           className="justify-self-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           onClick={(e) => {
+            if (pathname !== "/") return;
             e.preventDefault();
             const lenis = (
               window as Window & { __lenis?: { scrollTo: (n: number) => void } }
@@ -111,22 +171,44 @@ export function Navigation() {
           {NAV_ITEMS.map((link) => (
             <li key={link.href}>
               <a
-                href={link.href}
+                href={pathname === "/" ? link.href : `/${link.href}`}
+                aria-current={currentHref === link.href ? "location" : undefined}
                 onClick={(e) => {
-                  e.preventDefault();
+                  if (pathname === "/") e.preventDefault();
                   handleNav(link.href);
                 }}
-                className="rounded-sm px-3 py-1.5 text-[0.8125rem] text-muted transition-colors duration-300 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className={cn(
+                  "relative rounded-sm px-3 py-1.5 text-[0.8125rem] transition-colors duration-300 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                  currentHref === link.href ? "text-foreground" : "text-muted",
+                )}
               >
                 {t(link.key)}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute inset-x-3 -bottom-0.5 h-px origin-left bg-accent transition-transform duration-300",
+                    currentHref === link.href ? "scale-x-100" : "scale-x-0",
+                  )}
+                />
               </a>
             </li>
           ))}
         </ul>
 
         {/* Right cluster — desktop: ● Open · МН */}
-        <div className="hidden items-center justify-self-end gap-6 md:flex lg:gap-8">
+        <div className="hidden items-center justify-self-end gap-5 md:flex lg:gap-7">
           <AvailabilityDot label={t("statusOpen")} />
+          <button
+            type="button"
+            onClick={openCommand}
+            className="hidden items-center gap-2 rounded-full border border-border px-3 py-1.5 text-muted transition-[color,border-color,background-color] duration-300 hover:border-border-strong hover:bg-surface-1 hover:text-foreground lg:inline-flex"
+            aria-label={t("openCommand")}
+          >
+            <span className="text-[0.75rem]">{t("menu")}</span>
+            <kbd className="font-mono text-[0.625rem] tracking-wide text-foreground/65">
+              ⌘K
+            </kbd>
+          </button>
           <LangToggle
             label={targetLabel}
             fullName={targetFull}
@@ -191,19 +273,40 @@ export function Navigation() {
           {NAV_ITEMS.map((link) => (
             <li key={link.href}>
               <a
-                href={link.href}
+                href={pathname === "/" ? link.href : `/${link.href}`}
+                aria-current={currentHref === link.href ? "location" : undefined}
                 tabIndex={mobileOpen ? 0 : -1}
                 onClick={(e) => {
-                  e.preventDefault();
+                  if (pathname === "/") e.preventDefault();
                   handleNav(link.href);
                 }}
-                className="block rounded-lg px-1 py-3 font-display text-2xl tracking-tight text-foreground"
+                className={cn(
+                  "flex items-center justify-between rounded-lg px-1 py-3 font-display text-2xl tracking-tight",
+                  currentHref === link.href ? "text-accent" : "text-foreground",
+                )}
               >
                 {t(link.key)}
+                {currentHref === link.href && (
+                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+                )}
               </a>
             </li>
           ))}
-          <li className="pt-3">
+          <li className="mt-2 flex items-center justify-between border-t border-border pt-4">
+            <button
+              type="button"
+              tabIndex={mobileOpen ? 0 : -1}
+              onClick={() => {
+                setMobileOpen(false);
+                openCommand();
+              }}
+              className="inline-flex items-center gap-2 text-sm text-foreground"
+            >
+              <span>{t("openCommand")}</span>
+              <kbd className="rounded border border-border px-1.5 py-0.5 font-mono text-[0.625rem] text-muted">
+                ⌘K
+              </kbd>
+            </button>
             <AvailabilityDot label={t("statusOpen")} />
           </li>
         </ul>

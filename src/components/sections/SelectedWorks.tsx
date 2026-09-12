@@ -10,6 +10,7 @@ import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
 import { CaseStudyLink } from "@/components/work/CaseStudyLink";
+import { ProjectLinks } from "@/components/work/ProjectLinks";
 import { PROJECTS, STACKED_ORDER, type ProjectId } from "@/lib/projects";
 import { cn } from "@/lib/cn";
 
@@ -229,9 +230,13 @@ function ProjectRow({
       <div
         data-project-text
         data-project-part
-        className={cn("mt-8", !reduced && "opacity-0")}
+        className={cn(
+          "mt-8 flex flex-wrap items-center gap-x-6 gap-y-3",
+          !reduced && "opacity-0",
+        )}
       >
         <CaseStudyLink href={project.href} />
+        <ProjectLinks id={id} />
       </div>
     </div>
   );

@@ -21,12 +21,7 @@ export const NAV_ITEMS = [
 export const SOCIAL_ITEMS = [
   {
     key: "github" as const,
-    href: "https://github.com",
-    external: true,
-  },
-  {
-    key: "linkedin" as const,
-    href: "https://linkedin.com",
+    href: "https://github.com/usukh6ayar",
     external: true,
   },
   {

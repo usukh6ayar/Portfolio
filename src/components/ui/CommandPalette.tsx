@@ -9,12 +9,13 @@ import {
   type KeyboardEvent,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
 import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { scrollToHash } from "@/components/providers/LenisProvider";
-import { SITE } from "@/lib/constants";
-import { PROJECTS } from "@/lib/projects";
+import { SITE, SOCIAL_ITEMS } from "@/lib/constants";
+import { ALL_PROJECT_IDS, PROJECTS } from "@/lib/projects";
 import { EASE } from "@/lib/easings";
 import { cn } from "@/lib/cn";
 
@@ -48,10 +49,13 @@ export function CommandPalette() {
   const tCommon = useTranslations("common");
   const { isCommandOpen, closeCommand } = useApp();
   const { locale, setLocale } = useLocaleSwitch();
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const listId = useId();
   const wasOpen = useRef(false);
 
@@ -61,7 +65,8 @@ export function CommandPalette() {
     const actions = t("groupActions");
 
     const go = (hash: string) => {
-      scrollToHash(hash);
+      if (pathname === "/") scrollToHash(hash);
+      else window.location.assign(`/${hash}`);
       closeCommand();
     };
 
@@ -82,6 +87,13 @@ export function CommandPalette() {
         action: () => go("#featured"),
       },
       {
+        id: "nav-work",
+        label: t("work"),
+        hint: "#work",
+        group: navigate,
+        action: () => go("#work"),
+      },
+      {
         id: "nav-stack",
         label: t("stack"),
         hint: "#stack",
@@ -95,17 +107,17 @@ export function CommandPalette() {
         group: navigate,
         action: () => go("#contact"),
       },
-      // Projects
-      {
-        id: "proj-sparkxp",
-        label: t("sparkxp"),
-        hint: "/work/sparkxp",
+      // Projects — one entry per registered project, label from command.<id>
+      ...ALL_PROJECT_IDS.map((id) => ({
+        id: `proj-${id}`,
+        label: t(id),
+        hint: PROJECTS[id].href,
         group: projects,
         action: () => {
-          window.location.href = PROJECTS.sparkxp.href;
+          window.location.href = PROJECTS[id].href;
           closeCommand();
         },
-      },
+      })),
       // Actions
       {
         id: "act-copy-email",
@@ -119,26 +131,17 @@ export function CommandPalette() {
           });
         },
       },
-      {
-        id: "act-github",
+      // Social hrefs live in SITE config — keep them out of this file
+      ...SOCIAL_ITEMS.filter((item) => item.key === "github").map((item) => ({
+        id: `act-${item.key}`,
         label: t("openGitHub"),
-        hint: "github.com",
+        hint: item.href.replace(/^https?:\/\//, ""),
         group: actions,
         action: () => {
-          openExternal("https://github.com");
+          openExternal(item.href);
           closeCommand();
         },
-      },
-      {
-        id: "act-linkedin",
-        label: t("openLinkedIn"),
-        hint: "linkedin.com",
-        group: actions,
-        action: () => {
-          openExternal("https://linkedin.com");
-          closeCommand();
-        },
-      },
+      })),
       {
         id: "act-lang",
         label: t("switchLanguage"),
@@ -150,7 +153,7 @@ export function CommandPalette() {
         },
       },
     ];
-  }, [closeCommand, t, locale, setLocale, copied]);
+  }, [closeCommand, t, locale, setLocale, copied, pathname]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -168,6 +171,7 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (isCommandOpen && !wasOpen.current) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
       wasOpen.current = true;
       const timer = window.setTimeout(() => {
         setQuery("");
@@ -177,8 +181,10 @@ export function CommandPalette() {
       }, 0);
       return () => window.clearTimeout(timer);
     }
-    if (!isCommandOpen) {
+    if (!isCommandOpen && wasOpen.current) {
       wasOpen.current = false;
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
     }
   }, [isCommandOpen]);
 
@@ -213,6 +219,30 @@ export function CommandPalette() {
     }
   };
 
+  const onDialogKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeCommand();
+      return;
+    }
+
+    if (e.key !== "Tab") return;
+    const focusable = panelRef.current?.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+    );
+    if (!focusable?.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   const groups = useMemo(() => {
     const map = new Map<string, CommandItem[]>();
     for (const item of filtered) {
@@ -237,15 +267,18 @@ export function CommandPalette() {
           role="dialog"
           aria-modal="true"
           aria-label={t("title")}
+          onKeyDown={onDialogKeyDown}
         >
           <button
             type="button"
             className="absolute inset-0 bg-[var(--color-overlay)] backdrop-blur-[2px]"
             aria-label={t("close")}
+            tabIndex={-1}
             onClick={closeCommand}
           />
 
           <motion.div
+            ref={panelRef}
             className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-border-strong bg-surface-1 shadow-2xl shadow-black/50"
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

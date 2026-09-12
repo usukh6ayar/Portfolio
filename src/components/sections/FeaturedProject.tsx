@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
+import { ProjectLinks } from "@/components/work/ProjectLinks";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { FEATURED_ID, PROJECTS } from "@/lib/projects";
 import { cn } from "@/lib/cn";
@@ -174,13 +175,17 @@ export function FeaturedProject() {
 
         <div
           data-featured-part
-          className={cn("mt-12 sm:mt-14", !reduced && "opacity-0")}
+          className={cn(
+            "mt-12 flex flex-wrap items-center gap-x-8 gap-y-5 sm:mt-14",
+            !reduced && "opacity-0",
+          )}
         >
           <span data-cursor="case" className="inline-block">
             <MagneticButton href={href} variant="primary">
               {t("viewCaseStudy")}
             </MagneticButton>
           </span>
+          <ProjectLinks id={id} />
         </div>
       </div>
     </section>

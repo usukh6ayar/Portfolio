@@ -13,7 +13,6 @@ import dynamic from "next/dynamic";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { LenisProvider } from "@/components/providers/LenisProvider";
 import { Preloader } from "@/components/layout/Preloader";
-import { CustomCursor } from "@/components/ui/CustomCursor";
 
 /** Lazy — command palette JS only loads on first open / after idle */
 const CommandPalette = dynamic(
@@ -97,7 +96,6 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <I18nProvider>
       <AppContext.Provider value={value}>
         <LenisProvider>
-          <CustomCursor />
           <Preloader />
           {children}
           {paletteMounted && <CommandPalette />}

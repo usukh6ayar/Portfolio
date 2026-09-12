@@ -110,16 +110,6 @@ html.lenis body {
   overflow: hidden;
 }
 
-/*
- * Custom cursor — hide OS pointer while active.
- * Universal * catches links, buttons, Tailwind cursor-pointer, etc.
- * Class is only set when fine-pointer + not reduced-motion (see CustomCursor).
- */
-html.has-custom-cursor,
-html.has-custom-cursor * {
-  cursor: none !important;
-}
-
 body {
   margin: 0;
   min-height: 100dvh;
@@ -171,7 +161,7 @@ button {
   color: inherit;
   background: none;
   border: none;
-  cursor: pointer; /* native only; overridden by html.has-custom-cursor * */
+  cursor: pointer;
 }
 
 /* ==========================================================================

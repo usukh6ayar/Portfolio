@@ -27,7 +27,8 @@
     "name": "Usukhbayar",
     "location": "Ulaanbaatar, Mongolia",
     "loading": "Loading",
-    "close": "Close"
+    "close": "Close",
+    "skipToContent": "Skip to content"
   },
   "hero": {
     "roleLabel": "Full-Stack Developer",
@@ -113,25 +114,55 @@
     "stackLabel": "Tech stack",
     "imageAlt": "{title} product screenshot",
     "imagePlaceholder": "Screenshot coming soon",
+    "links": {
+      "live": "Live site",
+      "repo": "Source code",
+      "admin": "Admin dashboard"
+    },
     "featured": {
       "label": "Featured project",
       "id": "sparkxp",
       "title": "SparkXP",
-      "category": "Education · Product",
-      "year": "—",
+      "category": "Education · Mobile product",
+      "year": "2026",
       "summary": "A gamified English-learning app for Mongolian students and schools — lessons, spaced-repetition practice, and an AI buddy that keeps learners coming back.",
       "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
-      "solution": "SparkXP turns learning into a game: structured lessons, vocabulary with spaced repetition, XP, streaks, and leaderboards, plus an AI buddy for text and voice practice — with classes and assignments for teachers.",
-      "outcome": "In active development — a React Native app with a NestJS API and admin dashboard, building toward launch; measured results will be added once they exist.",
-      "stack": ["React Native", "Expo", "NestJS", "PostgreSQL"]
+      "solution": "Three surfaces, one product, built end to end: an Expo app for students and teachers, a NestJS API on PostgreSQL and Redis, and an admin dashboard. Structured lessons and spaced-repetition vocabulary sit under a gamification loop of XP, sparks, streaks and leaderboards, with an AI buddy for text and voice practice, and classes, join codes and assignments for teachers.",
+      "outcome": "The API runs on Railway and the admin dashboard on Vercel; the app is in active development ahead of its store release. Payments are built but deliberately switched off until the gateway is wired.",
+      "stack": [
+        "React Native",
+        "Expo",
+        "NestJS",
+        "PostgreSQL",
+        "Redis"
+      ]
     },
     "projects": {
       "sparkxp": {
         "title": "SparkXP",
-        "category": "Education · Product",
-        "year": "—",
-        "summary": "Gamified English learning for Mongolian students and schools — lessons, practice, and an AI buddy.",
-        "stack": ["React Native", "Expo", "NestJS", "PostgreSQL"]
+        "category": "Education · Mobile product",
+        "year": "2026",
+        "summary": "Gamified English learning for Mongolian students and schools — mobile app, API, and admin dashboard, built end to end.",
+        "stack": [
+          "React Native",
+          "Expo",
+          "NestJS",
+          "PostgreSQL",
+          "Redis"
+        ]
+      },
+      "nomadkids": {
+        "title": "NomadKids",
+        "category": "Education · Web platform",
+        "year": "2026",
+        "summary": "A deployed kindergarten portfolio platform, integrated with Mongolia's national education system — teachers record development, parents follow their own child, and each history exports as a printable PDF.",
+        "stack": [
+          "Next.js",
+          "NestJS",
+          "Prisma",
+          "PostgreSQL",
+          "Cloudflare R2"
+        ]
       }
     },
     "caseStudy": {
@@ -143,15 +174,49 @@
       "solution": "Solution",
       "outcome": "Outcome",
       "gallery": "Gallery",
+      "highlights": "Engineering highlights",
       "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
-      "galleryNote": "Brand and in-app artwork from SparkXP. Product screens will be added as they are captured.",
+      "galleryNote": "Real screens captured from the running product, and brand artwork from it. Only the window frame is presentation — nothing inside it is a mockup.",
       "sparkxp": {
-        "role": "Product · Frontend · Mobile",
-        "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play.",
+        "role": "Team lead · Full-stack · Mobile",
+        "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
         "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
-        "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks, and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API, PostgreSQL, and Redis, with an admin dashboard for teachers and content.",
-        "outcome": "In active development across the student, teacher, and admin experiences; measured results will be added once it launches."
+        "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API on PostgreSQL and Redis. Teachers get classes, join codes and assignments; the admin dashboard drives content, the AI generation pipelines, buddy configuration and plan limits.",
+        "outcome": "The API is deployed on Railway and the admin dashboard on Vercel; the student and teacher app is in active development ahead of its store release. Measured results go here once the app is in users' hands — not before.",
+        "highlights": [
+          "Three surfaces, one product: the Expo app for students and teachers, the public landing page, and the admin dashboard — all on a single NestJS API.",
+          "Led it as team lead of three developers: I owned the backend, the admin dashboard and production deploys, with two developers on the mobile app.",
+          "AI runs through a gateway rather than scattered SDK calls — Gemini for vocabulary generation, reading comprehension questions, the in-app dictionary and speech-to-text; OpenAI's Batch API for word and idiom imagery; ElevenLabs for pronunciation audio and lesson-video transcription; Azure for text-to-speech.",
+          "The AI buddy is a real-time loop — speech in, model, speech out — with monthly voice and STT minutes enforced from the learner's plan, and generated speech cached so a repeated line costs nothing the second time.",
+          "The buddy's 3D avatar is a rigged GLB uploaded through the admin dashboard to Cloudflare R2 and referenced by URL, so a new character ships without an app release. That same model is the fox watching your cursor on this site."
+        ]
+      },
+      "nomadkids": {
+        "role": "Full-stack · Web",
+        "overview": "NomadKids is a digital portfolio for Mongolian kindergartens: teachers record observations and developmental assessments, parents follow their own child's progress and photographs, and administrators manage kindergartens, groups, and staff.",
+        "problem": "Kindergartens track child development on paper. Records scatter when a child changes group, year, or kindergarten, and the family is left with nothing to keep. The client's brief also sets strict rules on who may see a child's data.",
+        "solution": "A Next.js front end against a NestJS and Prisma API, with authorization enforced server-side per role and per child rather than in the UI — roles live on membership, so one person can be both a teacher and a parent. Sessions use same-site HttpOnly cookies, a short access token with a rotating refresh, and no token ever stored in localStorage. Photos live in a private Cloudflare R2 bucket behind presigned URLs, and reports are rendered as A4 Mongolian-Cyrillic PDFs by a Puppeteer worker pulling off a BullMQ queue.",
+        "outcome": "Deployed and serving: nomadkids.mn with its API on api.nomadkids.mn and media on a private bucket, behind a strict content-security policy and HSTS. The ESIS access token was issued and the connection verified end to end; per-service scope is still being granted by the ministry's IT centre, which is an external gate rather than a code gap.",
+        "highlights": [
+          "Integrated with ESIS, Mongolia's national education information system: 39 services wired against the ministry's v2 catalogue of 198, chosen on least privilege and matched 39-for-39 against the ministry's own official service list, path for path.",
+          "Built by a team of two that I led, across the Next.js front end, the NestJS API and the integration work.",
+          "Multi-tenant by construction — one provider token serves many kindergartens through a per-kindergarten ESIS institution mapping, so tenant data can't leak across the integration.",
+          "An operator console where a kindergarten admin sees readiness per service, runs a read-only dry run, and reads back sync history and an audit log — without touching live records.",
+          "Self-assessed line by line against ministerial order A/261: of 51 mandatory criteria, 35 met, 14 partial, 1 outstanding. Self-assessed, not certified — the distinction is the point.",
+          "28-table schema with the authorization boundary written into it, and a security acceptance matrix covering RBAC, tenancy, IDOR, media and reports."
+        ]
       }
+    },
+    "surfaces": {
+      "app": "Mobile app",
+      "landing": "Landing page",
+      "admin": "Admin dashboard"
+    },
+    "buddy": {
+      "label": "The buddy avatar",
+      "caption": "Spark — the app's own rigged avatar. Move your cursor; he follows.",
+      "captionStatic": "Spark — the app's own rigged avatar, shown still.",
+      "note": "The same GLB the app pulls from Cloudflare R2, re-exported at roughly 0.6 MB. The gaze is spread down the rig — head, neck, chest — clamped and damped, so it reads as looking rather than swivelling."
     }
   },
   "skills": {
@@ -163,25 +228,46 @@
         "index": "01",
         "title": "Product Interfaces",
         "description": "Clear web product UI — flows, systems, and interfaces people can trust day to day.",
-        "tech": ["React", "Next.js", "TypeScript", "Tailwind CSS"]
+        "tech": [
+          "React",
+          "Next.js",
+          "TypeScript",
+          "Tailwind CSS"
+        ]
       },
       {
         "index": "02",
         "title": "Mobile Products",
         "description": "Cross-platform mobile apps with product-grade UX — booking, learning, and consumer flows.",
-        "tech": ["React Native", "Expo", "TypeScript", "Redux", "Firebase", "Flutter"]
+        "tech": [
+          "React Native",
+          "Expo",
+          "TypeScript",
+          "Redux",
+          "Firebase",
+          "Flutter"
+        ]
       },
       {
         "index": "03",
         "title": "Backend Systems",
         "description": "APIs and data layers that support the product — enough backend to ship, not oversold specialization.",
-        "tech": ["Node.js", "NestJS", "Express", "PostgreSQL"]
+        "tech": [
+          "Node.js",
+          "NestJS",
+          "Express",
+          "PostgreSQL"
+        ]
       },
       {
         "index": "04",
         "title": "Motion & UI Craft",
         "description": "Intentional motion and interaction detail that reinforce hierarchy without noise.",
-        "tech": ["GSAP", "Framer Motion", "Lenis"]
+        "tech": [
+          "GSAP",
+          "Framer Motion",
+          "Lenis"
+        ]
       }
     ]
   },
@@ -210,9 +296,11 @@
     "groupActions": "Actions",
     "about": "About",
     "featured": "Featured Work",
+    "work": "Selected Works",
     "stack": "Capabilities",
     "contact": "Contact",
     "sparkxp": "SparkXP",
+    "nomadkids": "NomadKids",
     "copyEmail": "Copy Email",
     "emailCopied": "Email copied",
     "openGitHub": "Open GitHub",

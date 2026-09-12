@@ -24,8 +24,8 @@ type ProjectMediaProps = {
 };
 
 /**
- * Product screenshot surface.
- * Cursor labels live in CustomCursor via data-cursor on parent links.
+ * Product screenshot surface with a persistent, visible action label. The
+ * affordance stays clear on touch and keyboard instead of depending on hover.
  */
 export function ProjectMedia({
   id,
@@ -79,6 +79,23 @@ export function ProjectMedia({
         ) : (
           <Placeholder title={title} tint={tint} />
         )}
+
+        <span
+          aria-hidden
+          className={cn(
+            "absolute bottom-3 right-3 z-10 inline-flex items-center gap-2",
+            "rounded-full border border-white/10 bg-black/75 px-3 py-1.5 backdrop-blur-md",
+            "font-sans text-xs font-medium tracking-tight text-white/90 shadow-lg shadow-black/20",
+            "transition-[transform,background-color,border-color] duration-300",
+            "group-hover/media:-translate-y-0.5 group-hover/media:border-accent/30 group-hover/media:bg-black/90",
+            "sm:bottom-4 sm:right-4 sm:px-3.5 sm:py-2 sm:text-[0.8125rem]",
+          )}
+        >
+          <span>{t("viewCaseStudy")}</span>
+          <span className="text-accent transition-transform duration-300 group-hover/media:translate-x-0.5">
+            →
+          </span>
+        </span>
       </div>
       <figcaption className="sr-only">{alt}</figcaption>
     </motion.figure>

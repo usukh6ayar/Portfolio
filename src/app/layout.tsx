@@ -9,6 +9,7 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import { PageTransition } from "@/components/providers/PageTransition";
 import { Navigation } from "@/components/layout/Navigation";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { SkipLink } from "@/components/ui/SkipLink";
 import { SITE } from "@/lib/constants";
 import en from "../../messages/en.json";
 import "./globals.css";
@@ -58,9 +59,14 @@ export default function RootLayout({
     >
       <body className="grain min-h-full bg-background font-sans text-foreground antialiased">
         <AppProviders>
+          <SkipLink />
           <ScrollProgress />
           <Navigation />
-          <main id="main" className="relative flex min-h-full flex-1 flex-col">
+          <main
+            id="main"
+            tabIndex={-1}
+            className="relative flex min-h-full flex-1 flex-col"
+          >
             <PageTransition>{children}</PageTransition>
           </main>
         </AppProviders>

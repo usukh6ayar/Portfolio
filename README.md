@@ -122,9 +122,7 @@ Portfolio/
 | ID | Route | Role |
 |----|--------|------|
 | `sparkxp` | `/work/sparkxp` | Flagship |
-| `beauty-corner` | `/work/beauty-corner` | Selected |
-| `qr-menu` | `/work/qr-menu` | Selected |
-| `ai-image-studio` | `/work/ai-image-studio` | Selected |
+| `nomadkids` | `/work/nomadkids` | Selected |
 
 ---
 

@@ -1,13 +1,67 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
+import { ProjectLinks } from "@/components/work/ProjectLinks";
+
 import type { ProjectId } from "@/lib/projects";
-import { PROJECTS } from "@/lib/projects";
+import { FEATURED_ID, PROJECTS } from "@/lib/projects";
 import { EASE } from "@/lib/easings";
+
+/**
+ * three + R3F is ~600 KB — keep it out of every other route's bundle and off
+ * the server. Only the flagship case study mounts it.
+ */
+const BuddyAvatar = dynamic(
+  () => import("@/components/work/BuddyAvatar").then((m) => m.BuddyAvatar),
+  { ssr: false },
+);
+
+/** Reserve the canvas space, but defer the heavy 3D bundle until it is near. */
+function LazyBuddyAvatar() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || nearViewport) return;
+    if (!("IntersectionObserver" in window)) {
+      const timer = setTimeout(() => setNearViewport(true), 0);
+      return () => clearTimeout(timer);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setNearViewport(true);
+        observer.disconnect();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [nearViewport]);
+
+  return (
+    <div ref={rootRef} className="mt-4">
+      {nearViewport ? (
+        <BuddyAvatar />
+      ) : (
+        <div
+          className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-border bg-surface-1 sm:aspect-[16/10]"
+          aria-hidden
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_12%,rgba(167,139,250,0.12),transparent_70%)]" />
+        </div>
+      )}
+    </div>
+  );
+}
 
 type CaseStudyViewProps = {
   id: ProjectId;
@@ -16,11 +70,16 @@ type CaseStudyViewProps = {
 export function CaseStudyView({ id }: CaseStudyViewProps) {
   const t = useTranslations("work");
   const tc = useTranslations("work.caseStudy");
+  const ts = useTranslations("work.surfaces");
+  const tb = useTranslations("work.buddy");
   const project = PROJECTS[id];
   const title = t(`projects.${id}.title`);
   const category = t(`projects.${id}.category`);
   const year = t(`projects.${id}.year`);
   const stack = t.raw(`projects.${id}.stack`) as string[];
+  const highlights = tc.raw(`${id}.highlights`) as string[];
+  /** Back to the section this project actually lives in */
+  const backHref = id === FEATURED_ID ? "/#featured" : "/#work";
 
   return (
     <article className="pb-[var(--section-y)] pt-[calc(var(--nav-height)+2rem)]">
@@ -31,7 +90,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
           transition={{ duration: 0.45, ease: EASE.outExpo }}
         >
           <Link
-            href="/#featured"
+            href={backHref}
             className="inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-muted transition-colors hover:text-foreground"
           >
             <span aria-hidden>←</span>
@@ -54,6 +113,8 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
           <p className="mt-6 max-w-[36rem] text-base leading-relaxed text-muted sm:text-lg">
             {tc(`${id}.overview`)}
           </p>
+
+          <ProjectLinks id={id} className="mt-7" />
         </motion.div>
 
         <div className="mt-10 sm:mt-12 md:mt-14">
@@ -98,24 +159,53 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
               </p>
             </section>
 
+            {id === FEATURED_ID && (
+              <section>
+                <h2 className="text-caption text-muted">{tb("label")}</h2>
+                <LazyBuddyAvatar />
+                <p className="mt-4 max-w-[36rem] text-sm leading-relaxed text-muted">
+                  {tb("note")}
+                </p>
+              </section>
+            )}
+
+            <section>
+              <h2 className="text-caption text-muted">{tc("highlights")}</h2>
+              <ul className="mt-4 max-w-[38rem] space-y-3">
+                {highlights.map((item) => (
+                  <li
+                    key={item}
+                    className="flex gap-3 text-[0.975rem] leading-[1.75] text-foreground/90"
+                  >
+                    <span aria-hidden className="mt-[0.6em] h-px w-4 shrink-0 bg-border-strong" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
             <section>
               <h2 className="text-caption text-muted">{tc("gallery")}</h2>
               <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {project.gallery?.length ? (
                   project.gallery.map((img, i) => (
-                    <figure
-                      key={img.src}
-                      className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-border bg-surface-1"
-                    >
-                      <Image
-                        src={img.src}
-                        alt={t("imageAlt", { title })}
-                        fill
-                        sizes="(max-width: 640px) 100vw, 480px"
-                        style={{ objectPosition: img.position ?? "center" }}
-                        className="object-cover"
-                        priority={i === 0}
-                      />
+                    <figure key={img.src}>
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-border bg-surface-1">
+                        <Image
+                          src={img.src}
+                          alt={t("imageAlt", { title })}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 480px"
+                          style={{ objectPosition: img.position ?? "center" }}
+                          className="object-cover"
+                          priority={i === 0}
+                        />
+                      </div>
+                      {img.surface && (
+                        <figcaption className="mt-3 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
+                          {ts(img.surface)}
+                        </figcaption>
+                      )}
                     </figure>
                   ))
                 ) : (
