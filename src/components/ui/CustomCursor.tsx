@@ -23,7 +23,17 @@ const INTERACTIVE_SELECTOR = [
   "[data-cursor-interactive]",
 ].join(",");
 
-/** Bloom radius (px) and brightness per mode — the whole cursor language. */
+/** Controls compact enough for the blob to wrap without looking like a slab. */
+const MAGNETIC_SELECTOR = "[data-magnetic], button, [role='button'], a";
+const MAGNET_MAX_W = 340;
+const MAGNET_MAX_H = 130;
+/** How far toward the element's centre the blob is pulled once it locks. */
+const MAGNETIC_FACTOR = 0.85;
+
+/** Blob geometry while free. */
+const BLOB = 40;
+
+/** Bloom radius (px) and brightness per mode — the ambient half of the cursor. */
 const BLOOM = {
   default: { scale: 1, opacity: 0.5 },
   interactive: { scale: 1.5, opacity: 0.85 },
@@ -35,8 +45,9 @@ const TRAIL = [
   { duration: 0.16, size: 5, opacity: 0.6 },
   { duration: 0.28, size: 4.5, opacity: 0.42 },
   { duration: 0.44, size: 4, opacity: 0.28 },
-  { duration: 0.62, size: 3.5, opacity: 0.16 },
 ];
+
+const PARTICLES = 12;
 
 function resolveMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) return "default";
@@ -67,15 +78,39 @@ function resolveMode(target: EventTarget | null): CursorMode {
   return "interactive";
 }
 
+/** The control under the pointer, before it is measured. */
+function resolveMagnet(target: EventTarget | null): Element | null {
+  if (!(target instanceof Element)) return null;
+  if (target.closest("[data-cursor-none]")) return null;
+  return target.closest(MAGNETIC_SELECTOR);
+}
+
+/** Slabs and hairlines are left alone; only compact controls get wrapped. */
+function wrappable(rect: DOMRect) {
+  return (
+    rect.width <= MAGNET_MAX_W &&
+    rect.height <= MAGNET_MAX_H &&
+    rect.width >= 8 &&
+    rect.height >= 8
+  );
+}
+
 /**
- * Custom cursor — an acid bloom that lights the page as it passes.
+ * Custom cursor — an acid bloom with a magnetic blob inside it.
  *
- * Three layers: a wide screen-blended glow that brightens whatever text it
- * crosses, four lagging trail dots, and a crisp core. Portalled to <body> on
- * purpose: `mix-blend-mode` only reaches the page when nothing between the
- * element and the root isolates it into its own stacking context.
+ * The blob runs on a spring rather than a tween: it carries velocity, so it
+ * stretches along its own direction of travel and settles with a little
+ * overshoot. Over a compact control it locks toward the element's centre and
+ * morphs to its outline, which is what makes buttons feel like they attract
+ * the pointer. `exclusion` blending keeps it legible over anything it crosses.
  *
- * Transform-only, refs + GSAP quickTo. Never re-renders on pointermove.
+ * Behind it sit the ambient layers: a wide additive bloom that lights the text
+ * it passes, three lagging trail dots, the label pill for project / case /
+ * contact, and a burst of particles on click.
+ *
+ * Portalled to <body> on purpose: `mix-blend-mode` only reaches the page when
+ * nothing between the element and the root isolates it into its own stacking
+ * context. Transform-only, refs + GSAP. Never re-renders on pointermove.
  * Skips entirely on touch / reduced-motion.
  */
 export function CustomCursor() {
@@ -86,9 +121,11 @@ export function CustomCursor() {
   const [mounted, setMounted] = useState(false);
 
   const bloomRef = useRef<HTMLDivElement>(null);
+  const blobRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
   const trailRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const particleRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const modeRef = useRef<CursorMode>("default");
   const visibleRef = useRef(false);
@@ -114,11 +151,20 @@ export function CustomCursor() {
     const root = document.documentElement;
     const body = document.body;
     const bloom = bloomRef.current;
+    const blob = blobRef.current;
     const core = coreRef.current;
     const label = labelRef.current;
     const trail = trailRefs.current.filter(Boolean) as HTMLDivElement[];
+    const particles = particleRefs.current.filter(Boolean) as HTMLDivElement[];
 
-    if (!enabled || !bloom || !core || !label || trail.length !== TRAIL.length) {
+    if (
+      !enabled ||
+      !bloom ||
+      !blob ||
+      !core ||
+      !label ||
+      trail.length !== TRAIL.length
+    ) {
       root.classList.remove("has-custom-cursor");
       root.style.removeProperty("cursor");
       body.style.removeProperty("cursor");
@@ -129,8 +175,8 @@ export function CustomCursor() {
     root.style.cursor = "none";
     body.style.cursor = "none";
 
-    const layers = [bloom, core, ...trail];
-    gsap.set(layers, {
+    const tweened = [bloom, core, ...trail];
+    gsap.set(tweened, {
       xPercent: -50,
       yPercent: -50,
       x: -400,
@@ -139,6 +185,7 @@ export function CustomCursor() {
     });
     gsap.set(bloom, { scale: BLOOM.default.scale });
     gsap.set(label, { xPercent: 0, yPercent: 0, x: -400, y: -400, force3D: true });
+    gsap.set(particles, { xPercent: -50, yPercent: -50, opacity: 0 });
 
     const to = (
       el: HTMLElement,
@@ -161,6 +208,17 @@ export function CustomCursor() {
 
     let labelWidth = 0;
 
+    // — Blob spring state. Position and velocity in px; the velocity is what
+    //   drives the stretch, so it is integrated rather than tweened.
+    const pointer = { x: -400, y: -400 };
+    const pos = { x: -400, y: -400 };
+    const vel = { x: 0, y: 0 };
+    let magnet: Element | null = null;
+    let magnetRect: DOMRect | null = null;
+    // The candidate is tracked separately so a control the blob declined to
+    // wrap is not re-measured on every single pointermove.
+    let candidate: Element | null = null;
+
     const applyBloom = () => {
       const mode = modeRef.current;
       const step =
@@ -178,6 +236,42 @@ export function CustomCursor() {
       bloom.style.opacity = visibleRef.current ? String(step.opacity) : "0";
     };
 
+    /** Grow the blob to the control's outline, or shrink back to a disc. */
+    const applyMagnet = (next: Element | null) => {
+      if (next === candidate) return;
+      candidate = next;
+
+      const rect = next ? next.getBoundingClientRect() : null;
+      const accepted = rect && wrappable(rect) ? next : null;
+      if (accepted === magnet) return;
+
+      magnet = accepted;
+      magnetRect = accepted ? rect : null;
+
+      if (accepted && magnetRect) {
+        const radius = parseFloat(
+          getComputedStyle(accepted).borderRadius || "9999",
+        );
+        gsap.to(blob, {
+          width: magnetRect.width + 12,
+          height: magnetRect.height + 12,
+          borderRadius: Math.min(radius + 6, (magnetRect.height + 12) / 2),
+          duration: 0.42,
+          ease: "power3.out",
+          overwrite: "auto",
+        });
+      } else {
+        gsap.to(blob, {
+          width: BLOB,
+          height: BLOB,
+          borderRadius: BLOB / 2,
+          duration: 0.5,
+          ease: "elastic.out(1, 0.7)",
+          overwrite: "auto",
+        });
+      }
+    };
+
     const applyMode = (mode: CursorMode, force = false) => {
       if (!force && modeRef.current === mode) return;
       modeRef.current = mode;
@@ -190,6 +284,7 @@ export function CustomCursor() {
       core.style.width = coreSize;
       core.style.height = coreSize;
       core.style.opacity = visible ? "1" : "0";
+      blob.style.opacity = visible ? "1" : "0";
 
       for (const [i, el] of trail.entries()) {
         el.style.opacity = visible && !labeled ? String(TRAIL[i].opacity) : "0";
@@ -221,8 +316,61 @@ export function CustomCursor() {
       applyMode(modeRef.current, true);
     };
 
+    // — The spring. Runs on GSAP's ticker so it shares the page's one rAF.
+    const tick = (_time: number, deltaMs: number) => {
+      // Clamped so a stalled tab does not fire the blob across the screen.
+      const step = Math.min(deltaMs, 40) / 16.667;
+
+      let tx = pointer.x;
+      let ty = pointer.y;
+      if (magnet && magnetRect) {
+        const cx = magnetRect.left + magnetRect.width / 2;
+        const cy = magnetRect.top + magnetRect.height / 2;
+        tx += (cx - tx) * MAGNETIC_FACTOR;
+        ty += (cy - ty) * MAGNETIC_FACTOR;
+      }
+
+      vel.x = (vel.x + (tx - pos.x) * 0.22 * step) * 0.76;
+      vel.y = (vel.y + (ty - pos.y) * 0.22 * step) * 0.76;
+      pos.x += vel.x * step;
+      pos.y += vel.y * step;
+
+      const speed = Math.hypot(vel.x, vel.y);
+      // Gooey stretch along the direction of travel — dropped while locked, so
+      // a wrapped control keeps its shape.
+      const stretch = magnet ? 0 : Math.min(speed / 46, 0.42);
+      // Only a stretched blob has a direction worth rotating to; a wrapped
+      // control must stay square to the element it is tracing.
+      const angle = stretch > 0.01 ? Math.atan2(vel.y, vel.x) : 0;
+
+      blob.style.transform =
+        `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%) ` +
+        `rotate(${angle}rad) scale(${1 + stretch}, ${1 - stretch * 0.72})`;
+    };
+    gsap.ticker.add(tick);
+
+    const burst = (x: number, y: number) => {
+      if (!particles.length) return;
+      for (const [i, p] of particles.entries()) {
+        const a = (i / particles.length) * Math.PI * 2 + Math.random() * 0.5;
+        const d = 40 + Math.random() * 58;
+        gsap.set(p, { x, y, opacity: 1, scale: 0.7 + Math.random() * 0.6 });
+        gsap.to(p, {
+          x: x + Math.cos(a) * d,
+          y: y + Math.sin(a) * d,
+          opacity: 0,
+          scale: 0.2,
+          duration: 0.5 + Math.random() * 0.25,
+          ease: "power3.out",
+          overwrite: true,
+        });
+      }
+    };
+
     const onMove = (e: PointerEvent) => {
       const { clientX: x, clientY: y } = e;
+      pointer.x = x;
+      pointer.y = y;
       coreX(x);
       coreY(y);
       bloomX(x);
@@ -238,25 +386,34 @@ export function CustomCursor() {
 
       applyVisibility(true);
       applyMode(resolveMode(e.target));
+      applyMagnet(resolveMagnet(e.target));
     };
 
     const onLeave = () => {
       applyVisibility(false);
       applyMode("default");
+      applyMagnet(null);
     };
 
-    const onDown = () => {
+    const onDown = (e: PointerEvent) => {
       pressedRef.current = true;
       applyBloom();
+      burst(e.clientX, e.clientY);
     };
     const onUp = () => {
       pressedRef.current = false;
       applyBloom();
     };
+    // A locked control moves with the page; re-measure instead of trailing it.
+    const remeasure = () => {
+      if (magnet) magnetRect = magnet.getBoundingClientRect();
+    };
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("pointerdown", onDown, { passive: true });
     window.addEventListener("pointerup", onUp, { passive: true });
+    window.addEventListener("scroll", remeasure, { passive: true });
+    window.addEventListener("resize", remeasure, { passive: true });
     window.addEventListener("blur", onLeave);
     root.addEventListener("pointerleave", onLeave);
 
@@ -267,9 +424,12 @@ export function CustomCursor() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("scroll", remeasure);
+      window.removeEventListener("resize", remeasure);
       window.removeEventListener("blur", onLeave);
       root.removeEventListener("pointerleave", onLeave);
-      gsap.killTweensOf([...layers, label]);
+      gsap.ticker.remove(tick);
+      gsap.killTweensOf([...tweened, blob, label, ...particles]);
       modeRef.current = "default";
       visibleRef.current = false;
       pressedRef.current = false;
@@ -278,8 +438,8 @@ export function CustomCursor() {
 
   if (!enabled) return null;
 
-  // No wrapping element: a positioned wrapper would isolate the bloom into its
-  // own stacking context and the blend would stop reaching the page.
+  // No wrapping element: a positioned wrapper would isolate the blend into its
+  // own stacking context and it would stop reaching the page.
   return createPortal(
     <>
       <div
@@ -300,6 +460,26 @@ export function CustomCursor() {
         }}
       />
 
+      <div
+        ref={blobRef}
+        aria-hidden
+        data-cursor-none
+        className="pointer-events-none fixed left-0 top-0 z-[9998]"
+        style={{
+          width: BLOB,
+          height: BLOB,
+          borderRadius: BLOB / 2,
+          opacity: 0,
+          // An outline rather than a slab: `difference` keeps it visible on any
+          // backdrop, and a filled blob turns the acid CTA magenta.
+          border: "1.5px solid rgba(245,245,240,0.9)",
+          background: "rgba(245,245,240,0.05)",
+          mixBlendMode: "difference",
+          transition: "opacity 220ms var(--ease-out-expo)",
+          willChange: "transform, width, height",
+        }}
+      />
+
       {TRAIL.map((dot, i) => (
         <div
           key={dot.duration}
@@ -315,6 +495,25 @@ export function CustomCursor() {
             opacity: 0,
             boxShadow: "0 0 8px rgba(184,243,0,0.55)",
             transition: "opacity 220ms var(--ease-out-expo)",
+            willChange: "transform, opacity",
+          }}
+        />
+      ))}
+
+      {Array.from({ length: PARTICLES }, (_, i) => (
+        <div
+          key={i}
+          ref={(el) => {
+            particleRefs.current[i] = el;
+          }}
+          aria-hidden
+          data-cursor-none
+          className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full bg-accent"
+          style={{
+            width: 5,
+            height: 5,
+            opacity: 0,
+            boxShadow: "0 0 12px rgba(184,243,0,0.85)",
             willChange: "transform, opacity",
           }}
         />
