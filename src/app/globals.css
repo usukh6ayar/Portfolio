@@ -235,9 +235,12 @@ video {
 .gallery-dialog {
   position: fixed;
   inset: 0;
-  width: min(72rem, calc(100vw - 2rem));
+  width: min(80rem, calc(100vw - 3rem));
   max-width: none;
-  max-height: calc(100dvh - 2rem);
+  /* Deliberately short of the viewport: the blurred page stays visible around
+     the edges, so the shot reads as lifted off the page rather than replacing
+     it. */
+  max-height: calc(100dvh - 4rem);
   margin: auto;
   padding: 0;
   color: var(--color-text);
@@ -245,7 +248,41 @@ video {
   border: 1px solid var(--color-border-strong);
   border-radius: 1rem;
 }
-.gallery-dialog::backdrop { background: rgba(0, 0, 0, 0.9); }
+.gallery-dialog::backdrop {
+  background: rgba(6, 6, 6, 0.62);
+  backdrop-filter: blur(14px) saturate(0.9);
+  -webkit-backdrop-filter: blur(14px) saturate(0.9);
+  animation: gallery-backdrop 260ms ease-out;
+}
+
+/* The shot turns as it comes forward. */
+.gallery-dialog[open] {
+  animation: gallery-flip 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+@keyframes gallery-flip {
+  from {
+    opacity: 0;
+    transform: perspective(1600px) rotateY(-22deg) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1600px) rotateY(0deg) scale(1);
+  }
+}
+
+@keyframes gallery-backdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-dialog[open],
+  .gallery-dialog::backdrop {
+    animation: none;
+  }
+}
 
 /* ==========================================================================
    Typography utilities

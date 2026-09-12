@@ -86,14 +86,13 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
   nomadkids: {
     id: "nomadkids",
     href: "/work/nomadkids",
-    image: "/images/work/nomadkids-hero.webp",
+    image: null,
     tone: "cool",
     gallery: [
+      // One board per role and nothing deeper: the detail screens gave away
+      // more of the product than a case study needs to.
       { src: "/images/work/nomadkids-director.webp", surface: "director" },
-      { src: "/images/work/nomadkids-esis.webp", surface: "director" },
       { src: "/images/work/nomadkids-teacher.webp", surface: "teacher" },
-      { src: "/images/work/nomadkids-assessment.webp", surface: "teacher" },
-      { src: "/images/work/nomadkids-portfolio.webp", surface: "teacher" },
       { src: "/images/work/nomadkids-cook.webp", surface: "cook" },
       { src: "/images/work/nomadkids-parent.webp", surface: "parent" },
     ],

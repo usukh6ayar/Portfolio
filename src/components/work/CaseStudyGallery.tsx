@@ -43,19 +43,19 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
         {shots.map((shot) => {
           const caption = tg(`captions.${captionKey(shot.src)}`);
           return (
+            // No plate: these are device and browser mockups that carry their
+            // own backdrop, and a card around them only adds empty margin.
             <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
               onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
-              className="group/shot overflow-hidden rounded-xl border border-border bg-surface-1 text-left transition-colors hover:border-border-strong">
-              <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">
-                <Image src={shot.src} alt={`${alt} — ${caption}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 440px" className="object-contain" />
-              </div>
-              <div className="flex min-h-16 items-center justify-between gap-3 border-t border-border px-4 py-3">
-                <div>
-                  {shot.surface && <p className="mb-1 font-mono text-[0.5625rem] uppercase tracking-wider text-muted">{ts(shot.surface)}</p>}
-                  <p className="text-sm font-medium">{caption}</p>
-                </div>
-                <span aria-hidden className="text-muted transition-colors group-hover/shot:text-accent">↗</span>
-              </div>
+              className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
+              <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 440px"
+                className="h-auto w-full rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.03]" />
+              <p className="mt-3 flex items-baseline gap-2 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
+                {shot.surface && <span className="text-accent/70">{ts(shot.surface)}</span>}
+                <span className="truncate text-muted">{caption}</span>
+                <span aria-hidden className="ml-auto text-muted/60 transition-colors group-hover/shot:text-accent">↗</span>
+              </p>
             </button>
           );
         })}
@@ -120,7 +120,7 @@ function GalleryDialog({ images, index, alt, onClose, onStep, position, total }:
         <p className="text-sm font-medium">{caption}</p>
         <button type="button" onClick={close} aria-label={tg("close")} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border text-muted hover:text-foreground">✕</button>
       </header>
-      <div className="relative h-[min(68dvh,48rem)]">
+      <div className="relative h-[min(74dvh,52rem)]">
         <Image src={shown.src} alt={`${alt} — ${caption}`} fill sizes="(max-width: 1152px) 100vw, 1152px" className="object-contain" loading="eager" />
       </div>
       <footer className="flex items-center justify-center gap-5 border-t border-border px-4 py-3">
