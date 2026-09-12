@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { useTranslations } from "next-intl";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -21,6 +22,21 @@ const INTERACTIVE_SELECTOR = [
   "[data-cursor]",
   "[data-cursor-interactive]",
 ].join(",");
+
+/** Bloom radius (px) and brightness per mode — the whole cursor language. */
+const BLOOM = {
+  default: { scale: 1, opacity: 0.5 },
+  interactive: { scale: 1.5, opacity: 0.85 },
+  labeled: { scale: 1.72, opacity: 0.95 },
+} as const;
+
+/** Trail dots: follow duration, size, opacity — each lags a little more. */
+const TRAIL = [
+  { duration: 0.16, size: 5, opacity: 0.6 },
+  { duration: 0.28, size: 4.5, opacity: 0.42 },
+  { duration: 0.44, size: 4, opacity: 0.28 },
+  { duration: 0.62, size: 3.5, opacity: 0.16 },
+];
 
 function resolveMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) return "default";
@@ -52,8 +68,15 @@ function resolveMode(target: EventTarget | null): CursorMode {
 }
 
 /**
- * Custom cursor — transform-only, refs + GSAP quickTo.
- * Never re-renders on pointermove. Skips entirely on touch / reduced-motion.
+ * Custom cursor — an acid bloom that lights the page as it passes.
+ *
+ * Three layers: a wide screen-blended glow that brightens whatever text it
+ * crosses, four lagging trail dots, and a crisp core. Portalled to <body> on
+ * purpose: `mix-blend-mode` only reaches the page when nothing between the
+ * element and the root isolates it into its own stacking context.
+ *
+ * Transform-only, refs + GSAP quickTo. Never re-renders on pointermove.
+ * Skips entirely on touch / reduced-motion.
  */
 export function CustomCursor() {
   const t = useTranslations("cursor");
@@ -62,17 +85,15 @@ export function CustomCursor() {
 
   const [mounted, setMounted] = useState(false);
 
+  const bloomRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
+  const trailRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const modeRef = useRef<CursorMode>("default");
   const visibleRef = useRef(false);
-  const labelsRef = useRef({
-    project: "",
-    case: "",
-    contact: "",
-  });
+  const pressedRef = useRef(false);
+  const labelsRef = useRef({ project: "", case: "", contact: "" });
 
   useEffect(() => {
     const id = window.requestAnimationFrame(() => setMounted(true));
@@ -92,11 +113,12 @@ export function CustomCursor() {
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
+    const bloom = bloomRef.current;
     const core = coreRef.current;
-    const ring = ringRef.current;
     const label = labelRef.current;
+    const trail = trailRefs.current.filter(Boolean) as HTMLDivElement[];
 
-    if (!enabled || !core || !ring || !label) {
+    if (!enabled || !bloom || !core || !label || trail.length !== TRAIL.length) {
       root.classList.remove("has-custom-cursor");
       root.style.removeProperty("cursor");
       body.style.removeProperty("cursor");
@@ -107,31 +129,53 @@ export function CustomCursor() {
     root.style.cursor = "none";
     body.style.cursor = "none";
 
-    gsap.set([core, ring, label], {
+    const layers = [bloom, core, ...trail];
+    gsap.set(layers, {
       xPercent: -50,
       yPercent: -50,
-      x: -100,
-      y: -100,
+      x: -400,
+      y: -400,
       force3D: true,
     });
-    // Label sits slightly past the pointer tip (matches prior +14 / +12 offset)
-    gsap.set(label, { xPercent: 0, yPercent: 0 });
+    gsap.set(bloom, { scale: BLOOM.default.scale });
+    gsap.set(label, { xPercent: 0, yPercent: 0, x: -400, y: -400, force3D: true });
 
-    const coreX = gsap.quickTo(core, "x", { duration: 0.05, ease: "power3" });
-    const coreY = gsap.quickTo(core, "y", { duration: 0.05, ease: "power3" });
-    const ringX = gsap.quickTo(ring, "x", { duration: 0.35, ease: "power3" });
-    const ringY = gsap.quickTo(ring, "y", { duration: 0.35, ease: "power3" });
-    // Label lags with ring, offset from pointer
-    const labelX = gsap.quickTo(label, "x", { duration: 0.35, ease: "power3" });
-    const labelY = gsap.quickTo(label, "y", { duration: 0.35, ease: "power3" });
+    const to = (
+      el: HTMLElement,
+      prop: "x" | "y",
+      duration: number,
+      ease = "power3",
+    ) => gsap.quickTo(el, prop, { duration, ease });
 
-    const applyVisibility = (visible: boolean) => {
-      if (visibleRef.current === visible) return;
-      visibleRef.current = visible;
-      const opacity = visible ? "1" : "0";
-      core.style.opacity = opacity;
-      // Ring/label visibility is mode-dependent
-      applyMode(modeRef.current, true);
+    const coreX = to(core, "x", 0.045);
+    const coreY = to(core, "y", 0.045);
+    const bloomX = to(bloom, "x", 0.5);
+    const bloomY = to(bloom, "y", 0.5);
+    const labelX = to(label, "x", 0.35);
+    const labelY = to(label, "y", 0.35);
+    // power1 keeps the dots strung out along the path instead of snapping home.
+    const trailTo = trail.map((el, i) => ({
+      x: to(el, "x", TRAIL[i].duration, "power1"),
+      y: to(el, "y", TRAIL[i].duration, "power1"),
+    }));
+
+    let labelWidth = 0;
+
+    const applyBloom = () => {
+      const mode = modeRef.current;
+      const step =
+        mode === "default"
+          ? BLOOM.default
+          : mode === "interactive"
+            ? BLOOM.interactive
+            : BLOOM.labeled;
+      gsap.to(bloom, {
+        scale: step.scale * (pressedRef.current ? 0.82 : 1),
+        duration: 0.45,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+      bloom.style.opacity = visibleRef.current ? String(step.opacity) : "0";
     };
 
     const applyMode = (mode: CursorMode, force = false) => {
@@ -141,48 +185,57 @@ export function CustomCursor() {
       const visible = visibleRef.current;
       const labeled =
         mode === "project" || mode === "case" || mode === "contact";
-      const interactive = mode === "interactive";
 
-      // Core size
-      const coreSize = labeled || interactive ? "4px" : "6px";
+      const coreSize = labeled ? "4px" : mode === "interactive" ? "5px" : "7px";
       core.style.width = coreSize;
       core.style.height = coreSize;
       core.style.opacity = visible ? "1" : "0";
 
-      // Ring vs label — never both
-      if (labeled) {
-        ring.style.opacity = "0";
-        ring.style.width = "30px";
-        ring.style.height = "30px";
+      for (const [i, el] of trail.entries()) {
+        el.style.opacity = visible && !labeled ? String(TRAIL[i].opacity) : "0";
+      }
 
+      if (labeled) {
         const text =
           mode === "project"
             ? labelsRef.current.project
             : mode === "case"
               ? labelsRef.current.case
               : labelsRef.current.contact;
-        if (label.textContent !== text) label.textContent = text;
+        if (label.textContent !== text) {
+          label.textContent = text;
+          // Measured once per label change — never inside pointermove.
+          labelWidth = label.offsetWidth;
+        }
         label.style.opacity = visible ? "1" : "0";
-        label.style.visibility = "visible";
       } else {
         label.style.opacity = "0";
-        ring.style.opacity = visible ? "1" : "0";
-        ring.style.width = interactive ? "44px" : "30px";
-        ring.style.height = interactive ? "44px" : "30px";
-        ring.style.borderColor = interactive
-          ? "rgba(245,245,240,0.7)"
-          : "rgba(245,245,240,0.4)";
       }
+
+      applyBloom();
+    };
+
+    const applyVisibility = (visible: boolean) => {
+      if (visibleRef.current === visible) return;
+      visibleRef.current = visible;
+      applyMode(modeRef.current, true);
     };
 
     const onMove = (e: PointerEvent) => {
       const { clientX: x, clientY: y } = e;
       coreX(x);
       coreY(y);
-      ringX(x);
-      ringY(y);
-      labelX(x + 14);
-      labelY(y + 12);
+      bloomX(x);
+      bloomY(y);
+      for (const dot of trailTo) {
+        dot.x(x);
+        dot.y(y);
+      }
+      // Flip the label to the other side near the viewport edge.
+      const flip = x + labelWidth + 32 > window.innerWidth;
+      labelX(flip ? x - labelWidth - 16 : x + 16);
+      labelY(y + 14);
+
       applyVisibility(true);
       applyMode(resolveMode(e.target));
     };
@@ -192,8 +245,19 @@ export function CustomCursor() {
       applyMode("default");
     };
 
-    // One pointer listener — covers move + hover target via e.target
+    const onDown = () => {
+      pressedRef.current = true;
+      applyBloom();
+    };
+    const onUp = () => {
+      pressedRef.current = false;
+      applyBloom();
+    };
+
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onDown, { passive: true });
+    window.addEventListener("pointerup", onUp, { passive: true });
+    window.addEventListener("blur", onLeave);
     root.addEventListener("pointerleave", onLeave);
 
     return () => {
@@ -201,66 +265,101 @@ export function CustomCursor() {
       root.style.removeProperty("cursor");
       body.style.removeProperty("cursor");
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("blur", onLeave);
       root.removeEventListener("pointerleave", onLeave);
-      gsap.killTweensOf([core, ring, label]);
+      gsap.killTweensOf([...layers, label]);
       modeRef.current = "default";
       visibleRef.current = false;
+      pressedRef.current = false;
     };
   }, [enabled]);
 
-  if (!mounted || !enabled) return null;
+  if (!enabled) return null;
 
-  return (
-    <div
-      className="pointer-events-none fixed inset-0 z-[9999]"
-      aria-hidden
-      data-cursor-none
-    >
+  // No wrapping element: a positioned wrapper would isolate the bloom into its
+  // own stacking context and the blend would stop reaching the page.
+  return createPortal(
+    <>
       <div
-        ref={ringRef}
-        className={cn(
-          "pointer-events-none fixed left-0 top-0 rounded-full border",
-          "border-[rgba(245,245,240,0.4)]",
-          "transition-[width,height,border-color,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-        )}
+        ref={bloomRef}
+        aria-hidden
+        data-cursor-none
+        className="pointer-events-none fixed left-0 top-0 z-[9998] rounded-full"
         style={{
-          width: 30,
-          height: 30,
+          width: 300,
+          height: 300,
           opacity: 0,
-          willChange: "transform",
+          mixBlendMode: "plus-lighter",
+          // Many stops on purpose: a two-stop falloff bands visibly on near-black.
+          background:
+            "radial-gradient(circle closest-side, rgba(184,243,0,0.34) 0%, rgba(184,243,0,0.19) 14%, rgba(184,243,0,0.1) 28%, rgba(167,139,250,0.06) 46%, rgba(167,139,250,0.025) 62%, rgba(167,139,250,0.008) 76%, transparent 90%)",
+          transition: "opacity 300ms var(--ease-out-expo)",
+          willChange: "transform, opacity",
         }}
       />
 
+      {TRAIL.map((dot, i) => (
+        <div
+          key={dot.duration}
+          ref={(el) => {
+            trailRefs.current[i] = el;
+          }}
+          aria-hidden
+          data-cursor-none
+          className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full bg-accent"
+          style={{
+            width: dot.size,
+            height: dot.size,
+            opacity: 0,
+            boxShadow: "0 0 8px rgba(184,243,0,0.55)",
+            transition: "opacity 220ms var(--ease-out-expo)",
+            willChange: "transform, opacity",
+          }}
+        />
+      ))}
+
       <div
         ref={labelRef}
+        aria-hidden
+        data-cursor-none
         className={cn(
-          "pointer-events-none fixed left-0 top-0",
+          "pointer-events-none fixed left-0 top-0 z-[9999]",
           "inline-flex items-center rounded-full",
-          "border border-[rgba(245,245,240,0.14)] bg-[#111111]/95",
+          "border border-[rgba(184,243,0,0.28)] bg-[#0a0a0a]/92",
           "px-2.5 py-1",
-          "font-sans text-[10px] font-medium uppercase tracking-[0.12em] text-foreground/90",
+          "font-sans text-[10px] font-medium uppercase tracking-[0.12em] text-accent",
           "whitespace-nowrap",
-          "transition-[opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "transition-opacity duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
         )}
         style={{
           opacity: 0,
-          willChange: "transform",
+          boxShadow: "0 0 24px -6px rgba(184,243,0,0.45)",
+          willChange: "transform, opacity",
         }}
       />
 
       <div
         ref={coreRef}
+        aria-hidden
+        data-cursor-none
         className={cn(
-          "pointer-events-none fixed left-0 top-0 rounded-full bg-accent",
+          "pointer-events-none fixed left-0 top-0 z-[9999] rounded-full bg-accent",
           "transition-[width,height,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
         )}
         style={{
-          width: 6,
-          height: 6,
+          width: 7,
+          height: 7,
           opacity: 0,
-          willChange: "transform",
+          // The dark hairline keeps the core readable on light screenshots,
+          // where the additive bloom clips to nothing.
+          boxShadow:
+            "0 0 0 1.5px rgba(10,10,10,0.5), 0 0 10px rgba(184,243,0,0.9), 0 0 28px rgba(184,243,0,0.45)",
+          willChange: "transform, opacity",
         }}
       />
-    </div>
+    </>,
+    document.body,
   );
 }

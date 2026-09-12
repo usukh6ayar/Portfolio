@@ -164,6 +164,15 @@ button {
   cursor: pointer;
 }
 
+/* While the bloom cursor is mounted, no element may re-summon the native one
+   (buttons, links and text fields all set their own `cursor`). */
+.has-custom-cursor,
+.has-custom-cursor *,
+.has-custom-cursor *::before,
+.has-custom-cursor *::after {
+  cursor: none !important;
+}
+
 /* ==========================================================================
    Typography utilities
    ========================================================================== */

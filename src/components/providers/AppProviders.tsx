@@ -14,6 +14,12 @@ import { I18nProvider } from "@/components/providers/I18nProvider";
 import { LenisProvider } from "@/components/providers/LenisProvider";
 import { Preloader } from "@/components/layout/Preloader";
 
+/** Lazy — GSAP-driven, client-only, and irrelevant to touch or reduced motion */
+const CustomCursor = dynamic(
+  () => import("@/components/ui/CustomCursor").then((m) => m.CustomCursor),
+  { ssr: false },
+);
+
 /** Lazy — command palette JS only loads on first open / after idle */
 const CommandPalette = dynamic(
   () =>
@@ -96,6 +102,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <I18nProvider>
       <AppContext.Provider value={value}>
         <LenisProvider>
+          <CustomCursor />
           <Preloader />
           {children}
           {paletteMounted && <CommandPalette />}

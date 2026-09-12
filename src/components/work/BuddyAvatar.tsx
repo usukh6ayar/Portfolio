@@ -49,8 +49,11 @@ function Rig({ targetRef }: { targetRef: React.RefObject<{ x: number; y: number 
     const pitch = THREE.MathUtils.clamp(current.current.y, -1, 1) * 0.36;
 
     for (const { node, rest, weight } of bones.current) {
+      // The rig's bone frames are world-aligned, so a positive rotation about
+      // local X drops the muzzle — pitch is subtracted to look *toward* the
+      // pointer rather than away from it.
       node.rotation.set(
-        rest.x + pitch * weight,
+        rest.x - pitch * weight,
         rest.y + yaw * weight,
         rest.z,
       );
@@ -69,26 +72,50 @@ function Pointer({
   idle: boolean;
 }) {
   const { gl } = useThree();
+  const client = useRef<{ x: number; y: number } | null>(null);
+  const rect = useRef<DOMRect | null>(null);
 
   useEffect(() => {
     if (idle) return;
     const onMove = (e: PointerEvent) => {
-      const r = gl.domElement.getBoundingClientRect();
-      // Track across the viewport, not just the canvas, so the gaze still
-      // reads when the cursor is beside the model rather than over it.
-      targetRef.current = {
-        x: ((e.clientX - (r.left + r.width / 2)) / (window.innerWidth / 2)) * 1.1,
-        y: -((e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2)) * 1.1,
-      };
+      client.current = { x: e.clientX, y: e.clientY };
     };
+    // The canvas slides under a motionless cursor as the page scrolls, so the
+    // cached rect is invalidated rather than measured on every frame.
+    const invalidate = () => {
+      rect.current = null;
+    };
+
     window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [gl, idle, targetRef]);
+    window.addEventListener("scroll", invalidate, { passive: true });
+    window.addEventListener("resize", invalidate, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", invalidate);
+      window.removeEventListener("resize", invalidate);
+    };
+  }, [idle]);
 
   useFrame(({ clock }) => {
-    if (!idle) return;
-    const t = clock.getElapsedTime();
-    targetRef.current = { x: Math.sin(t * 0.35) * 0.7, y: Math.sin(t * 0.23) * 0.25 };
+    const at = client.current;
+    // Until a pointer shows up — touch, or a visitor who has only scrolled —
+    // the gaze wanders instead of staring blankly ahead.
+    if (idle || !at) {
+      const t = clock.getElapsedTime();
+      targetRef.current = {
+        x: Math.sin(t * 0.35) * 0.7,
+        y: Math.sin(t * 0.23) * 0.25,
+      };
+      return;
+    }
+
+    const r = (rect.current ??= gl.domElement.getBoundingClientRect());
+    // Track across the viewport, not just the canvas, so the gaze still reads
+    // when the cursor is beside the model rather than over it.
+    targetRef.current = {
+      x: ((at.x - (r.left + r.width / 2)) / (window.innerWidth / 2)) * 1.1,
+      y: -((at.y - (r.top + r.height / 2)) / (window.innerHeight / 2)) * 1.1,
+    };
   });
 
   return null;
