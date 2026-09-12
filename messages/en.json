@@ -215,14 +215,19 @@
         ],
         "roles": [
           {
-            "name": "Administrator",
-            "surface": "admin",
-            "detail": "Manages kindergartens, groups and staff, and runs the ESIS console — readiness per service, read-only dry runs, sync history and the audit log."
+            "name": "Director",
+            "surface": "director",
+            "detail": "Sees the whole kindergarten — attendance, groups, staff and reports — and runs the ESIS console: readiness per service, read-only dry runs, sync history and the audit log."
           },
           {
             "name": "Teacher",
             "surface": "teacher",
-            "detail": "Records observations and developmental assessments, keeps attendance and daily notes, and builds each child’s portfolio."
+            "detail": "Records attendance, observations and developmental assessments, posts to the class board and builds each child’s portfolio."
+          },
+          {
+            "name": "Cook",
+            "surface": "cook",
+            "detail": "Owns the kitchen: the weekly menu, ingredients and technology cards with calories per portion, stock levels and food orders."
           },
           {
             "name": "Parent",
@@ -232,7 +237,6 @@
           {
             "name": "Mobile app",
             "surface": null,
-            "status": "next",
             "detail": "In development: the parent experience as a React Native app, so daily updates arrive where families already are."
           }
         ]
@@ -247,8 +251,10 @@
       "app": "Mobile app",
       "landing": "Landing page",
       "admin": "Admin dashboard",
-      "teacher": "Teacher tools",
-      "parent": "Parent view"
+      "teacher": "Teacher",
+      "parent": "Parent",
+      "director": "Director",
+      "cook": "Kitchen"
     },
     "buddy": {
       "label": "The buddy avatar",
@@ -276,7 +282,10 @@
         "nomadkids-assessment": "Development assessment",
         "nomadkids-portfolio": "Child portfolio",
         "nomadkids-parent": "Parent experience",
-        "sparkxp-app-home": "Home & AI buddy"
+        "sparkxp-app-home": "Home & AI buddy",
+        "nomadkids-director": "Management dashboard",
+        "nomadkids-teacher": "Teacher dashboard",
+        "nomadkids-cook": "Technology cards"
       }
     }
   },

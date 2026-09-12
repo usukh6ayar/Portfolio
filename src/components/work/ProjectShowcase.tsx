@@ -49,24 +49,24 @@ const SHOWCASES: Record<
     ],
   },
   nomadkids: {
-    surfaces: ["admin", "teacher", "parent"],
+    surfaces: ["director", "teacher", "cook", "parent"],
     panels: [
       {
-        key: "nomadkids-esis",
-        surface: "admin",
-        src: "/images/work/nomadkids-esis.webp",
+        key: "nomadkids-director",
+        surface: "director",
+        src: "/images/work/nomadkids-director.webp",
         className: "left-0 top-[4%] w-[44%] -rotate-[1.5deg]",
       },
       {
-        key: "nomadkids-parent",
-        surface: "parent",
-        src: "/images/work/nomadkids-parent.webp",
+        key: "nomadkids-cook",
+        surface: "cook",
+        src: "/images/work/nomadkids-cook.webp",
         className: "right-0 top-[22%] w-[44%] rotate-[1.5deg]",
       },
       {
-        key: "nomadkids-assessment",
+        key: "nomadkids-teacher",
         surface: "teacher",
-        src: "/images/work/nomadkids-assessment.webp",
+        src: "/images/work/nomadkids-teacher.webp",
         className:
           "left-1/2 top-[16%] z-10 w-[52%] -translate-x-1/2 shadow-[0_40px_90px_-40px_rgba(0,0,0,1)]",
       },

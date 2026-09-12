@@ -24,7 +24,14 @@ export type GalleryImage = {
    * Which surface of the product this shot comes from. Copy lives in
    * messages → work.surfaces.<key>; a project with one surface can omit it.
    */
-  surface?: "app" | "landing" | "admin" | "teacher" | "parent";
+  surface?:
+    | "app"
+    | "landing"
+    | "admin"
+    | "director"
+    | "teacher"
+    | "cook"
+    | "parent";
 };
 
 /**
@@ -82,9 +89,12 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
     image: "/images/work/nomadkids-hero.webp",
     tone: "cool",
     gallery: [
-      { src: "/images/work/nomadkids-esis.webp", surface: "admin" },
+      { src: "/images/work/nomadkids-director.webp", surface: "director" },
+      { src: "/images/work/nomadkids-esis.webp", surface: "director" },
+      { src: "/images/work/nomadkids-teacher.webp", surface: "teacher" },
       { src: "/images/work/nomadkids-assessment.webp", surface: "teacher" },
       { src: "/images/work/nomadkids-portfolio.webp", surface: "teacher" },
+      { src: "/images/work/nomadkids-cook.webp", surface: "cook" },
       { src: "/images/work/nomadkids-parent.webp", surface: "parent" },
     ],
     links: [
