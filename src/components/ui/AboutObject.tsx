@@ -88,16 +88,16 @@ function Cluster({ progress }: { progress: React.RefObject<number> }) {
       <mesh castShadow={false}>
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
-          color="#15181d"
-          roughness={0.34}
-          metalness={0.22}
+          color="#1c2128"
+          roughness={0.28}
+          metalness={0.3}
           flatShading
         />
       </mesh>
 
       {/* The one acid element: a thin ring cutting across the core. */}
       <mesh ref={ring}>
-        <torusGeometry args={[1.52, 0.022, 16, 160]} />
+        <torusGeometry args={[1.55, 0.018, 16, 160]} />
         <meshStandardMaterial
           color="#b8f300"
           emissive="#b8f300"
@@ -109,7 +109,7 @@ function Cluster({ progress }: { progress: React.RefObject<number> }) {
 
       {/* A second, softer ring for depth. */}
       <mesh rotation={[0.9, 0.4, 0]}>
-        <torusGeometry args={[1.22, 0.01, 12, 120]} />
+        <torusGeometry args={[1.26, 0.009, 12, 120]} />
         <meshStandardMaterial
           color="#a78bfa"
           emissive="#a78bfa"
@@ -147,7 +147,7 @@ export function AboutObject({ className }: { className?: string }) {
   return (
     <div ref={rootRef} className={cn("relative", className)}>
       <Canvas
-        camera={{ position: [0, 0, 5.2], fov: 34 }}
+        camera={{ position: [0, 0, 6.4], fov: 34 }}
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true }}
         frameloop={reduced ? "demand" : "always"}
@@ -155,7 +155,7 @@ export function AboutObject({ className }: { className?: string }) {
       >
         <ambientLight intensity={0.55} />
         {/* Key from the top right, acid rim from behind left, violet fill. */}
-        <directionalLight position={[3.5, 4, 3]} intensity={2.4} color="#ffffff" />
+        <directionalLight position={[3.5, 4, 3]} intensity={2.8} color="#ffffff" />
         <directionalLight position={[-4, -1, -2.5]} intensity={3.2} color="#b8f300" />
         <directionalLight position={[-2, 3, -3]} intensity={0.9} color="#a78bfa" />
         <Cluster progress={progress} />

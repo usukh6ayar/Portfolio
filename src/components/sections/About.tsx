@@ -1,15 +1,51 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { StackConstellation } from "@/components/ui/StackConstellation";
 import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** three + R3F is ~600 KB — off the server, and only once it is near. */
+const AboutObject = dynamic(
+  () => import("@/components/ui/AboutObject").then((m) => m.AboutObject),
+  { ssr: false },
+);
+
+function LazyObject() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState(false);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || near) return;
+    if (!("IntersectionObserver" in window)) {
+      const timer = setTimeout(() => setNear(true), 0);
+      return () => clearTimeout(timer);
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setNear(true);
+        observer.disconnect();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [near]);
+
+  return (
+    <div ref={rootRef} className="absolute inset-0">
+      {near && <AboutObject className="h-full w-full" />}
+    </div>
+  );
+}
 
 type TimelineItem = {
   year: string;
@@ -162,7 +198,7 @@ export function About() {
                   aria-hidden
                   className="absolute inset-0 bg-[radial-gradient(ellipse_65%_55%_at_50%_42%,rgba(184,243,0,0.07),transparent_72%)]"
                 />
-                <StackConstellation className="absolute inset-0" />
+                <LazyObject />
 
                 <div
                   className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/[0.04]"

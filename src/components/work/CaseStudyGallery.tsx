@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { GalleryImage } from "@/lib/projects";
 import { PHONE_CROPS, PhoneCutout, cropKey } from "@/components/work/PhoneCutout";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { cn } from "@/lib/cn";
 
 type Surface = NonNullable<GalleryImage["surface"]> | "all";
@@ -68,11 +69,11 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
               <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
                 onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
                 className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
-                <div className="flex h-[clamp(13rem,22vw,19rem)] items-center justify-center">
+                <TiltCard className="flex h-[clamp(13rem,22vw,19rem)] items-center justify-center" max={10} lift={16} glare={false}>
                   <PhoneCutout src={shot.src} alt={`${alt} — ${caption}`} crop={PHONE_CROPS[key]}
                     sizes="(max-width: 640px) 45vw, 220px"
-                    className="h-full shadow-[0_26px_50px_-28px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.05]" />
-                </div>
+                    className="h-full shadow-[0_26px_50px_-28px_rgba(0,0,0,0.95)]" />
+                </TiltCard>
                 <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
                   <span className="block truncate text-muted">{caption}</span>
                 </p>
@@ -90,9 +91,11 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
               <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
                 onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
                 className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
-                <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 480px"
-                  className="h-auto w-full rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.03]" />
+                <TiltCard className="rounded-lg" max={8} lift={14}>
+                  <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 480px"
+                    className="h-auto w-full rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)]" />
+                </TiltCard>
                 <p className="mt-4 flex items-baseline gap-2 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
                   {shot.surface && <span className="text-accent/70">{ts(shot.surface)}</span>}
                   <span className="truncate text-muted">{caption}</span>

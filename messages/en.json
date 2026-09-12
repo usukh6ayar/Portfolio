@@ -109,7 +109,8 @@
       "web": "Web",
       "api": "API",
       "data": "Data"
-    }
+    },
+    "objectAlt": "Abstract object — a faceted core inside two rings"
   },
   "work": {
     "label": "Selected Works",

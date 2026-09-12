@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { ProjectId } from "@/lib/projects";
 import { PHONE_CROPS, PhoneCutout } from "@/components/work/PhoneCutout";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { cn } from "@/lib/cn";
 
 /** The plate a single phone is cut out of, measured in PhoneCutout. */
@@ -84,27 +85,36 @@ export function ProjectShowcase({
   const ts = useTranslations("work.surfaces");
   const showcase = SHOWCASES[id];
 
-  const lift =
-    "transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:hover:z-30 motion-safe:hover:scale-[1.04]";
+  // The tilt supplies the lift; only the stacking order is left to CSS.
+  const lift = "hover:z-30";
 
   return (
     <div className="relative w-full">
       <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
         {showcase.panels.map((panel) => (
-          <div key={panel.key} className={cn("absolute", lift, panel.className)}>
-            <Image
-              src={panel.src}
-              alt={t(panel.key)}
-              width={1200}
-              height={900}
-              priority={priority && !showcase.phone && panel.className.includes("z-10")}
-              sizes={
-                size === "hero"
-                  ? "(max-width: 768px) 60vw, (max-width: 1280px) 46vw, 620px"
-                  : "(max-width: 1024px) 60vw, 360px"
-              }
-              className="h-auto w-full rounded-lg shadow-[0_34px_80px_-40px_rgba(0,0,0,0.95)]"
-            />
+          <div
+            key={panel.key}
+            className={cn("absolute", lift, panel.className)}
+          >
+            <TiltCard className="rounded-lg" max={7} lift={12}>
+              <Image
+                src={panel.src}
+                alt={t(panel.key)}
+                width={1200}
+                height={900}
+                priority={
+                  priority &&
+                  !showcase.phone &&
+                  panel.className.includes("z-10")
+                }
+                sizes={
+                  size === "hero"
+                    ? "(max-width: 768px) 60vw, (max-width: 1280px) 46vw, 620px"
+                    : "(max-width: 1024px) 60vw, 360px"
+                }
+                className="h-auto w-full rounded-lg shadow-[0_34px_80px_-40px_rgba(0,0,0,0.95)]"
+              />
+            </TiltCard>
           </div>
         ))}
 
@@ -115,18 +125,20 @@ export function ProjectShowcase({
               lift,
             )}
           >
-            <PhoneCutout
-              src={PHONE_SRC}
-              alt={t(PHONE_KEY)}
-              crop={PHONE_CROPS["sparkxp-app-hero"]}
-              priority={priority}
-              sizes={
-                size === "hero"
-                  ? "(max-width: 1280px) 40vw, 420px"
-                  : "(max-width: 1024px) 40vw, 260px"
-              }
-              className="h-full shadow-[0_30px_70px_-20px_rgba(0,0,0,0.95)]"
-            />
+            <TiltCard className="h-full" max={9} lift={14} glare={false}>
+              <PhoneCutout
+                src={PHONE_SRC}
+                alt={t(PHONE_KEY)}
+                crop={PHONE_CROPS["sparkxp-app-hero"]}
+                priority={priority}
+                sizes={
+                  size === "hero"
+                    ? "(max-width: 1280px) 40vw, 420px"
+                    : "(max-width: 1024px) 40vw, 260px"
+                }
+                className="h-full shadow-[0_30px_70px_-20px_rgba(0,0,0,0.95)]"
+              />
+            </TiltCard>
           </div>
         )}
       </div>
