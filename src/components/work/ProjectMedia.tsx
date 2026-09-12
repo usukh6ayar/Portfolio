@@ -1,20 +1,8 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
 import type { ProjectId } from "@/lib/projects";
-import { PROJECTS } from "@/lib/projects";
+import { ProjectShowcase } from "@/components/work/ProjectShowcase";
 import { cn } from "@/lib/cn";
-import { SparkXPShowcase } from "@/components/work/SparkXPShowcase";
-
-const TONE: Record<(typeof PROJECTS)[ProjectId]["tone"], string> = {
-  lime: "rgba(184, 243, 0, 0.055)",
-  violet: "rgba(167, 139, 250, 0.06)",
-  cool: "rgba(120, 170, 220, 0.055)",
-  warm: "rgba(220, 160, 100, 0.055)",
-  neutral: "rgba(245, 245, 240, 0.035)",
-};
 
 type ProjectMediaProps = {
   id: ProjectId;
@@ -22,147 +10,25 @@ type ProjectMediaProps = {
   className?: string;
   size?: "hero" | "card";
   priority?: boolean;
+  /** Accepted for call-site compatibility; the frameless composition has no
+   *  plate to hang an action label on. */
   showAction?: boolean;
 };
 
 /**
- * Product screenshot surface with a persistent, visible action label. The
- * affordance stays clear on touch and keyboard instead of depending on hover.
+ * Project media. Both projects carry their own composition — whole screenshots
+ * standing on the page, one per surface — so this is only the wrapper that
+ * places it; a plate around them would put them back in a box.
  */
 export function ProjectMedia({
   id,
-  title,
   className,
   size = "card",
   priority = false,
-  showAction = true,
 }: ProjectMediaProps) {
-  const t = useTranslations("work");
-  const project = PROJECTS[id];
-  const alt = t("imageAlt", { title });
-  const tint = TONE[project.tone];
-
   return (
-    <motion.figure
-      layoutId={`project-media-${id}`}
-      className={cn(
-        "group/media relative w-full overflow-hidden",
-        "rounded-[1.5rem] border border-border bg-surface-1",
-        "shadow-[0_24px_64px_-40px_rgba(0,0,0,0.65)]",
-        "transition-[border-color] duration-300",
-        "hover:border-border-strong",
-        className,
-      )}
-    >
-      <div
-        className={cn(
-          "relative w-full",
-          size === "hero"
-            ? "aspect-[16/10] lg:aspect-[16/9]"
-            : "aspect-[16/10] sm:aspect-[5/3]",
-        )}
-      >
-        {id === "sparkxp" ? (
-          <SparkXPShowcase priority={priority} size={size} />
-        ) : project.image ? (
-          <Image
-            src={project.image}
-            alt={alt}
-            fill
-            sizes={
-              size === "hero"
-                ? "(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
-                : "(max-width: 768px) 100vw, (max-width: 1280px) 55vw, 720px"
-            }
-            preload={priority}
-            className={cn(
-              "object-cover object-top",
-              "transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-              "opacity-[0.96] motion-safe:group-hover/media:scale-[1.01] motion-safe:group-hover/media:opacity-100",
-            )}
-          />
-        ) : (
-          <Placeholder title={title} tint={tint} />
-        )}
-
-        {showAction && <span
-          aria-hidden
-          className={cn(
-            "absolute bottom-3 right-3 z-10 inline-flex items-center gap-2",
-            "rounded-full border border-white/10 bg-black/75 px-3 py-1.5 backdrop-blur-md",
-            "font-sans text-xs font-medium tracking-tight text-white/90 shadow-lg shadow-black/20",
-            "transition-[transform,background-color,border-color] duration-300",
-            "group-hover/media:-translate-y-0.5 group-hover/media:border-accent/30 group-hover/media:bg-black/90",
-            "sm:bottom-4 sm:right-4 sm:px-3.5 sm:py-2 sm:text-[0.8125rem]",
-          )}
-        >
-          <span>{t("viewCaseStudy")}</span>
-          <span className="text-accent transition-transform duration-300 group-hover/media:translate-x-0.5">
-            →
-          </span>
-        </span>}
-      </div>
-      <figcaption className="sr-only">{alt}</figcaption>
-    </motion.figure>
-  );
-}
-
-function Placeholder({ title, tint }: { title: string; tint: string }) {
-  const t = useTranslations("work");
-
-  return (
-    <div
-      className="absolute inset-0 flex flex-col transition-opacity duration-500 group-hover/media:opacity-[0.98]"
-      style={{ background: "#121212" }}
-      role="img"
-      aria-label={t("imagePlaceholder")}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse 90% 55% at 50% 0%, ${tint} 0%, transparent 72%)`,
-        }}
-        aria-hidden
-      />
-
-      <div className="relative flex h-full flex-col p-5 sm:p-7 md:p-8">
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-          <div className="flex items-center gap-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent/50" />
-            <span className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-white/28">
-              {title}
-            </span>
-          </div>
-          <div className="hidden gap-3 sm:flex">
-            <span className="h-1.5 w-12 rounded-full bg-white/[0.06]" />
-            <span className="h-1.5 w-8 rounded-full bg-white/[0.05]" />
-          </div>
-        </div>
-
-        <div className="mt-6 grid flex-1 grid-cols-12 gap-3 sm:gap-4">
-          <div className="col-span-3 flex flex-col gap-2">
-            <div className="h-2 w-4/5 rounded-full bg-white/[0.07]" />
-            <div className="h-2 w-full rounded-full bg-white/[0.04]" />
-            <div className="h-2 w-3/4 rounded-full bg-white/[0.04]" />
-            <div className="mt-4 h-2 w-2/3 rounded-full bg-white/[0.04]" />
-            <div className="h-2 w-5/6 rounded-full bg-white/[0.035]" />
-          </div>
-          <div className="col-span-9 flex flex-col gap-3">
-            <div className="h-7 w-1/3 rounded-lg bg-white/[0.06]" />
-            <div className="grid flex-1 grid-cols-3 gap-3">
-              <div className="rounded-xl border border-white/[0.05] bg-white/[0.03]" />
-              <div className="rounded-xl border border-white/[0.05] bg-white/[0.045]" />
-              <div className="rounded-xl border border-white/[0.05] bg-white/[0.03]" />
-            </div>
-            <div className="h-2 w-full rounded-full bg-white/[0.04]" />
-            <div className="h-2 w-3/4 rounded-full bg-white/[0.03]" />
-          </div>
-        </div>
-
-        <p className="mt-auto pt-4 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-white/18">
-          {t("imagePlaceholder")}
-        </p>
-      </div>
+    <div className={cn("w-full", className)}>
+      <ProjectShowcase id={id} priority={priority} size={size} />
     </div>
   );
 }

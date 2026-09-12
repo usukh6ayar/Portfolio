@@ -41,7 +41,8 @@
     "subcopy": "Frontend and mobile products with a product mindset — clear interfaces, solid engineering, shipped for real use.",
     "ctaWork": "View selected work",
     "ctaContact": "Get in touch",
-    "scrollHint": "Scroll to explore"
+    "scrollHint": "Scroll to explore",
+    "portraitMeta": "Full-Stack · Mobile"
   },
   "about": {
     "label": "About",
@@ -71,7 +72,7 @@
     "nowTitle": "What I'm building toward",
     "nowBody": "Building full-stack products at Retro Mind while finishing my degree. Open to full-stack roles and selected freelance work where craft matters.",
     "nowMeta": "Ulaanbaatar · Open to opportunities",
-    "portraitMeta": "Full-Stack · Frontend · Mobile",
+    "portraitMeta": "Full-Stack · Mobile",
     "portraitAlt": "Usukhbayar — portrait",
     "portraitPlaceholder": "Portrait",
     "portraitPath": "public/images/portrait.jpg",
@@ -101,7 +102,14 @@
         "title": "Design to done",
         "detail": "At Retro Mind LLC — building everything from design through to shipped, leading a small team."
       }
-    ]
+    ],
+    "stackMap": {
+      "alt": "Stack map — tools and how they connect",
+      "mobile": "Mobile",
+      "web": "Web",
+      "api": "API",
+      "data": "Data"
+    }
   },
   "work": {
     "label": "Selected Works",
@@ -204,15 +212,43 @@
           "An operator console where a kindergarten admin sees readiness per service, runs a read-only dry run, and reads back sync history and an audit log — without touching live records.",
           "Self-assessed line by line against ministerial order A/261: of 51 mandatory criteria, 35 met, 14 partial, 1 outstanding. Self-assessed, not certified — the distinction is the point.",
           "28-table schema with the authorization boundary written into it, and a security acceptance matrix covering RBAC, tenancy, IDOR, media and reports."
+        ],
+        "roles": [
+          {
+            "name": "Administrator",
+            "surface": "admin",
+            "detail": "Manages kindergartens, groups and staff, and runs the ESIS console — readiness per service, read-only dry runs, sync history and the audit log."
+          },
+          {
+            "name": "Teacher",
+            "surface": "teacher",
+            "detail": "Records observations and developmental assessments, keeps attendance and daily notes, and builds each child’s portfolio."
+          },
+          {
+            "name": "Parent",
+            "surface": "parent",
+            "detail": "Follows their own child only — progress, photographs and reports, scoped per child by the authorization boundary."
+          },
+          {
+            "name": "Mobile app",
+            "surface": null,
+            "status": "next",
+            "detail": "In development: the parent experience as a React Native app, so daily updates arrive where families already are."
+          }
         ]
       },
       "contents": "On this page",
-      "nextProject": "Next project"
+      "nextProject": "Next project",
+      "roles": "Roles",
+      "rolesNote": "Roles live on membership, not on the account — one person can be both a teacher and a parent, and every check runs server-side per role and per child.",
+      "statusNext": "In development"
     },
     "surfaces": {
       "app": "Mobile app",
       "landing": "Landing page",
-      "admin": "Admin dashboard"
+      "admin": "Admin dashboard",
+      "teacher": "Teacher tools",
+      "parent": "Parent view"
     },
     "buddy": {
       "label": "The buddy avatar",

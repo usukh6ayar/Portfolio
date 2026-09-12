@@ -143,11 +143,11 @@ export function Contact() {
     <section
       id="contact"
       ref={rootRef}
-      className="relative z-0 flex min-h-[100dvh] flex-col scroll-mt-[var(--nav-height)] bg-background"
+      className="relative z-0 flex flex-col scroll-mt-[var(--nav-height)] bg-background"
       aria-labelledby="contact-heading"
     >
       {/* Main closing scene */}
-      <div className="container-page flex flex-1 flex-col justify-center py-20 sm:py-24 md:py-28">
+      <div className="container-page flex flex-col py-20 sm:py-24 md:py-28">
         <p
           data-contact-body
           className={cn(

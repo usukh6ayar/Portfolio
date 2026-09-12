@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { PORTRAIT } from "@/lib/constants";
+import { StackConstellation } from "@/components/ui/StackConstellation";
 import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -34,8 +33,6 @@ export function About() {
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
   const imageWrapRef = useRef<HTMLDivElement>(null);
-  const imageInnerRef = useRef<HTMLDivElement>(null);
-  const [portraitFailed, setPortraitFailed] = useState(!PORTRAIT.hasPortrait);
 
   const story = t.raw("story") as string[];
   const timeline = t.raw("timeline") as TimelineItem[];
@@ -46,7 +43,6 @@ export function About() {
 
     const root = rootRef.current;
     const imageWrap = imageWrapRef.current;
-    const imageInner = imageInnerRef.current;
     const textBlocks = root.querySelectorAll<HTMLElement>("[data-about-text]");
     const blocks = root.querySelectorAll<HTMLElement>("[data-about-block]");
 
@@ -102,23 +98,6 @@ export function About() {
         }
       }
 
-      // Skip scrub parallax on touch — listeners/scrub never initialize
-      if (canParallax && imageInner && imageWrap) {
-        gsap.fromTo(
-          imageInner,
-          { y: -5 },
-          {
-            y: 5,
-            ease: "none",
-            scrollTrigger: {
-              trigger: imageWrap,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
-          },
-        );
-      }
 
       gsap.fromTo(
         textBlocks,
@@ -174,33 +153,17 @@ export function About() {
               <div
                 ref={imageWrapRef}
                 className={cn(
-                  "relative aspect-[3/4] w-full overflow-hidden",
+                  "relative aspect-square w-full overflow-hidden",
                   "rounded-[1.5rem] border border-border bg-surface-1",
                   !reduced && "opacity-0",
                 )}
               >
                 <div
-                  ref={imageInnerRef}
-                  className="absolute inset-[-2.5%] will-change-transform"
-                >
-                  {PORTRAIT.hasPortrait && !portraitFailed ? (
-                    <Image
-                      src={PORTRAIT.src}
-                      alt={t("portraitAlt")}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 42vw"
-                      className="object-cover object-center"
-                      onError={() => setPortraitFailed(true)}
-                    />
-                  ) : (
-                    <PortraitPlaceholder />
-                  )}
-                </div>
-
-                <div
-                  className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-t from-background/45 via-transparent to-background/5"
                   aria-hidden
+                  className="absolute inset-0 bg-[radial-gradient(ellipse_65%_55%_at_50%_42%,rgba(184,243,0,0.07),transparent_72%)]"
                 />
+                <StackConstellation className="absolute inset-0" />
+
                 <div
                   className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/[0.04]"
                   aria-hidden
@@ -361,45 +324,5 @@ export function About() {
         </div>
       </div>
     </section>
-  );
-}
-
-function PortraitPlaceholder() {
-  const t = useTranslations("about");
-
-  return (
-    <div
-      className="absolute inset-0 flex flex-col justify-end bg-surface-1"
-      role="img"
-      aria-label={t("portraitPlaceholder")}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 55% at 42% 28%, rgba(184, 243, 0, 0.05) 0%, transparent 55%),
-            radial-gradient(ellipse 70% 50% at 72% 72%, rgba(167, 139, 250, 0.04) 0%, transparent 50%),
-            linear-gradient(165deg, #161616 0%, #0e0e0e 48%, #111111 100%)
-          `,
-        }}
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 opacity-[0.1]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundSize: "160px 160px",
-        }}
-        aria-hidden
-      />
-      <div className="relative z-10 p-6 sm:p-8">
-        <p className="font-display text-4xl font-semibold tracking-tight text-foreground/20 sm:text-5xl">
-          U
-        </p>
-        <p className="mt-3 max-w-[12rem] font-mono text-[0.625rem] leading-relaxed uppercase tracking-[0.12em] text-muted/80">
-          {t("portraitPlaceholder")}
-        </p>
-      </div>
-    </div>
   );
 }

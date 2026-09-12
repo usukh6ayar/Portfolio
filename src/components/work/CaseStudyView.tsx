@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
@@ -76,11 +77,24 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
   const year = t(`projects.${id}.year`);
   const stack = t.raw(`projects.${id}.stack`) as string[];
   const highlights = tc.raw(`${id}.highlights`) as string[];
+  /** Some projects document who uses them; most do not. */
+  const roles = (tc.has(`${id}.roles`)
+    ? (tc.raw(`${id}.roles`) as { name: string; detail: string; surface?: string | null }[])
+    : []);
   /** Back to the section this project actually lives in */
   const backHref = id === FEATURED_ID ? "/#featured" : "/#work";
 
   const nextId = ALL_PROJECT_IDS[(ALL_PROJECT_IDS.indexOf(id) + 1) % ALL_PROJECT_IDS.length];
-  const sections = ["overview", "gallery", "highlights"] as const;
+  /** The contents list drives the numbering, so an absent section never
+   *  leaves a hole in the sequence. */
+  const sections: string[] = [
+    "overview",
+    ...(roles.length ? ["roles"] : []),
+    "gallery",
+    "highlights",
+  ];
+  const number = (section: string) =>
+    String(sections.indexOf(section) + 1).padStart(2, "0");
 
   return (
     <article className="pb-16 pt-[calc(var(--nav-height)+2rem)] sm:pb-24">
@@ -120,7 +134,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
 
           <div className="min-w-0 space-y-16 sm:space-y-20">
             <section id="overview" className="case-section" aria-labelledby="overview-title">
-              <SectionTitle number="01" title={tc("overview")} id="overview-title" />
+              <SectionTitle number={number("overview")} title={tc("overview")} id="overview-title" />
               <p className="mt-6 max-w-[65ch] text-base leading-[1.85] text-muted">{tc(`${id}.overview`)}</p>
               <div className="mt-8 divide-y divide-border rounded-xl border border-border bg-surface-1 px-5 sm:px-7">
                 {(["problem", "solution", "outcome"] as const).map((key) => (
@@ -132,16 +146,52 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
               </div>
             </section>
 
+            {roles.length > 0 ? (
+              <section id="roles" className="case-section" aria-labelledby="roles-title">
+                <SectionTitle number={number("roles")} title={tc("roles")} id="roles-title" />
+                <p className="mt-3 max-w-[65ch] text-sm leading-relaxed text-muted">{tc("rolesNote")}</p>
+                <ul className="mt-6 grid gap-6 sm:grid-cols-2">
+                  {roles.map((role) => {
+                    const shot = role.surface
+                      ? project.gallery?.find((image) => image.surface === role.surface)
+                      : undefined;
+                    return (
+                      <li key={role.name}>
+                        {shot ? (
+                          <Image
+                            src={shot.src}
+                            alt={`${title} — ${role.name}`}
+                            width={1200}
+                            height={900}
+                            sizes="(max-width: 640px) 100vw, 420px"
+                            className="h-auto w-full rounded-lg shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)]"
+                          />
+                        ) : (
+                          <div className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-border">
+                            <span className="rounded-full border border-accent/30 px-3 py-1 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-accent">
+                              {tc("statusNext")}
+                            </span>
+                          </div>
+                        )}
+                        <h3 className="mt-4 text-sm font-medium">{role.name}</h3>
+                        <p className="mt-1.5 max-w-[48ch] text-sm leading-[1.85] text-muted">{role.detail}</p>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ) : null}
+
             {project.gallery?.length ? (
               <section id="gallery" className="case-section" aria-labelledby="gallery-title">
-                <SectionTitle number="02" title={tc("gallery")} id="gallery-title" />
+                <SectionTitle number={number("gallery")} title={tc("gallery")} id="gallery-title" />
                 <p className="mt-3 text-sm leading-relaxed text-muted">{tc("galleryNote")}</p>
                 <CaseStudyGallery images={project.gallery} alt={t("imageAlt", { title })} />
               </section>
             ) : null}
 
             <section id="highlights" className="case-section" aria-labelledby="highlights-title">
-              <SectionTitle number="03" title={tc("highlights")} id="highlights-title" />
+              <SectionTitle number={number("highlights")} title={tc("highlights")} id="highlights-title" />
               <ul className="mt-6 divide-y divide-border">
                 {highlights.map((item, index) => (
                   <li key={item} className="flex gap-5 py-5 first:pt-0">

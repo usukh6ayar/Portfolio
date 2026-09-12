@@ -226,6 +226,12 @@ video {
 }
 
 .case-section { scroll-margin-top: calc(var(--nav-height) + 2rem); }
+
+/* Stack constellation — stars breathe until one is picked out. */
+@keyframes stack-drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(0.6px, -0.8px); }
+}
 .gallery-dialog {
   position: fixed;
   inset: 0;
