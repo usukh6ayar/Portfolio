@@ -188,22 +188,17 @@ export function About() {
             <div className="lg:sticky lg:top-[calc(var(--nav-height)+1.75rem)]">
               <div
                 ref={imageWrapRef}
+                // No frame: the object stands on the page, not in a card.
                 className={cn(
-                  "relative aspect-square w-full overflow-hidden",
-                  "rounded-[1.5rem] border border-border bg-surface-1",
+                  "relative aspect-square w-full",
                   !reduced && "opacity-0",
                 )}
               >
                 <div
                   aria-hidden
-                  className="absolute inset-0 bg-[radial-gradient(ellipse_65%_55%_at_50%_42%,rgba(184,243,0,0.07),transparent_72%)]"
+                  className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,rgba(184,243,0,0.05),transparent_70%)]"
                 />
                 <LazyObject />
-
-                <div
-                  className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/[0.04]"
-                  aria-hidden
-                />
               </div>
 
               <div

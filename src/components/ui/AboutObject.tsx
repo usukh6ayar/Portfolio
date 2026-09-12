@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Edges } from "@react-three/drei";
 import * as THREE from "three";
 import { useTranslations } from "next-intl";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -20,11 +21,7 @@ function useScrollProgress(root: React.RefObject<HTMLElement | null>) {
     const read = () => {
       const r = el.getBoundingClientRect();
       const centre = r.top + r.height / 2;
-      progress.current = THREE.MathUtils.clamp(
-        1 - centre / window.innerHeight,
-        0,
-        1,
-      );
+      progress.current = THREE.MathUtils.clamp(1 - centre / window.innerHeight, 0, 1);
     };
     read();
     window.addEventListener("scroll", read, { passive: true });
@@ -38,105 +35,80 @@ function useScrollProgress(root: React.RefObject<HTMLElement | null>) {
   return progress;
 }
 
+/** Bottom to top: the layers a product is actually built in. */
+const LAYERS = [
+  { key: "data", color: "#2a303a", edge: "#6b7686", width: 1, offset: -1 },
+  { key: "logic", color: "#333a46", edge: "#a78bfa", width: 1.4, offset: 0 },
+  { key: "ui", color: "#3d4552", edge: "#b8f300", width: 2, offset: 1 },
+];
+
 /**
- * Three primitives and a light rig — no downloaded asset, no scene service.
- * A faceted core, a ring cutting across it at an angle, and one small sphere
- * off to the side, lit so the acid rim reads against near-black.
+ * Three slabs floating one above another — the layers of an interface seen
+ * edge-on. Scrolling pulls them apart and turns the stack; at rest they drift.
  */
-function Cluster({ progress }: { progress: React.RefObject<number> }) {
+function Stack({ progress }: { progress: React.RefObject<number> }) {
   const group = useRef<THREE.Group>(null);
-  const ring = useRef<THREE.Mesh>(null);
-  const bead = useRef<THREE.Mesh>(null);
+  const slabs = useRef<(THREE.Group | null)[]>([]);
   const eased = useRef(0);
-  const { invalidate } = useThree();
 
   useFrame(({ clock }, delta) => {
     const g = group.current;
     if (!g) return;
     const p = progress.current ?? 0;
-    // Scroll leads, time keeps it alive when the page is still.
     eased.current += (p - eased.current) * (1 - Math.exp(-4 * delta));
-    const t = clock.getElapsedTime();
     const s = eased.current;
+    const t = clock.getElapsedTime();
 
+    // Looking down on the stack, turning a little further as the page moves.
     g.rotation.set(
-      -0.35 + s * 0.9 + Math.sin(t * 0.25) * 0.05,
-      s * Math.PI * 1.35 + t * 0.08,
-      0.12 + s * 0.2,
+      0.78 - s * 0.22 + Math.sin(t * 0.3) * 0.02,
+      -0.55 + s * 1.15 + t * 0.06,
+      0,
     );
-    const scale = 0.86 + s * 0.28;
-    g.scale.setScalar(scale);
-    g.position.y = (0.5 - s) * 0.35;
+    g.position.y = (0.5 - s) * 0.3;
 
-    if (ring.current) {
-      ring.current.rotation.x = 1.25 - s * 0.8;
-      ring.current.rotation.y = -s * Math.PI * 1.1 - t * 0.12;
+    for (const [i, slab] of slabs.current.entries()) {
+      if (!slab) continue;
+      const layer = LAYERS[i];
+      // Separation grows with scroll; each layer breathes on its own phase.
+      const gap = 0.42 + s * 0.55;
+      slab.position.y = layer.offset * gap + Math.sin(t * 0.7 + i * 1.6) * 0.035;
+      slab.position.x = layer.offset * s * 0.12;
+      slab.rotation.z = Math.sin(t * 0.35 + i) * 0.012;
     }
-    if (bead.current) {
-      bead.current.position.set(
-        Math.cos(t * 0.4 + s * 3) * 1.5,
-        0.75 - s * 0.5,
-        Math.sin(t * 0.4 + s * 3) * 1.5,
-      );
-    }
-    invalidate();
   });
 
   return (
     <group ref={group}>
-      {/* Core — flat-shaded so the light breaks into facets. */}
-      <mesh castShadow={false}>
-        <icosahedronGeometry args={[1, 1]} />
-        <meshStandardMaterial
-          color="#1c2128"
-          roughness={0.28}
-          metalness={0.3}
-          flatShading
-        />
-      </mesh>
-
-      {/* The one acid element: a thin ring cutting across the core. */}
-      <mesh ref={ring}>
-        <torusGeometry args={[1.55, 0.018, 16, 160]} />
-        <meshStandardMaterial
-          color="#b8f300"
-          emissive="#b8f300"
-          emissiveIntensity={0.55}
-          roughness={0.3}
-          metalness={0.1}
-        />
-      </mesh>
-
-      {/* A second, softer ring for depth. */}
-      <mesh rotation={[0.9, 0.4, 0]}>
-        <torusGeometry args={[1.26, 0.009, 12, 120]} />
-        <meshStandardMaterial
-          color="#a78bfa"
-          emissive="#a78bfa"
-          emissiveIntensity={0.35}
-          roughness={0.4}
-        />
-      </mesh>
-
-      <mesh ref={bead}>
-        <sphereGeometry args={[0.09, 24, 24]} />
-        <meshStandardMaterial
-          color="#f5f5f0"
-          emissive="#b8f300"
-          emissiveIntensity={0.25}
-          roughness={0.2}
-          metalness={0.3}
-        />
-      </mesh>
+      {LAYERS.map((layer, i) => (
+        <group
+          key={layer.key}
+          ref={(el) => {
+            slabs.current[i] = el;
+          }}
+        >
+          {/* A hard-edged box on purpose: Edges finds nothing to draw on a
+              rounded one, and the outline is what reads at this angle. */}
+          <mesh>
+            <boxGeometry args={[2.6, 0.07, 1.75]} />
+            <meshStandardMaterial
+              color={layer.color}
+              roughness={0.5}
+              metalness={0.2}
+            />
+            <Edges threshold={15} color={layer.edge} lineWidth={layer.width} />
+          </mesh>
+        </group>
+      ))}
     </group>
   );
 }
 
 /**
- * The About section's object — built from primitives rather than a downloaded
- * model, so it carries the site's own palette and costs nothing but geometry.
- * Scroll drives its turn and scale; a slow drift keeps it alive when the page
- * is still. Frozen flat under reduced motion.
+ * The About section's object — the layers of a product rather than a
+ * decorative shape, built from primitives so it carries the site's own palette
+ * and costs no downloaded asset. Scroll pulls the stack apart and turns it.
+ * Frozen flat under reduced motion.
  */
 export function AboutObject({ className }: { className?: string }) {
   const t = useTranslations("about");
@@ -147,18 +119,18 @@ export function AboutObject({ className }: { className?: string }) {
   return (
     <div ref={rootRef} className={cn("relative", className)}>
       <Canvas
-        camera={{ position: [0, 0, 6.4], fov: 34 }}
+        camera={{ position: [0, 0, 6.2], fov: 34 }}
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true }}
         frameloop={reduced ? "demand" : "always"}
         aria-label={t("objectAlt")}
       >
-        <ambientLight intensity={0.55} />
-        {/* Key from the top right, acid rim from behind left, violet fill. */}
-        <directionalLight position={[3.5, 4, 3]} intensity={2.8} color="#ffffff" />
-        <directionalLight position={[-4, -1, -2.5]} intensity={3.2} color="#b8f300" />
-        <directionalLight position={[-2, 3, -3]} intensity={0.9} color="#a78bfa" />
-        <Cluster progress={progress} />
+        <ambientLight intensity={1.1} />
+        {/* Key from the top right, acid bounce from below left, violet fill. */}
+        <directionalLight position={[3.5, 5, 3]} intensity={3.2} color="#ffffff" />
+        <directionalLight position={[-3.5, -2, 1.5]} intensity={2.2} color="#b8f300" />
+        <directionalLight position={[-2, 3, -3]} intensity={1.4} color="#a78bfa" />
+        <Stack progress={progress} />
       </Canvas>
     </div>
   );
