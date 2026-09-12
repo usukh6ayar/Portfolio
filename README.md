@@ -2,7 +2,7 @@
 
 Bilingual (EN / MN) personal portfolio for a product engineer focused on frontend and mobile. Built as a dark, editorial product presentation — not a template resume site.
 
-**Repository:** [github.com/usukh6ayar/Portfolio](https://github.com/usukh6ayar/Portfolio)
+**Live:** [usukhbayar.dev](https://usukhbayar.dev) · **Repository:** [github.com/usukh6ayar/Portfolio](https://github.com/usukh6ayar/Portfolio)
 
 ---
 
@@ -217,7 +217,7 @@ To add a screenshot: place the asset under `public/`, set `image` on the project
 - Portrait (`PORTRAIT.hasPortrait` is currently `false`)
 - Project product screenshots (`image: null` for all projects — placeholders render)
 - Production contact details (email configured in `src/lib/constants.ts`; GitHub / LinkedIn hrefs are stubs; Instagram is configured)
-- Configured canonical URL in metadata: `https://usukhbayar.dev` (`SITE.url`) — replace or confirm before public launch if needed
+- Canonical URL in metadata: `https://usukhbayar.dev` (`SITE.url`) — live; the apex is the primary domain on Vercel and `www` 308-redirects to it
 
 No WebGL in this version by design.
 

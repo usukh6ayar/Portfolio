@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import type { ProjectId } from "@/lib/projects";
 import { PROJECTS } from "@/lib/projects";
 import { cn } from "@/lib/cn";
+import { SparkXPShowcase } from "@/components/work/SparkXPShowcase";
 
 const TONE: Record<(typeof PROJECTS)[ProjectId]["tone"], string> = {
   lime: "rgba(184, 243, 0, 0.055)",
@@ -21,6 +22,7 @@ type ProjectMediaProps = {
   className?: string;
   size?: "hero" | "card";
   priority?: boolean;
+  showAction?: boolean;
 };
 
 /**
@@ -33,6 +35,7 @@ export function ProjectMedia({
   className,
   size = "card",
   priority = false,
+  showAction = true,
 }: ProjectMediaProps) {
   const t = useTranslations("work");
   const project = PROJECTS[id];
@@ -59,7 +62,9 @@ export function ProjectMedia({
             : "aspect-[16/10] sm:aspect-[5/3]",
         )}
       >
-        {project.image ? (
+        {id === "sparkxp" ? (
+          <SparkXPShowcase priority={priority} size={size} />
+        ) : project.image ? (
           <Image
             src={project.image}
             alt={alt}
@@ -69,7 +74,7 @@ export function ProjectMedia({
                 ? "(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
                 : "(max-width: 768px) 100vw, (max-width: 1280px) 55vw, 720px"
             }
-            priority={priority}
+            preload={priority}
             className={cn(
               "object-cover object-top",
               "transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
@@ -80,7 +85,7 @@ export function ProjectMedia({
           <Placeholder title={title} tint={tint} />
         )}
 
-        <span
+        {showAction && <span
           aria-hidden
           className={cn(
             "absolute bottom-3 right-3 z-10 inline-flex items-center gap-2",
@@ -95,7 +100,7 @@ export function ProjectMedia({
           <span className="text-accent transition-transform duration-300 group-hover/media:translate-x-0.5">
             →
           </span>
-        </span>
+        </span>}
       </div>
       <figcaption className="sr-only">{alt}</figcaption>
     </motion.figure>

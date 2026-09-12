@@ -143,10 +143,20 @@ body {
   border-radius: 2px;
 }
 
-/* Links default */
-a {
-  color: inherit;
-  text-decoration: none;
+/* Base resets must stay below utilities so control colors and borders work. */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
 }
 
 img,
@@ -156,22 +166,80 @@ video {
   max-width: 100%;
 }
 
-button {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-/* While the bloom cursor is mounted, no element may re-summon the native one
-   (buttons, links and text fields all set their own `cursor`). */
+/* Hide the native pointer only after the custom dot has a valid position. */
 .has-custom-cursor,
 .has-custom-cursor *,
 .has-custom-cursor *::before,
 .has-custom-cursor *::after {
   cursor: none !important;
 }
+
+/* Native text and dialog interactions retain their familiar affordances. */
+.has-custom-cursor :is(input, textarea, [contenteditable="true"]) { cursor: text !important; }
+.has-custom-cursor dialog, .has-custom-cursor dialog * { cursor: auto !important; }
+.has-custom-cursor dialog button { cursor: pointer !important; }
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: difference;
+}
+.cursor-dot span {
+  display: block;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  transition: width 160ms ease, height 160ms ease, background 160ms ease;
+}
+.cursor-dot[data-interactive="true"] span {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+}
+
+.cursor-dot[data-magnetic="true"] span {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+}
+.cursor-outline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  mix-blend-mode: difference;
+  transition: width 180ms var(--ease-out-expo), height 180ms var(--ease-out-expo),
+    border-radius 180ms var(--ease-out-expo), opacity 140ms ease;
+}
+
+.case-section { scroll-margin-top: calc(var(--nav-height) + 2rem); }
+.gallery-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(72rem, calc(100vw - 2rem));
+  max-width: none;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 1rem;
+}
+.gallery-dialog::backdrop { background: rgba(0, 0, 0, 0.9); }
 
 /* ==========================================================================
    Typography utilities

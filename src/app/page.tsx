@@ -9,7 +9,7 @@ import { STACKED_ORDER } from "@/lib/projects";
 
 /**
  * Story: Hero → About → Featured → Works → Capabilities → Contact
- * Bridges only where chapter weight needs a deliberate handoff.
+ * Project sections use their own compact headings.
  */
 export default function HomePage() {
   return (
@@ -18,15 +18,11 @@ export default function HomePage() {
 
       <About />
 
-      <SectionBridge next="featured" />
       <FeaturedProject />
 
       {/* Selected Works — only when secondary projects exist (see STACKED_ORDER) */}
       {STACKED_ORDER.length > 0 && (
-        <>
-          <SectionBridge next="work" />
-          <SelectedWorks />
-        </>
+        <SelectedWorks />
       )}
 
       <Skills />

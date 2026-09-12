@@ -14,7 +14,7 @@ import { I18nProvider } from "@/components/providers/I18nProvider";
 import { LenisProvider } from "@/components/providers/LenisProvider";
 import { Preloader } from "@/components/layout/Preloader";
 
-/** Lazy — GSAP-driven, client-only, and irrelevant to touch or reduced motion */
+/** Lazy — client-only, and unnecessary for touch or reduced motion */
 const CustomCursor = dynamic(
   () => import("@/components/ui/CustomCursor").then((m) => m.CustomCursor),
   { ssr: false },

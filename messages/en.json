@@ -106,7 +106,7 @@
   "work": {
     "label": "Selected Works",
     "headline": "More products.",
-    "intro": "Supporting work — real software with clear problems, not a gallery of mockups.",
+    "intro": "More products I’ve designed, built and shipped.",
     "viewCaseStudy": "View Case Study",
     "problem": "Problem",
     "solution": "Solution",
@@ -176,7 +176,7 @@
       "gallery": "Gallery",
       "highlights": "Engineering highlights",
       "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
-      "galleryNote": "Real screens captured from the running product, and brand artwork from it. Only the window frame is presentation — nothing inside it is a mockup.",
+      "galleryNote": "Explore the product screens. Select an image for a closer look.",
       "sparkxp": {
         "role": "Team lead · Full-stack · Mobile",
         "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
@@ -205,7 +205,9 @@
           "Self-assessed line by line against ministerial order A/261: of 51 mandatory criteria, 35 met, 14 partial, 1 outstanding. Self-assessed, not certified — the distinction is the point.",
           "28-table schema with the authorization boundary written into it, and a security acceptance matrix covering RBAC, tenancy, IDOR, media and reports."
         ]
-      }
+      },
+      "contents": "On this page",
+      "nextProject": "Next project"
     },
     "surfaces": {
       "app": "Mobile app",
@@ -222,7 +224,24 @@
       "open": "Open {surface} screenshot",
       "previous": "Previous screenshot",
       "next": "Next screenshot",
-      "close": "Close"
+      "close": "Close",
+      "filter": "Filter screenshots",
+      "all": "All screens",
+      "captions": {
+        "sparkxp-app-lessons": "Lessons & learning path",
+        "sparkxp-app-review": "Vocabulary review",
+        "sparkxp-app-buddychat": "AI buddy conversation",
+        "sparkxp-app-quiz": "Practice & quizzes",
+        "sparkxp-landing-hero": "Product introduction",
+        "sparkxp-landing-pricing": "Plans & pricing",
+        "sparkxp-admin-buddy": "Buddy management",
+        "sparkxp-admin-usage": "Usage dashboard",
+        "nomadkids-esis": "ESIS integration",
+        "nomadkids-assessment": "Development assessment",
+        "nomadkids-portfolio": "Child portfolio",
+        "nomadkids-parent": "Parent experience",
+        "sparkxp-app-home": "Home & AI buddy"
+      }
     }
   },
   "skills": {

@@ -1,298 +1,133 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import type { GalleryImage } from "@/lib/projects";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { EASE } from "@/lib/easings";
 import { cn } from "@/lib/cn";
 
-type Shot = GalleryImage & { index: number };
-type Group = { surface?: GalleryImage["surface"]; shots: Shot[] };
+type Surface = NonNullable<GalleryImage["surface"]> | "all";
+const captionKey = (src: string) => src.split("/").pop()!.replace(/\.webp$/, "");
 
-/**
- * Runs of the same surface stay together in source order — the registry
- * already lists shots grouped, and consecutive runs keep the page honest if
- * a surface ever appears twice.
- */
-function groupBySurface(images: GalleryImage[]): Group[] {
-  const groups: Group[] = [];
-  images.forEach((img, index) => {
-    const last = groups[groups.length - 1];
-    if (last && last.surface === img.surface) {
-      last.shots.push({ ...img, index });
-    } else {
-      groups.push({ surface: img.surface, shots: [{ ...img, index }] });
-    }
-  });
-  return groups;
-}
-
-/**
- * Case-study gallery — grouped by product surface, the first shot of each
- * group running full width and the rest paired in an offset two-column grid.
- * Clicking a shot lifts it into a lightbox through a shared-element
- * transition; arrows and Escape drive it from the keyboard.
- */
-export function CaseStudyGallery({
-  images,
-  alt,
-}: {
-  images: GalleryImage[];
-  alt: string;
-}) {
+export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt: string }) {
   const ts = useTranslations("work.surfaces");
   const tg = useTranslations("work.gallery");
-  const reduced = useReducedMotion();
-
+  const [surface, setSurface] = useState<Surface>("all");
   const [open, setOpen] = useState<number | null>(null);
-  const triggers = useRef<(HTMLButtonElement | null)[]>([]);
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const restoreTo = useRef<number | null>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
+  const surfaces = [...new Set(images.flatMap((image) => image.surface ? [image.surface] : []))];
+  const shots = images.map((image, index) => ({ ...image, index }))
+    .filter((image) => surface === "all" || image.surface === surface);
 
-  const groups = groupBySurface(images);
-  const shown = open === null ? null : images[open];
-
-  const close = useCallback(() => setOpen(null), []);
-  const step = useCallback(
-    (delta: number) =>
-      setOpen((i) =>
-        i === null ? i : (i + delta + images.length) % images.length,
-      ),
-    [images.length],
-  );
-
-  // Escape and arrows while the lightbox owns the screen.
-  useEffect(() => {
-    if (open === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        close();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        step(1);
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        step(-1);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, close, step]);
-
-  // Freeze the page underneath, the same way the command palette does.
-  useEffect(() => {
-    if (open === null) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const lenis = (
-      window as Window & {
-        __lenis?: { stop: () => void; start: () => void };
-      }
-    ).__lenis;
-    lenis?.stop();
-    const focus = window.setTimeout(() => closeRef.current?.focus(), 60);
-    return () => {
-      document.body.style.overflow = prev;
-      lenis?.start();
-      window.clearTimeout(focus);
-    };
-  }, [open]);
-
-  // Hand focus back to the thumbnail that opened the lightbox.
-  useEffect(() => {
-    if (open !== null) {
-      restoreTo.current = open;
-      return;
-    }
-    const i = restoreTo.current;
-    if (i === null) return;
-    restoreTo.current = null;
-    triggers.current[i]?.focus();
-  }, [open]);
-
-  const layout = (src: string) => (reduced ? undefined : `shot-${src}`);
+  const close = () => {
+    setOpen(null);
+    openerRef.current?.focus({ preventScroll: true });
+  };
 
   return (
-    <>
-      <div className="mt-5 space-y-10">
-        {groups.map((group) => (
-          <div key={`${group.surface ?? "all"}-${group.shots[0].index}`}>
-            {group.surface && (
-              <p className="flex items-center gap-3 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                {ts(group.surface)}
-                <span aria-hidden className="h-px flex-1 bg-border" />
-              </p>
-            )}
-
-            <div
-              className={cn(
-                "grid grid-cols-1 items-start gap-4 sm:grid-cols-2",
-                group.surface && "mt-4",
-              )}
-            >
-              {group.shots.map((shot, i) => {
-                // Phone shots are one device on a wide backdrop — stretching
-                // one across the column just buys empty space. Surfaces that
-                // are actually wide (landing, admin, a site screenshot) lead
-                // with a full-width plate.
-                const lead = group.surface !== "app" && i === 0;
-                const column = group.surface !== "app" ? (i - 1) % 2 : i % 2;
-                return (
-                <button
-                  key={shot.src}
-                  ref={(el) => {
-                    triggers.current[shot.index] = el;
-                  }}
-                  type="button"
-                  onClick={() => setOpen(shot.index)}
-                  aria-label={tg("open", {
-                    surface: group.surface ? ts(group.surface) : alt,
-                  })}
-                  className={cn(
-                    "group/shot relative block w-full overflow-hidden rounded-[1.25rem]",
-                    "border border-border bg-surface-1 text-left",
-                    "transition-[border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                    "hover:border-border-strong motion-safe:hover:-translate-y-0.5",
-                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent",
-                    lead && "sm:col-span-2",
-                    // The right-hand column of each pair sits a little lower.
-                    !lead && column === 1 && "sm:mt-8",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "relative w-full",
-                      lead ? "aspect-[16/10]" : "aspect-[4/3]",
-                    )}
-                  >
-                    {open !== shot.index && (
-                      <motion.div
-                        layoutId={layout(shot.src)}
-                        className="absolute inset-0"
-                      >
-                        <Image
-                          src={shot.src}
-                          alt={alt}
-                          fill
-                          sizes={
-                            lead
-                              ? "(max-width: 640px) 100vw, 760px"
-                              : "(max-width: 640px) 100vw, 380px"
-                          }
-                          style={{
-                            objectPosition:
-                              shot.position ?? (lead ? "top" : "center"),
-                          }}
-                          className="object-cover"
-                        />
-                      </motion.div>
-                    )}
-                  </div>
-                </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <AnimatePresence>
-        {shown && (
-          <motion.div
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md sm:p-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduced ? 0 : 0.22, ease: EASE.outExpo }}
-            role="dialog"
-            aria-modal="true"
-            aria-label={alt}
-            onClick={close}
-          >
-            {/* Keyed: without a remount, arrowing to the next shot would swap
-                the layoutId on a live node and framer would collapse the panel
-                into that shot's thumbnail. Remounting makes every step its own
-                shared-element flight out of the grid. */}
-            <motion.div
-              key={shown.src}
-              layoutId={layout(shown.src)}
-              className="relative max-h-full w-full max-w-5xl overflow-hidden rounded-[1.25rem] border border-border-strong bg-surface-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative aspect-[4/3] w-full">
-                <Image
-                  src={shown.src}
-                  alt={alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 1024px"
-                  className="object-contain"
-                  priority
-                />
+    <div className="mt-6">
+      {surfaces.length > 1 && (
+        <div role="group" aria-label={tg("filter")} className="mb-6 flex flex-wrap gap-2">
+          {(["all", ...surfaces] as Surface[]).map((value) => (
+            <button key={value} type="button" aria-pressed={surface === value} onClick={() => setSurface(value)}
+              className={cn("inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm transition-colors",
+                surface === value ? "border-foreground bg-foreground text-background" : "border-border text-muted hover:border-border-strong hover:text-foreground")}>
+              {value === "all" ? tg("all") : ts(value)}
+              <span className="font-mono text-[0.625rem] opacity-60">{value === "all" ? images.length : images.filter((image) => image.surface === value).length}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {shots.map((shot) => {
+          const caption = tg(`captions.${captionKey(shot.src)}`);
+          return (
+            <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
+              onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
+              className="group/shot overflow-hidden rounded-xl border border-border bg-surface-1 text-left transition-colors hover:border-border-strong">
+              <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">
+                <Image src={shot.src} alt={`${alt} — ${caption}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 440px" className="object-contain" />
               </div>
-            </motion.div>
-
-            <div
-              className="absolute inset-x-0 bottom-5 flex items-center justify-center gap-2 sm:bottom-7"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <LightboxButton onClick={() => step(-1)} label={tg("previous")}>
-                ←
-              </LightboxButton>
-              <span className="min-w-16 text-center font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                {(open ?? 0) + 1} / {images.length}
-              </span>
-              <LightboxButton onClick={() => step(1)} label={tg("next")}>
-                →
-              </LightboxButton>
-            </div>
-
-            <LightboxButton
-              ref={closeRef}
-              onClick={close}
-              label={tg("close")}
-              className="absolute right-4 top-4 sm:right-6 sm:top-6"
-            >
-              ✕
-            </LightboxButton>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+              <div className="flex min-h-16 items-center justify-between gap-3 border-t border-border px-4 py-3">
+                <div>
+                  {shot.surface && <p className="mb-1 font-mono text-[0.5625rem] uppercase tracking-wider text-muted">{ts(shot.surface)}</p>}
+                  <p className="text-sm font-medium">{caption}</p>
+                </div>
+                <span aria-hidden className="text-muted transition-colors group-hover/shot:text-accent">↗</span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      {open !== null && createPortal(
+        <GalleryDialog images={images} index={open} alt={alt} onClose={close}
+          onStep={(delta) => {
+            const position = shots.findIndex((shot) => shot.index === open);
+            setOpen(shots[(position + delta + shots.length) % shots.length].index);
+          }}
+          position={shots.findIndex((shot) => shot.index === open) + 1} total={shots.length} />,
+        document.body,
+      )}
+    </div>
   );
 }
 
-function LightboxButton({
-  ref,
-  onClick,
-  label,
-  className,
-  children,
-}: {
-  ref?: React.Ref<HTMLButtonElement>;
-  onClick: () => void;
-  label: string;
-  className?: string;
-  children: React.ReactNode;
+/** Native modal semantics provide focus trapping and keep the background inert. */
+function GalleryDialog({ images, index, alt, onClose, onStep, position, total }: {
+  images: GalleryImage[]; index: number; alt: string; onClose: () => void;
+  onStep: (delta: number) => void; position: number; total: number;
 }) {
+  const tg = useTranslations("work.gallery");
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const shown = images[index];
+  const caption = tg(`captions.${captionKey(shown.src)}`);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    dialog.showModal();
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const lenis = (window as Window & { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+    lenis?.stop();
+    return () => {
+      dialog.close();
+      document.body.style.overflow = previous;
+      lenis?.start();
+    };
+  }, []);
+
+  const close = () => {
+    dialogRef.current?.close();
+    onClose();
+  };
+
   return (
-    <button
-      ref={ref}
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className={cn(
-        "inline-flex h-10 w-10 items-center justify-center rounded-full",
-        "border border-border-strong bg-black/70 text-foreground backdrop-blur-md",
-        "transition-colors duration-200 hover:border-accent/40 hover:text-accent",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent",
-        className,
-      )}
-    >
-      <span aria-hidden>{children}</span>
-    </button>
+    <dialog ref={dialogRef} className="gallery-dialog" aria-label={caption} data-lenis-prevent
+      onCancel={(event) => { event.preventDefault(); close(); }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          event.preventDefault(); onStep(event.key === "ArrowRight" ? 1 : -1);
+        }
+      }}>
+      <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-3 sm:px-6">
+        <p className="text-sm font-medium">{caption}</p>
+        <button type="button" onClick={close} aria-label={tg("close")} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border text-muted hover:text-foreground">✕</button>
+      </header>
+      <div className="relative h-[min(68dvh,48rem)]">
+        <Image src={shown.src} alt={`${alt} — ${caption}`} fill sizes="(max-width: 1152px) 100vw, 1152px" className="object-contain" loading="eager" />
+      </div>
+      <footer className="flex items-center justify-center gap-5 border-t border-border px-4 py-3">
+        <button type="button" onClick={() => onStep(-1)} aria-label={tg("previous")} className="flex h-11 w-11 items-center justify-center rounded-lg border border-border hover:text-accent">←</button>
+        <span aria-live="polite" aria-atomic="true" className="min-w-16 text-center font-mono text-xs text-muted">{position} / {total}</span>
+        <button type="button" onClick={() => onStep(1)} aria-label={tg("next")} className="flex h-11 w-11 items-center justify-center rounded-lg border border-border hover:text-accent">→</button>
+      </footer>
+    </dialog>
   );
 }
