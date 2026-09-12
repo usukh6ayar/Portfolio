@@ -214,7 +214,7 @@
     },
     "buddy": {
       "label": "The buddy avatar",
-      "caption": "Spark — the app's own rigged avatar. Move your cursor; he follows.",
+      "caption": "Spark — the app's own rigged avatar. Move your cursor and he follows; click him and he hops.",
       "captionStatic": "Spark — the app's own rigged avatar, shown still.",
       "note": "The same GLB the app pulls from Cloudflare R2, re-exported at roughly 0.6 MB. The gaze is spread down the rig — head, neck, chest — clamped and damped, so it reads as looking rather than swivelling."
     }
