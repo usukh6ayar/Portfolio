@@ -29,6 +29,8 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
   const shots = images
     .map((image, index) => ({ ...image, index }))
     .filter((image) => surface === "all" || image.surface === surface);
+  const phones = shots.filter((shot) => PHONE_CROPS[cropKey(shot.src)]);
+  const webs = shots.filter((shot) => !PHONE_CROPS[cropKey(shot.src)]);
 
   const close = () => {
     setOpen(null);
@@ -55,38 +57,52 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-x-6 gap-y-9 sm:grid-cols-2">
-        {shots.map((shot) => {
-          const key = cropKey(shot.src);
-          const caption = tg(`captions.${key}`);
-          const crop = PHONE_CROPS[key];
-          return (
-            <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
-              onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
-              className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
-              {/* One height band across the grid: devices fill it, browser
-                  shots fit their width inside it, and the rows stay level. */}
-              <div className="flex h-[clamp(14rem,26vw,20rem)] items-center justify-center">
-                {crop ? (
-                  <PhoneCutout src={shot.src} alt={`${alt} — ${caption}`} crop={crop}
-                    sizes="(max-width: 640px) 60vw, 260px"
-                    className="h-full shadow-[0_30px_60px_-30px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.04]" />
-                ) : (
-                  <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 460px"
-                    className="max-h-full w-auto rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.03]" />
-                )}
-              </div>
+      {/* Devices are narrow, so four fit a row; browser shots are wide and get
+          two, shown whole rather than cropped. */}
+      {phones.length > 0 && (
+        <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-4">
+          {phones.map((shot) => {
+            const key = cropKey(shot.src);
+            const caption = tg(`captions.${key}`);
+            return (
+              <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
+                onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
+                className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
+                <div className="flex h-[clamp(13rem,22vw,19rem)] items-center justify-center">
+                  <PhoneCutout src={shot.src} alt={`${alt} — ${caption}`} crop={PHONE_CROPS[key]}
+                    sizes="(max-width: 640px) 45vw, 220px"
+                    className="h-full shadow-[0_26px_50px_-28px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.05]" />
+                </div>
+                <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
+                  <span className="block truncate text-muted">{caption}</span>
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-              <p className="mt-4 flex items-baseline gap-2 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
-                {shot.surface && <span className="text-accent/70">{ts(shot.surface)}</span>}
-                <span className="truncate text-muted">{caption}</span>
-                <span aria-hidden className="ml-auto text-muted/60 transition-colors group-hover/shot:text-accent">↗</span>
-              </p>
-            </button>
-          );
-        })}
-      </div>
+      {webs.length > 0 && (
+        <div className={cn("grid grid-cols-1 gap-x-6 gap-y-9 sm:grid-cols-2", phones.length > 0 && "mt-10")}>
+          {webs.map((shot) => {
+            const caption = tg(`captions.${cropKey(shot.src)}`);
+            return (
+              <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
+                onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
+                className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
+                <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 480px"
+                  className="h-auto w-full rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/shot:scale-[1.03]" />
+                <p className="mt-4 flex items-baseline gap-2 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
+                  {shot.surface && <span className="text-accent/70">{ts(shot.surface)}</span>}
+                  <span className="truncate text-muted">{caption}</span>
+                  <span aria-hidden className="ml-auto text-muted/60 transition-colors group-hover/shot:text-accent">↗</span>
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {open !== null && createPortal(
         <GalleryDialog images={images} index={open} alt={alt} onClose={close}
@@ -155,7 +171,7 @@ function GalleryDialog({ images, index, alt, onClose, onStep, onJump, shots, pos
         ) : (
           <Image src={shown.src} alt={`${alt} — ${caption}`} width={1760} height={1320}
             sizes="(max-width: 1280px) 94vw, 1400px" loading="eager"
-            className="gallery-shot h-auto max-h-[84dvh] w-auto max-w-[min(94vw,88rem)] rounded-xl object-contain shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
+            className="gallery-shot h-[min(88dvh,62rem)] w-auto max-w-[94vw] rounded-xl object-contain shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         )}
 
         <div className="flex flex-col items-center gap-3">
