@@ -48,7 +48,8 @@ function LazyBuddyAvatar() {
   }, [nearViewport]);
 
   return (
-    <div ref={rootRef} className="mt-4">
+    // Capped: at full container width the canvas would tower over the copy.
+    <div ref={rootRef} className="mt-4 max-w-[56rem]">
       {nearViewport ? (
         <BuddyAvatar />
       ) : (
@@ -120,10 +121,12 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
           <ProjectMedia id={id} title={title} size="hero" priority />
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-12 border-t border-border pt-12 md:mt-16 md:grid-cols-12 md:gap-10 md:pt-14">
-          <aside className="md:col-span-4">
+        {/* Role and stack read as a spec strip across the top; everything
+            below runs the full column so no section trails a dead gutter. */}
+        <div className="mt-14 border-t border-border pt-10 md:mt-16 md:pt-12">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:gap-12">
             <MetaBlock label={tc("role")} value={tc(`${id}.role`)} />
-            <div className="mt-8">
+            <div>
               <p className="text-caption text-muted">{tc("stack")}</p>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {Array.isArray(stack) &&
@@ -136,24 +139,24 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                   ))}
               </ul>
             </div>
-          </aside>
+          </div>
 
-          <div className="space-y-12 md:col-span-8 md:space-y-14">
+          <div className="mt-14 space-y-14 md:mt-16 md:space-y-16">
             <section>
               <h2 className="text-caption text-muted">{tc("problem")}</h2>
-              <p className="mt-3 max-w-[38rem] text-[0.975rem] leading-[1.75] text-foreground/90">
+              <p className="mt-3 max-w-[44rem] text-[0.975rem] leading-[1.75] text-foreground/90">
                 {tc(`${id}.problem`)}
               </p>
             </section>
             <section>
               <h2 className="text-caption text-muted">{tc("solution")}</h2>
-              <p className="mt-3 max-w-[38rem] text-[0.975rem] leading-[1.75] text-foreground/90">
+              <p className="mt-3 max-w-[44rem] text-[0.975rem] leading-[1.75] text-foreground/90">
                 {tc(`${id}.solution`)}
               </p>
             </section>
             <section>
               <h2 className="text-caption text-muted">{tc("outcome")}</h2>
-              <p className="mt-3 max-w-[38rem] text-[0.975rem] leading-[1.75] text-muted">
+              <p className="mt-3 max-w-[44rem] text-[0.975rem] leading-[1.75] text-muted">
                 {tc(`${id}.outcome`)}
               </p>
             </section>
@@ -162,7 +165,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
               <section>
                 <h2 className="text-caption text-muted">{tb("label")}</h2>
                 <LazyBuddyAvatar />
-                <p className="mt-4 max-w-[36rem] text-sm leading-relaxed text-muted">
+                <p className="mt-4 max-w-[40rem] text-sm leading-relaxed text-muted">
                   {tb("note")}
                 </p>
               </section>
@@ -170,7 +173,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
 
             <section>
               <h2 className="text-caption text-muted">{tc("highlights")}</h2>
-              <ul className="mt-4 max-w-[38rem] space-y-3">
+              <ul className="mt-4 max-w-[44rem] space-y-3">
                 {highlights.map((item) => (
                   <li
                     key={item}
@@ -196,7 +199,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                   <div className="aspect-[4/3] rounded-[1.25rem] border border-border bg-surface-2" />
                 </div>
               )}
-              <p className="mt-4 max-w-[36rem] text-sm leading-relaxed text-muted">
+              <p className="mt-4 max-w-[40rem] text-sm leading-relaxed text-muted">
                 {project.gallery?.length ? tc("galleryNote") : tc("placeholderNote")}
               </p>
             </section>
