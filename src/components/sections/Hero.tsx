@@ -115,22 +115,22 @@ export function Hero() {
               <div data-hero-intro className={cn(!reduced && "opacity-0")}>
                 <StatusPill />
               </div>
-              <p
+            </div>
+
+            {/* The role sits inside the h1: the page's most valuable heading
+                should say what this person does, not only who they are. It
+                still reads as the eyebrow above the name. */}
+            <h1 id="hero-heading">
+              <span
                 data-hero-intro
                 className={cn(
-                  "font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted",
+                  "block font-mono text-[0.6875rem] font-normal uppercase tracking-[0.14em] text-muted",
                   !reduced && "opacity-0",
                 )}
               >
                 {t("roleLabel")}
-              </p>
-            </div>
-
-            <h1
-              id="hero-heading"
-              className="font-display text-[clamp(2.5rem,14.5cqw,9rem)] font-semibold leading-[0.95] tracking-[-0.055em] text-foreground"
-            >
-              <span className="block overflow-hidden pb-[0.08em]">
+              </span>
+              <span className="mt-4 block overflow-hidden pb-[0.08em] font-display text-[clamp(2.5rem,14.5cqw,9rem)] font-semibold leading-[0.95] tracking-[-0.055em] text-foreground sm:mt-5">
                 <span data-hero-line className={cn("block", !reduced && "opacity-0")}>
                   {tCommon("name")}
                 </span>

@@ -12,7 +12,7 @@ export function SelectedWorks() {
     <section id="work" className="scroll-mt-[var(--nav-height)] bg-background pb-16 sm:pb-24" aria-labelledby="work-heading">
       <div className="container-page">
         <header className="mb-8 flex flex-wrap items-baseline justify-between gap-4 border-t border-border pt-6 sm:mb-10">
-          <h2 id="work-heading" className="text-caption text-muted">{t("headline")}</h2>
+          <p id="work-heading" className="text-caption text-muted">{t("headline")}</p>
           <p className="max-w-md text-sm leading-relaxed text-muted">{t("intro")}</p>
         </header>
         <div className="space-y-14">
@@ -26,9 +26,9 @@ export function SelectedWorks() {
                 </Link>
                 <div>
                   <p className="text-caption text-muted"><span className="mr-3 text-accent">{String(index + 2).padStart(2, "0")}</span>{t(`projects.${id}.category`)}<span className="mx-2 text-border-strong">/</span>{t(`projects.${id}.year`)}</p>
-                  <h3 id={`work-title-${id}`} className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.12] tracking-[-0.035em]">
+                  <h2 id={`work-title-${id}`} className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.12] tracking-[-0.035em]">
                     <Link href={PROJECTS[id].href} className="transition-colors hover:text-accent">{title}</Link>
-                  </h3>
+                  </h2>
                   <p className="mt-5 max-w-lg text-base leading-[1.8] text-muted">{t(`projects.${id}.summary`)}</p>
                   <ul className="mt-6 flex flex-wrap gap-2" aria-label={t("stackLabel")}>
                     {stack.map((item) => <li key={item} className="rounded-md border border-border px-2.5 py-1 font-mono text-[0.6875rem] text-muted">{item}</li>)}

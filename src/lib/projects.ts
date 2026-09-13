@@ -3,14 +3,14 @@
  * Copy: messages/*.json → work.projects / work.featured / work.caseStudies
  */
 
-export const FEATURED_ID = "sparkxp" as const;
+export const FEATURED_ID = "nomadkids" as const;
 
 /**
  * Secondary "Selected Works" projects, in display order. Every id here needs
  * copy in messages/*.json (work.projects.<id>, work.caseStudy.<id>, command.<id>)
  * and an entry in PROJECTS below. Ids double as case-study slugs.
  */
-export const STACKED_ORDER = ["nomadkids"] as const;
+export const STACKED_ORDER = ["sparkxp"] as const;
 
 export const ALL_PROJECT_IDS = [FEATURED_ID, ...STACKED_ORDER] as const;
 

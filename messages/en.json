@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Usukhbayar — Full-Stack Developer",
-    "description": "Full-stack developer building frontend and mobile products. Designs thoughtfully, ships real products. Based in Ulaanbaatar, Mongolia."
+    "title": "Usukhbayar — Full-Stack Developer & Technical Lead",
+    "description": "Full-stack developer and technical lead in Ulaanbaatar. I build web and mobile products end to end — architecture, backend, interface and deployment. Two production products shipped."
   },
   "nav": {
     "primary": "Primary",
@@ -31,26 +31,27 @@
     "skipToContent": "Skip to content"
   },
   "hero": {
-    "roleLabel": "Full-Stack Developer",
+    "roleLabel": "Full-Stack Developer & Technical Lead",
     "statement": {
       "line1": "I design,",
       "line2Before": "",
       "line2Accent": "build, and ship",
       "line3": "products people actually use."
     },
-    "subcopy": "Frontend and mobile products with a product mindset — clear interfaces, solid engineering, shipped for real use.",
-    "ctaWork": "View selected work",
-    "ctaContact": "Get in touch",
+    "subcopy": "Full-stack engineer in Ulaanbaatar. I've led the development of two production products end to end — web, mobile and the backend behind them — from architecture through deployment.",
+    "ctaWork": "See what I've shipped",
+    "ctaContact": "Start a project",
     "scrollHint": "Scroll to explore",
-    "portraitMeta": "Full-Stack · Mobile"
+    "portraitMeta": "Full-Stack · Technical Lead"
   },
   "about": {
     "label": "About",
     "headline": "Thoughtful design. Practical engineering.",
-    "intro": "I'm Usukhbayar — a full-stack developer based in Ulaanbaatar. I focus on frontend and mobile, and I care most about software people actually use.",
+    "intro": "I'm Usukhbayar — a full-stack developer in Ulaanbaatar. I build web and mobile products, and I take technical ownership of them: architecture, database, API, interface and deployment.",
     "story": [
-      "CS student at the National University of Mongolia (class of 2027). Self-taught by shipping — not by waiting for a syllabus to catch up.",
-      "At Retro Mind LLC I work full-stack, leading a small team of two, building products end to end. The bar is simple: something people open again."
+      "On my last two products I led the development team. At Retro Mind LLC I work full-stack across the whole product. On NomadKids I set the architecture and wrote the specifications the team built against; on SparkXP I owned the backend, the admin dashboard and production deployment while two developers built the mobile app.",
+      "That means I can be handed a problem rather than a ticket. I decide how a system is put together, which trade-offs are worth making, and what has to be true before it goes live.",
+      "CS at the National University of Mongolia, 2027. Most of what I know came from shipping."
     ],
     "pathLabel": "Path",
     "principlesLabel": "Principles",
@@ -113,9 +114,9 @@
     "objectAlt": "The layers of a product — interface, logic, data"
   },
   "work": {
-    "label": "Selected Works",
-    "headline": "More products.",
-    "intro": "More products I’ve designed, built and shipped.",
+    "label": "Selected work",
+    "headline": "Selected work.",
+    "intro": "Two products I led and shipped — architecture, backend and interface.",
     "viewCaseStudy": "View Case Study",
     "problem": "Problem",
     "solution": "Solution",
@@ -130,20 +131,20 @@
     },
     "featured": {
       "label": "Featured project",
-      "id": "sparkxp",
-      "title": "SparkXP",
-      "category": "Education · Mobile product",
+      "id": "nomadkids",
+      "title": "NomadKids",
+      "category": "Education · Web platform",
       "year": "2026",
-      "summary": "A gamified English-learning app for Mongolian students and schools — lessons, spaced-repetition practice, and an AI buddy that keeps learners coming back.",
-      "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
-      "solution": "Three surfaces, one product, built end to end: an Expo app for students and teachers, a NestJS API on PostgreSQL and Redis, and an admin dashboard. Structured lessons and spaced-repetition vocabulary sit under a gamification loop of XP, sparks, streaks and leaderboards, with an AI buddy for text and voice practice, and classes, join codes and assignments for teachers.",
-      "outcome": "The API runs on Railway and the admin dashboard on Vercel; the app is in active development ahead of its store release. Payments are built but deliberately switched off until the gateway is wired.",
+      "summary": "A deployed kindergarten portfolio platform, integrated with Mongolia's national education system — teachers record development, parents follow their own child, and each history exports as a printable PDF.",
+      "problem": "Kindergartens track child development on paper. Records scatter when a child changes group, year, or kindergarten, and the family is left with nothing to keep. The client's brief also sets strict rules on who may see a child's data.",
+      "solution": "A Next.js front end against a NestJS and Prisma API, with authorization enforced server-side per role and per child rather than in the UI — roles live on membership, so one person can be both a teacher and a parent. Sessions use same-site HttpOnly cookies, a short access token with a rotating refresh, and no token ever stored in localStorage. Photos live in a private Cloudflare R2 bucket behind presigned URLs, and reports are rendered as A4 Mongolian-Cyrillic PDFs by a Puppeteer worker pulling off a BullMQ queue.",
+      "outcome": "Deployed and serving: nomadkids.mn with its API on api.nomadkids.mn and media on a private bucket, behind a strict content-security policy and HSTS. The ESIS access token was issued and the connection verified end to end; per-service scope is still being granted by the ministry's IT centre, which is an external gate rather than a code gap.",
       "stack": [
-        "React Native",
-        "Expo",
+        "Next.js",
         "NestJS",
+        "Prisma",
         "PostgreSQL",
-        "Redis"
+        "Cloudflare R2"
       ]
     },
     "projects": {
@@ -290,7 +291,7 @@
   "skills": {
     "label": "Capabilities",
     "headline": "What I build.",
-    "intro": "Capabilities first — tools second. What I can take from problem to a shipped product interface.",
+    "intro": "What I can take from a problem to a product that is live — interface, backend, and the deployment behind both.",
     "groups": [
       {
         "index": "01",
@@ -347,9 +348,9 @@
       "accent": "useful",
       "line2After": "."
     },
-    "body": "Open to full-stack roles and selected freelance work — frontend, mobile, and product-minded shipping.",
+    "body": "Tell me what you're building and I'll tell you what it takes — honestly, including when it's more than you need. Usually replies within a day.",
     "cta": "Start a project",
-    "role": "Full-Stack Developer",
+    "role": "Full-Stack Developer & Technical Lead",
     "footerConnect": "Connect",
     "footerLocation": "Based",
     "localTime": "UB",
