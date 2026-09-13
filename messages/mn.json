@@ -383,14 +383,7 @@
     "instagram": "Instagram",
     "email": "Имэйл"
   },
-  "footer": {
-    "rights": "Улаанбаатарт анхааралтай бүтээгдсэн."
-  },
-  "cursor": {
-    "view": "Үзэх ↗",
-    "openCase": "Нээх ↗",
-    "sayHi": "Сайн уу ↗"
-  },
+  "footer": {},
   "transitions": {
     "next": "Дараах",
     "about": {

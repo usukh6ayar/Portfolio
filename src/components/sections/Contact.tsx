@@ -199,7 +199,6 @@ export function Contact() {
         >
           <a
             href={`mailto:${SITE.email}`}
-            data-cursor="contact"
             className={cn(
               "group/cta relative flex w-full items-center justify-between gap-6",
               "overflow-hidden border-y border-border",

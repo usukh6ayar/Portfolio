@@ -75,7 +75,7 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
                     className="h-full shadow-[0_26px_50px_-28px_rgba(0,0,0,0.95)]" />
                 </TiltCard>
                 <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
-                  <span className="block truncate text-muted">{caption}</span>
+                  <span className="block text-muted">{caption}</span>
                 </p>
               </button>
             );
@@ -98,7 +98,7 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
                 </TiltCard>
                 <p className="mt-4 flex items-baseline gap-2 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
                   {shot.surface && <span className="text-accent/70">{ts(shot.surface)}</span>}
-                  <span className="truncate text-muted">{caption}</span>
+                  <span className="text-muted">{caption}</span>
                   <span aria-hidden className="ml-auto text-muted/60 transition-colors group-hover/shot:text-accent">↗</span>
                 </p>
               </button>
