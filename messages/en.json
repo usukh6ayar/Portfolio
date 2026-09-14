@@ -30,7 +30,9 @@
     "location": "Ulaanbaatar, Mongolia",
     "loading": "Loading",
     "close": "Close",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "stickyCta": "Start a project",
+    "stickyCtaLabel": "Start a project — jump to the inquiry form"
   },
   "hero": {
     "roleLabel": "Full-Stack Developer & Technical Lead",
@@ -411,12 +413,93 @@
       "line2After": "."
     },
     "body": "Tell me what you're building and I'll tell you what it takes — honestly, including when it's more than you need. Usually replies within a day.",
-    "cta": "Start a project",
     "role": "Full-Stack Developer & Technical Lead",
     "footerConnect": "Connect",
     "footerLocation": "Based",
     "localTime": "UB",
-    "srHeadline": "Let's build something useful."
+    "srHeadline": "Let's build something useful.",
+    "form": {
+      "title": "Tell me about the project",
+      "name": "Your name",
+      "namePlaceholder": "Name",
+      "email": "Email",
+      "emailPlaceholder": "you@company.com",
+      "projectType": "What are you building?",
+      "projectTypes": [
+        {
+          "value": "web",
+          "label": "A web app"
+        },
+        {
+          "value": "mobile",
+          "label": "A mobile app"
+        },
+        {
+          "value": "ecommerce",
+          "label": "E-commerce"
+        },
+        {
+          "value": "internal",
+          "label": "A booking or internal system"
+        },
+        {
+          "value": "unsure",
+          "label": "Not sure yet"
+        }
+      ],
+      "message": "Tell me about it",
+      "messagePlaceholder": "What it needs to do, who it's for, and anything already in place.",
+      "budget": "Budget",
+      "budgets": [
+        {
+          "value": "under-2m",
+          "label": "Under ₮2M (~$600)"
+        },
+        {
+          "value": "2-5m",
+          "label": "₮2–5M (~$600–1,500)"
+        },
+        {
+          "value": "5-15m",
+          "label": "₮5–15M (~$1,500–4,500)"
+        },
+        {
+          "value": "15m-plus",
+          "label": "₮15M+ (~$4,500+)"
+        },
+        {
+          "value": "unsure",
+          "label": "Not sure yet"
+        }
+      ],
+      "timeline": "Timeline",
+      "timelines": [
+        {
+          "value": "asap",
+          "label": "As soon as possible"
+        },
+        {
+          "value": "1-3",
+          "label": "1–3 months"
+        },
+        {
+          "value": "3-plus",
+          "label": "3+ months"
+        },
+        {
+          "value": "exploring",
+          "label": "Just exploring"
+        }
+      ],
+      "choose": "Choose one",
+      "submit": "Send project details",
+      "sending": "Sending…",
+      "success": "Thank you — that arrived. I'll come back to you within a day.",
+      "error": "That didn't send. Email me directly at {email} and it will reach me.",
+      "orEmail": "Or email me directly:",
+      "required": "Required",
+      "mailtoSubject": "Project inquiry — {name}"
+    }
   },
   "command": {
     "title": "Command palette",

@@ -8,14 +8,15 @@ import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { TextLink } from "@/components/ui/TextLink";
-import { SITE, SOCIAL_ITEMS } from "@/lib/constants";
+import { InquiryForm } from "@/components/contact/InquiryForm";
+import { SOCIAL_ITEMS } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Contact — final editorial chapter.
- * Full-width CTA row, no form. Integrated footer.
+ * The pitch, an inquiry form, and the integrated footer.
  * Isolated polish: does not edit Hero / About / other sections.
  */
 export function Contact() {
@@ -25,7 +26,6 @@ export function Contact() {
   const { isReady } = useApp();
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
-  const arrowRef = useRef<HTMLSpanElement>(null);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -36,7 +36,6 @@ export function Contact() {
     const body = root.querySelectorAll<HTMLElement>("[data-contact-body]");
     const cta = root.querySelector<HTMLElement>("[data-contact-cta]");
     const foot = root.querySelectorAll<HTMLElement>("[data-contact-foot]");
-    const arrow = arrowRef.current;
 
     if (reduced) {
       gsap.set([lines, body, cta, foot].filter(Boolean), {
@@ -96,23 +95,6 @@ export function Contact() {
               trigger: cta,
               start: "top 90%",
               once: true,
-              onEnter: () => {
-                if (!arrow || reduced) return;
-                // One subtle directional nudge when CTA first arrives
-                gsap.fromTo(
-                  arrow,
-                  { x: 0, y: 0 },
-                  {
-                    x: 4,
-                    y: -3,
-                    duration: 0.45,
-                    ease: "power2.out",
-                    yoyo: true,
-                    repeat: 1,
-                    repeatDelay: 0.05,
-                  },
-                );
-              },
             },
           },
         );
@@ -146,124 +128,94 @@ export function Contact() {
       className="relative z-0 flex flex-col scroll-mt-[var(--nav-height)] bg-background"
       aria-labelledby="contact-heading"
     >
-      {/* Main closing scene */}
-      <div className="container-page flex flex-col py-20 sm:py-24 md:py-28">
-        <p
-          data-contact-body
-          className={cn(
-            "font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted",
-            !reduced && "opacity-0",
-          )}
-        >
-          {t("label")}
-        </p>
-
-        <h2
-          id="contact-heading"
-          className="mt-5 max-w-[14ch] font-display text-[clamp(2.75rem,9vw,5.75rem)] font-semibold leading-[0.95] tracking-[-0.045em] text-foreground sm:mt-6"
-        >
-          <span className="block overflow-hidden pb-[0.04em]">
-            <span
-              data-contact-line
-              className={cn("block", !reduced && "opacity-0")}
-            >
-              {t("headline.line1")}
-            </span>
-          </span>
-          <span className="block overflow-hidden pb-[0.04em]">
-            <span
-              data-contact-line
-              className={cn("block", !reduced && "opacity-0")}
-            >
-              {t("headline.line2Before")}
-              <span className="text-accent">{t("headline.accent")}</span>
-              {t("headline.line2After")}
-            </span>
-          </span>
-        </h2>
-
-        <p
-          data-contact-body
-          className={cn(
-            "mt-7 max-w-[28rem] text-[0.975rem] leading-[1.7] text-muted sm:mt-8 sm:text-base",
-            !reduced && "opacity-0",
-          )}
-        >
-          {t("body")}
-        </p>
-
-        {/* Full-width editorial CTA */}
-        <div
-          data-contact-cta
-          className={cn("mt-12 w-full sm:mt-14 md:mt-16", !reduced && "opacity-0")}
-        >
-          <a
-            href={`mailto:${SITE.email}`}
+      {/* Main closing scene — the pitch on the left, the way to answer it on
+          the right. The path used to end at a mailto:, which asked a visitor
+          to compose the email themselves. */}
+      <div className="container-page grid gap-12 py-20 sm:py-24 lg:grid-cols-2 lg:gap-16 lg:py-28">
+        <div className="flex flex-col">
+          <p
+            data-contact-body
             className={cn(
-              "group/cta relative flex w-full items-center justify-between gap-6",
-              "overflow-hidden border-y border-border",
-              "py-6 sm:py-7 md:py-8",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent",
+              "font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted",
+              !reduced && "opacity-0",
             )}
           >
-            {/* Lime fill — left → right */}
-            <span
-              aria-hidden
-              className={cn(
-                "pointer-events-none absolute inset-0 z-0 origin-left bg-accent",
-                "scale-x-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                "group-hover/cta:scale-x-100 group-focus-visible/cta:scale-x-100",
-                "motion-reduce:transition-none",
-              )}
-            />
+            {t("label")}
+          </p>
 
-            <span
-              className={cn(
-                "relative z-10 font-display text-[clamp(1.25rem,3.5vw,2rem)] font-semibold tracking-[-0.03em]",
-                "text-foreground transition-colors duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                "group-hover/cta:text-on-accent group-focus-visible/cta:text-on-accent",
-              )}
-            >
-              {t("cta")}
+          <h2
+            id="contact-heading"
+            className="mt-5 max-w-[14ch] font-display text-[clamp(2.75rem,7vw,4.5rem)] font-semibold leading-[0.95] tracking-[-0.045em] text-foreground sm:mt-6"
+          >
+            <span className="block overflow-hidden pb-[0.04em]">
+              <span
+                data-contact-line
+                className={cn("block", !reduced && "opacity-0")}
+              >
+                {t("headline.line1")}
+              </span>
             </span>
+            <span className="block overflow-hidden pb-[0.04em]">
+              <span
+                data-contact-line
+                className={cn("block", !reduced && "opacity-0")}
+              >
+                {t("headline.line2Before")}
+                <span className="text-accent">{t("headline.accent")}</span>
+                {t("headline.line2After")}
+              </span>
+            </span>
+          </h2>
 
-            <span
-              ref={arrowRef}
-              aria-hidden
-              className={cn(
-                "relative z-10 shrink-0 text-[clamp(1.25rem,3vw,1.75rem)] leading-none",
-                "text-foreground transition-[color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                "group-hover/cta:translate-x-1 group-hover/cta:-translate-y-1 group-hover/cta:text-on-accent",
-                "group-focus-visible/cta:translate-x-1 group-focus-visible/cta:-translate-y-1 group-focus-visible/cta:text-on-accent",
-                "motion-reduce:transform-none",
-              )}
-            >
-              ↗
-            </span>
-          </a>
+          <p
+            data-contact-body
+            className={cn(
+              "mt-7 max-w-[28rem] text-[0.975rem] leading-[1.7] text-muted sm:mt-8 sm:text-base",
+              !reduced && "opacity-0",
+            )}
+          >
+            {t("body")}
+          </p>
+
+          {/* For the people who will not fill in a form, and there are some. */}
+          <p
+            data-contact-body
+            className={cn(
+              "mt-10 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted sm:mt-12",
+              !reduced && "opacity-0",
+            )}
+          >
+            {t("form.orEmail")}
+          </p>
+
+          <ul
+            data-contact-body
+            className={cn(
+              "mt-4 flex flex-wrap items-center gap-x-8 gap-y-3",
+              !reduced && "opacity-0",
+            )}
+          >
+            {SOCIAL_ITEMS.map((item) => (
+              <li key={item.key}>
+                <TextLink
+                  href={item.href}
+                  external={item.external}
+                  arrow={item.key === "email"}
+                  className="text-[0.9375rem]"
+                >
+                  {tSocial(item.key)}
+                </TextLink>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Typographic social row */}
-        <ul
-          data-contact-body
-          className={cn(
-            "mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 sm:mt-12",
-            !reduced && "opacity-0",
-          )}
+        <div
+          data-contact-cta
+          className={cn("lg:pt-2", !reduced && "opacity-0")}
         >
-          {SOCIAL_ITEMS.map((item) => (
-            <li key={item.key}>
-              <TextLink
-                href={item.href}
-                external={item.external}
-                arrow={item.key === "email"}
-                className="text-[0.9375rem]"
-              >
-                {tSocial(item.key)}
-              </TextLink>
-            </li>
-          ))}
-        </ul>
+          <InquiryForm />
+        </div>
       </div>
 
       {/* Integrated footer — same chapter, not a separate site block */}
