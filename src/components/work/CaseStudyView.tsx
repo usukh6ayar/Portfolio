@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
 import { ProjectLinks } from "@/components/work/ProjectLinks";
 import { CaseStudyGallery } from "@/components/work/CaseStudyGallery";
+import { scrollToHash } from "@/components/providers/LenisProvider";
 
 import type { ProjectId } from "@/lib/projects";
 import { ALL_PROJECT_IDS, FEATURED_ID, PROJECTS } from "@/lib/projects";
@@ -105,6 +106,12 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
   const number = (section: string) =>
     String(sections.indexOf(section) + 1).padStart(2, "0");
 
+  const handleSectionNavigation = (section: string) => {
+    const hash = `#${section}`;
+    window.history.pushState(null, "", hash);
+    scrollToHash(hash);
+  };
+
   return (
     <article className="pb-16 pt-[calc(var(--nav-height)+2rem)] sm:pb-24">
       <div className="container-page !max-w-[80rem]">
@@ -137,7 +144,15 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
           <aside>
             <nav aria-label={tc("contents")} className="flex flex-wrap gap-x-6 gap-y-2 border-b border-border pb-5 lg:sticky lg:top-[calc(var(--nav-height)+2rem)] lg:flex-col lg:gap-1 lg:border-b-0 lg:border-l lg:pb-0 lg:pl-5">
               {sections.map((section, index) => (
-                <a key={section} href={`#${section}`} className="flex min-h-11 items-center gap-3 text-sm text-muted transition-colors hover:text-accent">
+                <a
+                  key={section}
+                  href={`#${section}`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleSectionNavigation(section);
+                  }}
+                  className="flex min-h-11 items-center gap-3 text-sm text-muted transition-colors hover:text-accent"
+                >
                   <span className="font-mono text-[0.625rem] text-muted/60">0{index + 1}</span>{tc(section)}
                 </a>
               ))}

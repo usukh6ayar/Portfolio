@@ -65,9 +65,22 @@ export function CommandPalette() {
     const actions = t("groupActions");
 
     const go = (hash: string) => {
-      if (pathname === "/") scrollToHash(hash);
-      else window.location.assign(`/${hash}`);
       closeCommand();
+      if (pathname !== "/") {
+        window.location.assign(`/${hash}`);
+        return;
+      }
+
+      // The open palette pauses Lenis and locks body scrolling. Wait until
+      // its close effect has restored both before starting the navigation.
+      window.history.pushState(null, "", hash);
+      window.requestAnimationFrame(() => {
+        const lenis = (
+          window as Window & { __lenis?: { start: () => void } }
+        ).__lenis;
+        lenis?.start();
+        scrollToHash(hash);
+      });
     };
 
     return [
