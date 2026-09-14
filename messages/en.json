@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Usukhbayar — Full-Stack Developer & Technical Lead",
-    "description": "Full-stack developer and technical lead in Ulaanbaatar. I build web and mobile products end to end — architecture, backend, interface and deployment. Two production products shipped."
+    "title": "Usukhbayar — Full-Stack Developer & Team Lead",
+    "description": "Full-stack developer and team lead in Ulaanbaatar. I build web and mobile products end to end, from architecture through deployment. Two products shipped to production."
   },
   "nav": {
     "primary": "Primary",
@@ -34,14 +34,14 @@
     "stickyCtaLabel": "Start a project — jump to the inquiry form"
   },
   "hero": {
-    "roleLabel": "Full-Stack Developer & Technical Lead",
+    "roleLabel": "Full-Stack Developer · Team Lead",
     "statement": {
       "line1": "I design,",
       "line2Before": "",
       "line2Accent": "build, and ship",
       "line3": "products people actually use."
     },
-    "subcopy": "Full-stack engineer in Ulaanbaatar. I've led the development of two production products end to end — web, mobile and the backend behind them — from architecture through deployment.",
+    "subcopy": "Full-stack developer in Ulaanbaatar. I've led the development of two products end to end — web, mobile and the backend systems behind them — from architecture through production.",
     "ctaWork": "See what I've shipped",
     "ctaContact": "Start a project",
     "scrollHint": "Scroll to explore",
@@ -49,11 +49,11 @@
   },
   "about": {
     "label": "About",
-    "headline": "Thoughtful design. Practical engineering.",
+    "headline": "Smart design. Real engineering.",
     "intro": "I'm Usukhbayar — a full-stack developer in Ulaanbaatar. I build web and mobile products, and I take technical ownership of them: architecture, database, API, interface and deployment.",
     "story": [
-      "On my last two products I led the development team. At Retro Mind LLC I work full-stack across the whole product. On NomadKids I set the architecture and wrote the specifications the team built against; on SparkXP I owned the backend, the admin dashboard and production deployment while two developers built the mobile app.",
-      "That means I can be handed a problem rather than a ticket. I decide how a system is put together, which trade-offs are worth making, and what has to be true before it goes live.",
+      "At Aether Tech Core LLC, I've led the development teams behind my last two products. On NomadKids, I defined the system architecture and technical standards and prepared the documentation the team worked from. On SparkXP, I owned the backend, admin system and production deployment while guiding two mobile developers.",
+      "I'm not just someone who completes tickets — I take problems and own them through to a solution. I handle the key technical decisions: planning system structure, choosing the right architectural approach, and making sure a product is ready for production.",
       "CS at the National University of Mongolia, 2027. Most of what I know came from shipping."
     ],
     "pathLabel": "Path",
@@ -74,7 +74,7 @@
     ],
     "nowLabel": "Now",
     "nowTitle": "What I'm building toward",
-    "nowBody": "Building full-stack products at Retro Mind while finishing my degree. Open for selected freelance work where craft matters.",
+    "nowBody": "I'm building full-stack products at Aether Tech Core LLC while finishing my degree. Open to interesting projects where strong technical skills and craft matter.",
     "nowMeta": "Ulaanbaatar · Open for projects",
     "portraitMeta": "Full-Stack · Mobile",
     "portraitAlt": "Usukhbayar — portrait",
@@ -103,8 +103,8 @@
       },
       {
         "year": "Today",
-        "title": "Design to done",
-        "detail": "At Retro Mind LLC — building everything from design through to shipped, leading a small team."
+        "title": "Architecture & leadership",
+        "detail": "At Aether Tech Core LLC, owning the path from system design to production while leading the team."
       }
     ],
     "stackMap": {
@@ -119,7 +119,7 @@
   "work": {
     "label": "Selected work",
     "headline": "Selected work.",
-    "intro": "Two products I led and shipped — architecture, backend and interface.",
+    "intro": "Selected products I've built independently and led — from system architecture and backend through the interface and production.",
     "viewCaseStudy": "View Case Study",
     "problem": "Problem",
     "solution": "Solution",
@@ -191,14 +191,14 @@
       "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
       "galleryNote": "Explore the product screens. Select an image for a closer look.",
       "sparkxp": {
-        "role": "Team lead · Full-stack",
+        "role": "Team Lead · Full-Stack Developer",
         "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
         "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
         "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API on PostgreSQL and Redis. Teachers get classes, join codes and assignments; the admin dashboard drives content, the AI generation pipelines, buddy configuration and plan limits.",
         "outcome": "The API is deployed on Railway and the admin dashboard on Vercel; the student and teacher app is in active development ahead of its store release. Measured results go here once the app is in users' hands — not before.",
         "highlights": [
           "Three surfaces, one product: the Expo app for students and teachers, the public landing page, and the admin dashboard — all on a single NestJS API.",
-          "Led it as team lead of three developers: I owned the backend, the admin dashboard and production deploys, with two developers on the mobile app.",
+          "Technical leadership: led a three-person team, owning the backend architecture, admin dashboard and production deployment while guiding two mobile developers.",
           "AI runs through a gateway rather than scattered SDK calls — Gemini for vocabulary generation, reading comprehension questions, the in-app dictionary and speech-to-text; OpenAI's Batch API for word and idiom imagery; ElevenLabs for pronunciation audio and lesson-video transcription; Azure for text-to-speech.",
           "The AI buddy is a real-time loop — speech in, model, speech out — with monthly voice and STT minutes enforced from the learner's plan, and generated speech cached so a repeated line costs nothing the second time.",
           "The buddy's 3D avatar is a rigged GLB uploaded through the admin dashboard to Cloudflare R2 and referenced by URL, so a new character ships without an app release. That same model is the fox watching your cursor on this site."
@@ -214,14 +214,14 @@
         }
       },
       "nomadkids": {
-        "role": "Technical lead · Full-stack",
+        "role": "Technical Lead · Full-Stack Developer",
         "overview": "NomadKids is a digital portfolio for Mongolian kindergartens: teachers record observations and developmental assessments, parents follow their own child's progress and photographs, and administrators manage kindergartens, groups, and staff.",
         "problem": "Kindergartens track child development on paper. Records scatter when a child changes group, year, or kindergarten, and the family is left with nothing to keep. The client's brief also sets strict rules on who may see a child's data.",
         "solution": "A Next.js front end against a NestJS and Prisma API, with authorization enforced server-side per role and per child rather than in the UI — roles live on membership, so one person can be both a teacher and a parent. Sessions use same-site HttpOnly cookies, a short access token with a rotating refresh, and no token ever stored in localStorage. Photos live in a private Cloudflare R2 bucket behind presigned URLs, and reports are rendered as A4 Mongolian-Cyrillic PDFs by a Puppeteer worker pulling off a BullMQ queue.",
         "outcome": "Deployed and serving: nomadkids.mn with its API on api.nomadkids.mn and media on a private bucket, behind a strict content-security policy and HSTS. The ESIS access token was issued and the connection verified end to end; per-service scope is still being granted by the ministry's IT centre, which is an external gate rather than a code gap.",
         "highlights": [
           "Integrated with ESIS, Mongolia's national education information system: 39 services wired against the ministry's v2 catalogue of 198, chosen on least privilege and matched 39-for-39 against the ministry's own official service list, path for path.",
-          "Built by a team of two that I led, across the Next.js front end, the NestJS API and the integration work.",
+          "Technical leadership: led a two-person team and delivered the Next.js frontend, NestJS API and government integration.",
           "Multi-tenant by construction — one provider token serves many kindergartens through a per-kindergarten ESIS institution mapping, so tenant data can't leak across the integration.",
           "An operator console where a kindergarten admin sees readiness per service, runs a read-only dry run, and reads back sync history and an audit log — without touching live records.",
           "Self-assessed line by line against ministerial order A/261: of 51 mandatory criteria, 35 met, 14 partial, 1 outstanding. Self-assessed, not certified — the distinction is the point.",
@@ -325,7 +325,7 @@
     "offers": [
       {
         "index": "01",
-        "title": "Business web applications",
+        "title": "Business web systems",
         "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
       },
       {
@@ -375,7 +375,7 @@
   },
   "skills": {
     "label": "Capabilities",
-    "headline": "The stack behind it.",
+    "headline": "The stack I use.",
     "intro": "The tools I reach for, grouped by the job they do. Secondary to the work — but the question comes up, so here it is.",
     "groups": [
       {
@@ -440,7 +440,7 @@
     "localTime": "UB",
     "srHeadline": "Let's build something useful.",
     "form": {
-      "title": "Tell me about the project",
+      "title": "Tell me about your project",
       "name": "Your name",
       "namePlaceholder": "Name",
       "email": "Email",
