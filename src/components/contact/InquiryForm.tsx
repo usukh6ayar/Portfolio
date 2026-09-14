@@ -35,13 +35,21 @@ export function InquiryForm({ className }: { className?: string }) {
     const form = event.currentTarget;
     const data = new FormData(form);
 
+    // The selects carry stable slugs; the only reader is a person opening an
+    // email, so send them the words they chose rather than "5-15m".
+    data.set("projectType", labelFor(projectTypes, data.get("projectType")));
+    data.set("budget", labelFor(budgets, data.get("budget")));
+    data.set("timeline", labelFor(timelines, data.get("timeline")));
+
     if (!ENDPOINT) {
+      // `projectType` is phrased as a question on the form; the email wants a
+      // label, so the four lines read alike in an inbox.
       const body = [
         `${t("name")}: ${data.get("name")}`,
         `${t("email")}: ${data.get("email")}`,
-        `${t("projectType")} ${labelFor(projectTypes, data.get("projectType"))}`,
-        `${t("budget")}: ${labelFor(budgets, data.get("budget"))}`,
-        `${t("timeline")}: ${labelFor(timelines, data.get("timeline"))}`,
+        `${t("mailtoType")}: ${data.get("projectType")}`,
+        `${t("budget")}: ${data.get("budget")}`,
+        `${t("timeline")}: ${data.get("timeline")}`,
         "",
         String(data.get("message") ?? ""),
       ].join("\n");

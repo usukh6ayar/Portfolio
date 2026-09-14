@@ -520,7 +520,8 @@
       "error": "That didn't send. Email me directly at {email} and it will reach me.",
       "orEmail": "Or email me directly:",
       "required": "Required",
-      "mailtoSubject": "Project inquiry — {name}"
+      "mailtoSubject": "Project inquiry — {name}",
+      "mailtoType": "Project type"
     }
   },
   "command": {
@@ -578,7 +579,7 @@
     },
     "services": {
       "label": "Services",
-      "title": "What I build."
+      "title": "Four things you can hire me for."
     },
     "process": {
       "label": "How I work",
