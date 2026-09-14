@@ -13,7 +13,9 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "menu": "Menu",
-    "statusOpen": "Open"
+    "statusOpen": "Open",
+    "services": "Services",
+    "process": "Process"
   },
   "lang": {
     "switcher": "Language",
@@ -23,7 +25,7 @@
     "mnFull": "Монгол"
   },
   "common": {
-    "availability": "Open to opportunities",
+    "availability": "Open for projects",
     "name": "Usukhbayar",
     "location": "Ulaanbaatar, Mongolia",
     "loading": "Loading",
@@ -71,8 +73,8 @@
     ],
     "nowLabel": "Now",
     "nowTitle": "What I'm building toward",
-    "nowBody": "Building full-stack products at Retro Mind while finishing my degree. Open to full-stack roles and selected freelance work where craft matters.",
-    "nowMeta": "Ulaanbaatar · Open to opportunities",
+    "nowBody": "Building full-stack products at Retro Mind while finishing my degree. Open for selected freelance work where craft matters.",
+    "nowMeta": "Ulaanbaatar · Open for projects",
     "portraitMeta": "Full-Stack · Mobile",
     "portraitAlt": "Usukhbayar — portrait",
     "portraitPlaceholder": "Portrait",
@@ -293,10 +295,65 @@
       }
     }
   },
+  "services": {
+    "label": "Services",
+    "headline": "What I build.",
+    "intro": "Four things I've taken all the way to production. If your problem looks like one of these, I can tell you what it takes in a first call.",
+    "offers": [
+      {
+        "index": "01",
+        "title": "Business web applications",
+        "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
+      },
+      {
+        "index": "02",
+        "title": "Mobile products",
+        "detail": "Cross-platform iOS and Android with React Native and Expo, built against a backend I design at the same time — so the app and the API fit each other instead of being negotiated later."
+      },
+      {
+        "index": "03",
+        "title": "Backend & API systems",
+        "detail": "NestJS and PostgreSQL: schema design, authentication and authorization, background jobs, file storage, third-party integrations. Including integration with Mongolia's national education system."
+      },
+      {
+        "index": "04",
+        "title": "From idea to production",
+        "detail": "Discovery, architecture, build and deployment as one engagement. Domains, TLS, CI, backups and monitoring included — a product that is live, not a repository you have to find someone else to ship."
+      }
+    ],
+    "cta": "Start a project"
+  },
+  "process": {
+    "label": "How I work",
+    "headline": "Four steps, no surprises.",
+    "intro": "The same sequence on every project, so you always know what happens next and what you hold at the end of each step.",
+    "steps": [
+      {
+        "index": "01",
+        "title": "Discover",
+        "detail": "A call about the problem, not the technology. I come back with what I think it takes, what it doesn't, and where the risk sits. No charge — and honest when the answer is that you need less than you asked for."
+      },
+      {
+        "index": "02",
+        "title": "Plan",
+        "detail": "Scope, architecture and a schedule you can hold me to, written down before anything is built. On NomadKids this was the specification the rest of the team built against."
+      },
+      {
+        "index": "03",
+        "title": "Build",
+        "detail": "Working software you can open, in weekly increments. You see it as it is rather than at the end, which is when a change of mind is still cheap."
+      },
+      {
+        "index": "04",
+        "title": "Ship",
+        "detail": "Deployed on your own domain with TLS, backups and monitoring, handed over with the repository, the credentials and how to run it. Live, not almost."
+      }
+    ]
+  },
   "skills": {
     "label": "Capabilities",
-    "headline": "What I build.",
-    "intro": "What I can take from a problem to a product that is live — interface, backend, and the deployment behind both.",
+    "headline": "The stack behind it.",
+    "intro": "The tools I reach for, grouped by the job they do. Secondary to the work — but the question comes up, so here it is.",
     "groups": [
       {
         "index": "01",
@@ -381,7 +438,9 @@
     "openLinkedIn": "Open LinkedIn",
     "switchLanguage": "Switch Language",
     "hint": "↑↓ navigate · ↵ select",
-    "close": "Close command palette"
+    "close": "Close command palette",
+    "services": "Services",
+    "process": "How I Work"
   },
   "social": {
     "github": "GitHub",
@@ -398,19 +457,27 @@
     },
     "featured": {
       "label": "Featured project",
-      "title": "SparkXP"
+      "title": "NomadKids"
     },
     "work": {
       "label": "Selected works",
-      "title": "More products."
+      "title": "And what came before."
     },
     "skills": {
       "label": "Capabilities",
-      "title": "What I build."
+      "title": "The stack behind it."
     },
     "contact": {
       "label": "Contact",
       "title": "Let's build something useful."
+    },
+    "services": {
+      "label": "Services",
+      "title": "What I build."
+    },
+    "process": {
+      "label": "How I work",
+      "title": "Four steps, no surprises."
     }
   }
 }

@@ -55,12 +55,16 @@ export function Navigation() {
   useEffect(() => {
     if (pathname !== "/") return;
 
+    // In page order — the last one above the marker wins, so the order here
+    // has to match the order on the page, not the order of NAV_ITEMS.
     const sections = [
       { id: "top", href: "#top" },
-      { id: "about", href: "#about" },
       { id: "featured", href: "#featured" },
       { id: "work", href: "#featured" },
-      { id: "stack", href: "#stack" },
+      { id: "services", href: "#services" },
+      { id: "process", href: "#services" },
+      { id: "about", href: "#about" },
+      { id: "stack", href: "#about" },
       { id: "contact", href: "#contact" },
     ]
       .map((item) => ({ ...item, element: document.getElementById(item.id) }))

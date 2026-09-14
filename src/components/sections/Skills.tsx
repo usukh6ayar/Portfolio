@@ -18,8 +18,9 @@ type Capability = {
 };
 
 /**
- * Capabilities — what I build, not a tech badge wall.
- * Anchor remains #stack for nav compatibility.
+ * Capabilities — the tools, grouped by the job they do. Services answers what
+ * a client buys; this answers the question that follows it. Deliberately the
+ * later and quieter of the two. Anchor remains #stack.
  */
 export function Skills() {
   const t = useTranslations("skills");

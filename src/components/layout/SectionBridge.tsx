@@ -14,6 +14,8 @@ export type BridgeChapter =
   | "about"
   | "featured"
   | "work"
+  | "services"
+  | "process"
   | "skills"
   | "contact";
 

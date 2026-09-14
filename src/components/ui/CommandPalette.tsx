@@ -71,14 +71,8 @@ export function CommandPalette() {
     };
 
     return [
-      // Navigate
-      {
-        id: "nav-about",
-        label: t("about"),
-        hint: "#about",
-        group: navigate,
-        action: () => go("#about"),
-      },
+      // Navigate — in page order, and the only place every section is listed:
+      // the nav bar carries four of these, this carries all of them.
       {
         id: "nav-featured",
         label: t("featured"),
@@ -92,6 +86,27 @@ export function CommandPalette() {
         hint: "#work",
         group: navigate,
         action: () => go("#work"),
+      },
+      {
+        id: "nav-services",
+        label: t("services"),
+        hint: "#services",
+        group: navigate,
+        action: () => go("#services"),
+      },
+      {
+        id: "nav-process",
+        label: t("process"),
+        hint: "#process",
+        group: navigate,
+        action: () => go("#process"),
+      },
+      {
+        id: "nav-about",
+        label: t("about"),
+        hint: "#about",
+        group: navigate,
+        action: () => go("#about"),
       },
       {
         id: "nav-stack",

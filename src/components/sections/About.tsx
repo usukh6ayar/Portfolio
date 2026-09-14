@@ -178,7 +178,9 @@ export function About() {
     <section
       id="about"
       ref={rootRef}
-      className="relative z-0 scroll-mt-[var(--nav-height)] bg-background pb-[var(--section-y)] pt-2 sm:pt-4"
+      // Sits below the work now, so it opens on a rule like the sections
+      // around it rather than running straight out of the hero.
+      className="relative z-0 scroll-mt-[var(--nav-height)] border-t border-border bg-background py-[var(--section-y)]"
       aria-labelledby="about-heading"
     >
       <div className="container-page">

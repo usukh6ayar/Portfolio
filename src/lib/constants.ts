@@ -9,11 +9,15 @@ export const SITE = {
   url: "https://usukhbayar.dev",
 } as const;
 
-/** Nav hrefs only — labels come from i18n keys `nav.*` */
+/**
+ * Nav hrefs only — labels come from i18n keys `nav.*`. In page order, and
+ * capped at four: Capabilities (`#stack`) is reachable by scrolling and from
+ * the command palette, and a fifth item costs more than it returns.
+ */
 export const NAV_ITEMS = [
-  { key: "about" as const, href: "#about" },
   { key: "work" as const, href: "#featured" },
-  { key: "stack" as const, href: "#stack" },
+  { key: "services" as const, href: "#services" },
+  { key: "about" as const, href: "#about" },
   { key: "contact" as const, href: "#contact" },
 ];
 
