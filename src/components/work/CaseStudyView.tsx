@@ -204,7 +204,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                             alt={`${title} — ${role.name}`}
                             width={3200}
                             height={2075}
-                            quality={90}
+                            unoptimized
                             sizes="(max-width: 640px) 100vw, 420px"
                             className="h-auto w-full rounded-lg shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)]"
                           />

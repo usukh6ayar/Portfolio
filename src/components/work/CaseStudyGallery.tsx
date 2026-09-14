@@ -93,7 +93,7 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
                 className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
                 <TiltCard className="rounded-lg" max={8} lift={14}>
                   <Image src={shot.src} alt={`${alt} — ${caption}`} width={3200} height={2075}
-                    quality={90}
+                    unoptimized
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 480px"
                     className="h-auto w-full rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)]" />
                 </TiltCard>
@@ -174,7 +174,7 @@ function GalleryDialog({ images, index, alt, onClose, onStep, onJump, shots, pos
             className="gallery-shot h-[min(84dvh,58rem)] max-w-[92vw] shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         ) : (
           <Image src={shown.src} alt={`${alt} — ${caption}`} width={3200} height={2075}
-            quality={90}
+            unoptimized
             sizes="(max-width: 1280px) 94vw, 1400px" loading="eager"
             className="gallery-shot h-[min(88dvh,62rem)] w-auto max-w-[94vw] rounded-xl object-contain shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         )}

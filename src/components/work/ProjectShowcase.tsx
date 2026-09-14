@@ -95,7 +95,7 @@ export function ProjectShowcase({
                 width={3200}
                 height={2075}
                 preload={priority && panel.lead}
-                quality={90}
+                unoptimized
                 sizes={
                   size === "hero"
                     ? "(max-width: 768px) 60vw, (max-width: 1280px) 48vw, 640px"

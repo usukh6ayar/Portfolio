@@ -44,7 +44,8 @@ export function PhoneScreen({
         fill
         sizes={sizes}
         preload={preload}
-        quality={90}
+        // Served exactly as it sits in public/images/work — no second encode.
+        unoptimized
         className="object-cover"
       />
     </div>

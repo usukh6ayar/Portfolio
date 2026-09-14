@@ -9,8 +9,9 @@ import { cn } from "@/lib/cn";
  *
  * The tilt alone never reads as three-dimensional — a rotated flat image still
  * looks flat. What sells it is light: a specular sheen that slides across the
- * surface, a rim that brightens on the edge facing the pointer, and a contact
- * shadow on the page that swings the other way.
+ * surface, and a rim that brightens on the edge facing the pointer. The only
+ * shadow is the one the content itself casts, so nothing of a shape the image
+ * does not have ever appears outside it.
  *
  * Sheen and rim ride the *same* plane and the *same* corner radius as the
  * content. Drawn on the card plane instead, they parallax away from the image
@@ -38,7 +39,6 @@ export function TiltCard({
   const card = useRef<HTMLDivElement>(null);
   const rim = useRef<HTMLDivElement>(null);
   const sheen = useRef<HTMLDivElement>(null);
-  const shadow = useRef<HTMLDivElement>(null);
   const rect = useRef<DOMRect | null>(null);
   const reduced = useReducedMotion();
 
@@ -54,10 +54,6 @@ export function TiltCard({
     }
     if (rim.current) rim.current.style.opacity = "0";
     if (sheen.current) sheen.current.style.opacity = "0";
-    if (shadow.current) {
-      shadow.current.style.opacity = "0.35";
-      shadow.current.style.transform = "translate3d(0, 0, 0) scale(0.92)";
-    }
   };
 
   const track = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -84,12 +80,6 @@ export function TiltCard({
         `radial-gradient(58% 78% at ${((x + 1) / 2) * 100}% ${((y + 1) / 2) * 100}%, ` +
         `rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.07) 38%, transparent 76%)`;
     }
-    if (shadow.current) {
-      // The cast shadow moves opposite the tilt and spreads as the card rises.
-      shadow.current.style.opacity = "0.6";
-      shadow.current.style.transform =
-        `translate3d(${-x * 26}px, ${-y * 12 + 14}px, 0) scale(1.02)`;
-    }
   };
 
   return (
@@ -105,17 +95,6 @@ export function TiltCard({
       onPointerCancel={rest}
     >
       <div
-        ref={shadow}
-        aria-hidden
-        className="pointer-events-none absolute inset-x-[6%] bottom-[2%] top-[16%] rounded-[40%] bg-black blur-2xl"
-        style={{
-          opacity: 0.35,
-          transform: "translate3d(0,0,0) scale(0.92)",
-          transition: "transform 260ms cubic-bezier(0.16,1,0.3,1), opacity 260ms ease-out",
-        }}
-      />
-
-      <div
         ref={card}
         // The radius chains down from the stage's own class, so the rim and
         // sheen below land on the content's corners, not a square bounding box.
@@ -125,8 +104,10 @@ export function TiltCard({
           transition: "transform 260ms cubic-bezier(0.16,1,0.3,1)",
         }}
       >
-        {/* Content floats above the card plane, so it parallaxes as it turns. */}
-        <div className="h-full [transform:translateZ(28px)] [transform-style:preserve-3d]">
+        {/* Kept on the card plane. A permanent translateZ magnifies the layer
+            and Chrome rasterises it once at that scale, which is a standing
+            blur on a screenshot whose whole job is legible UI. */}
+        <div className="h-full [transform-style:preserve-3d]">
           {children}
         </div>
 
@@ -137,7 +118,7 @@ export function TiltCard({
           <div
             ref={rim}
             aria-hidden
-            className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] opacity-0 [transform:translateZ(29px)]"
+            className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] opacity-0 [transform:translateZ(1px)]"
             style={{ transition: "opacity 260ms ease-out, box-shadow 260ms ease-out" }}
           >
             <div
