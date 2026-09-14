@@ -61,10 +61,13 @@ export function Navigation() {
       { id: "top", href: "#top" },
       { id: "featured", href: "#featured" },
       { id: "work", href: "#featured" },
-      { id: "services", href: "#services" },
-      { id: "process", href: "#services" },
+      { id: "experience", href: "#experience" },
+      { id: "stack", href: "#stack" },
+      // Services and Process are off the nav bar; they belong to the item
+      // above them so nothing un-highlights while scrolling past.
+      { id: "services", href: "#stack" },
+      { id: "process", href: "#stack" },
       { id: "about", href: "#about" },
-      { id: "stack", href: "#about" },
       { id: "contact", href: "#contact" },
     ]
       .map((item) => ({ ...item, element: document.getElementById(item.id) }))
