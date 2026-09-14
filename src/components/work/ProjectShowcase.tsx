@@ -12,6 +12,8 @@ type Panel = {
   src: string;
   className: string;
   lead?: boolean;
+  /** Crop the 100px transparent export gutter and its baked-in shadow. */
+  clipExportShadow?: boolean;
 };
 
 /**
@@ -46,8 +48,9 @@ const SHOWCASES: Record<
         key: "nomadkids-teacher",
         src: "/images/work/nomadkids-teacher.webp",
         className:
-          "left-1/2 top-[16%] z-10 w-[54%] -translate-x-1/2 shadow-[0_40px_90px_-40px_rgba(0,0,0,1)]",
+          "left-1/2 top-[16%] z-10 w-[54%] -translate-x-1/2",
         lead: true,
+        clipExportShadow: true,
       },
     ],
   },
@@ -103,6 +106,11 @@ export function ProjectShowcase({
                     : "(max-width: 1024px) 60vw, 380px"
                 }
                 className="h-auto w-full"
+                style={
+                  panel.clipExportShadow
+                    ? { clipPath: "inset(4.82% 3.125%)" }
+                    : undefined
+                }
               />
             </TiltCard>
           </div>
@@ -127,7 +135,12 @@ export function ProjectShowcase({
         )}
       </div>
 
-      <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted">
+      <ul
+        className={cn(
+          "flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted",
+          id === "nomadkids" ? "-mt-[6%]" : "mt-5",
+        )}
+      >
         {showcase.surfaces.map((surface) => (
           <li key={surface} className="flex items-center gap-2">
             <span aria-hidden className="h-1 w-1 rounded-full bg-accent/70" />
