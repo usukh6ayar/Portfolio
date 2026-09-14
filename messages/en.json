@@ -337,7 +337,7 @@
     }
   },
   "services": {
-    "label": "Services",
+    "label": "What I build",
     "headline": "What I build.",
     "intro": "Four things I've taken all the way to production. If your problem looks like one of these, I can tell you what it takes in a first call.",
     "offers": [
