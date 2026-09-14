@@ -5,6 +5,7 @@ import en from "../../messages/en.json";
 export const alt = en.meta.title;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const dynamic = "force-static";
 
 /**
  * The card every shared link renders. Generated from the same copy the page

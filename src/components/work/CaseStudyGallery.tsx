@@ -69,7 +69,7 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
               <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
                 onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
                 className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
-                <TiltCard className="flex h-[clamp(13rem,22vw,19rem)] items-center justify-center" max={10} lift={16} glare={false}>
+                <TiltCard className="flex h-[clamp(13rem,22vw,19rem)] items-center justify-center" max={10} lift={16}>
                   <PhoneScreen src={shot.src} alt={`${alt} — ${caption}`}
                     sizes="(max-width: 640px) 45vw, 240px"
                     className="h-full shadow-[0_26px_50px_-28px_rgba(0,0,0,0.95)]" />

@@ -11,13 +11,14 @@ import { SectionBridge } from "@/components/layout/SectionBridge";
 import { STACKED_ORDER } from "@/lib/projects";
 
 /**
- * Story: Hero → Work → Experience → Skills → Services → Process → About → Contact
+ * Story: Hero → Work → Experience → Services → Process → About → Skills → Contact
  *
  * Proof, then the record behind it, then what it buys you, then who I am.
  * About sits low deliberately: a stranger has no reason to care who I am until
  * they have seen something. Experience sits directly under the work because
  * "who paid him to do this" is the question that follows "what has he built".
- * Project sections use their own compact headings.
+ * Services appears before the tool list so visitors first understand what they
+ * can hire me for; implementation details stay as later supporting evidence.
  */
 export default function HomePage() {
   return (
@@ -33,14 +34,14 @@ export default function HomePage() {
 
       <Experience />
 
-      <Skills />
-
       <SectionBridge next="services" />
       <Services />
 
       <Process />
 
       <About />
+
+      <Skills />
 
       <SectionBridge next="contact" />
       <Contact />

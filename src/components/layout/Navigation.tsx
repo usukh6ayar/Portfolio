@@ -15,7 +15,7 @@ import { useApp } from "@/components/providers/AppProviders";
 
 /**
  * Sticky nav — editorial, near-invisible.
- * Usukhbayar · About Work Capabilities Contact · ● Open  МН
+ * Usukhbayar · Work Experience Services About Contact · ● Open  МН
  * Command palette: Cmd/Ctrl+K only (not shown in the bar).
  */
 export function Navigation() {
@@ -62,12 +62,12 @@ export function Navigation() {
       { id: "featured", href: "#featured" },
       { id: "work", href: "#featured" },
       { id: "experience", href: "#experience" },
-      { id: "stack", href: "#stack" },
-      // Services and Process are off the nav bar; they belong to the item
-      // above them so nothing un-highlights while scrolling past.
-      { id: "services", href: "#stack" },
-      { id: "process", href: "#stack" },
+      { id: "services", href: "#services" },
+      { id: "process", href: "#services" },
       { id: "about", href: "#about" },
+      // Skills supports the About story and stays available in the command
+      // palette without taking another primary-navigation slot.
+      { id: "stack", href: "#about" },
       { id: "contact", href: "#contact" },
     ]
       .map((item) => ({ ...item, element: document.getElementById(item.id) }))

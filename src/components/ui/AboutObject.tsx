@@ -1,29 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Edges } from "@react-three/drei";
 import * as THREE from "three";
 import { useTranslations } from "next-intl";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
-/**
- * Scroll progress through the section, 0 before it arrives and 1 once it has
- * passed. Written to a ref rather than state: nothing here re-renders.
- */
 function useScrollProgress(root: React.RefObject<HTMLElement | null>) {
   const progress = useRef(0);
 
   useEffect(() => {
-    const el = root.current;
-    if (!el) return;
+    const element = root.current;
+    if (!element) return;
+
     const read = () => {
-      const r = el.getBoundingClientRect();
-      const centre = r.top + r.height / 2;
-      progress.current = THREE.MathUtils.clamp(1 - centre / window.innerHeight, 0, 1);
+      const rect = element.getBoundingClientRect();
+      const centre = rect.top + rect.height / 2;
+      progress.current = THREE.MathUtils.clamp(
+        1 - centre / window.innerHeight,
+        0,
+        1,
+      );
     };
+
     read();
     window.addEventListener("scroll", read, { passive: true });
     window.addEventListener("resize", read, { passive: true });
@@ -36,25 +37,28 @@ function useScrollProgress(root: React.RefObject<HTMLElement | null>) {
   return progress;
 }
 
-/**
- * Pointer position over the element, in -1..1 on each axis. Null until the
- * pointer has actually been somewhere — a touch device never reports, and the
- * scene should not sit at a hard zero waiting for it.
- */
 function usePointer(root: React.RefObject<HTMLElement | null>) {
   const pointer = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const el = root.current;
-    if (!el) return;
+    const element = root.current;
+    if (!element) return;
+
     const read = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
-      const r = el.getBoundingClientRect();
-      pointer.current.x = THREE.MathUtils.clamp(((event.clientX - r.left) / r.width) * 2 - 1, -1, 1);
-      pointer.current.y = THREE.MathUtils.clamp(((event.clientY - r.top) / r.height) * 2 - 1, -1, 1);
+      const rect = element.getBoundingClientRect();
+      pointer.current.x = THREE.MathUtils.clamp(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -1,
+        1,
+      );
+      pointer.current.y = THREE.MathUtils.clamp(
+        ((event.clientY - rect.top) / rect.height) * 2 - 1,
+        -1,
+        1,
+      );
     };
-    // On window, not the canvas: the parallax should answer to the whole
-    // section the visual sits in, not only the pixels it covers.
+
     window.addEventListener("pointermove", read, { passive: true });
     return () => window.removeEventListener("pointermove", read);
   }, [root]);
@@ -62,188 +66,140 @@ function usePointer(root: React.RefObject<HTMLElement | null>) {
   return pointer;
 }
 
-const CORE = "#3d4552";
-const CORE_EDGE = "#b8f300";
-const SHELL_EDGE = "#6b7686";
-const NODE = "#333a46";
-const LINK = "#6b7686";
-
-type Node = {
-  position: THREE.Vector3;
-  /** Radius of the node's own slow orbit around its resting point. */
-  drift: number;
-  phase: number;
-  size: number;
-  /** The few that carry the accent — the rest stay grey. */
-  lit: boolean;
-};
+const ACCENT = "#b8f300";
+const VIOLET = "#a78bfa";
+const METAL = "#252a31";
+const RING = "#707a89";
 
 /**
- * Nodes on two shells around the centre, placed on a Fibonacci sphere so they
- * distribute evenly without clumping, then pulled off it slightly so the
- * arrangement reads as designed rather than generated.
+ * A continuous product loop rather than a generic node network. The knot is
+ * one unbroken surface (product ownership end to end); the three orbiting
+ * signals stand for interface, system and delivery moving around one core.
  */
-function buildNodes(count: number): Node[] {
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  return Array.from({ length: count }, (_, i) => {
-    const y = 1 - (i / (count - 1)) * 2;
-    const radius = Math.sqrt(Math.max(0, 1 - y * y));
-    const theta = golden * i;
-    // Two shells, alternating, so the field has depth rather than a single skin.
-    const shell = i % 3 === 0 ? 2.75 : 2.1;
-    return {
-      position: new THREE.Vector3(
-        Math.cos(theta) * radius * shell,
-        y * shell * 0.72,
-        Math.sin(theta) * radius * shell,
-      ),
-      drift: 0.05 + (i % 4) * 0.02,
-      phase: i * 1.7,
-      size: i % 5 === 0 ? 0.085 : 0.055,
-      lit: i % 7 === 0,
-    };
-  });
-}
-
-/**
- * The centre, and everything wired to it.
- *
- * An octahedron core inside a larger wireframe shell, nodes distributed around
- * both, and a line from the core out to every node with a few node-to-node
- * links across the field. It turns slowly on its own and leans a little toward
- * the pointer; scrolling opens the field outward.
- */
-function System({
+function ProductLoop({
   progress,
   pointer,
-  nodeCount,
 }: {
   progress: React.RefObject<number>;
   pointer: React.RefObject<{ x: number; y: number }>;
-  nodeCount: number;
 }) {
-  const group = useRef<THREE.Group>(null);
-  const field = useRef<THREE.Group>(null);
-  const core = useRef<THREE.Group>(null);
-  const shell = useRef<THREE.Mesh>(null);
-  const nodeRefs = useRef<(THREE.Mesh | null)[]>([]);
-  const eased = useRef(0);
+  const root = useRef<THREE.Group>(null);
+  const knot = useRef<THREE.Group>(null);
+  const rings = useRef<(THREE.Mesh | null)[]>([]);
+  const signals = useRef<(THREE.Mesh | null)[]>([]);
+  const easedProgress = useRef(0);
   const lean = useRef({ x: 0, y: 0 });
 
-  const nodes = useMemo(() => buildNodes(nodeCount), [nodeCount]);
-
-  /**
-   * Spokes from the centre, plus a chord between every node and the one three
-   * along — enough cross-linking to read as a network, far short of a mesh.
-   */
-  const links = useMemo(() => {
-    const points: THREE.Vector3[] = [];
-    for (const [i, node] of nodes.entries()) {
-      points.push(new THREE.Vector3(0, 0, 0), node.position.clone());
-      const across = nodes[(i + 3) % nodes.length];
-      if (i % 2 === 0) points.push(node.position.clone(), across.position.clone());
-    }
-    return new THREE.BufferGeometry().setFromPoints(points);
-  }, [nodes]);
-
-  useEffect(() => () => links.dispose(), [links]);
-
   useFrame(({ clock }, delta) => {
-    const g = group.current;
-    if (!g) return;
+    const group = root.current;
+    if (!group) return;
 
-    const p = progress.current ?? 0;
-    eased.current += (p - eased.current) * (1 - Math.exp(-4 * delta));
-    const s = eased.current;
-    const t = clock.getElapsedTime();
+    const time = clock.getElapsedTime();
+    const damping = 1 - Math.exp(-3.2 * delta);
+    const target = pointer.current;
 
-    // Pointer lean is damped hard and clamped small: it should register as
-    // depth, not as a thing being dragged around.
-    const target = pointer.current ?? { x: 0, y: 0 };
-    const k = 1 - Math.exp(-2.6 * delta);
-    lean.current.x += (target.y * 0.14 - lean.current.x) * k;
-    lean.current.y += (target.x * 0.22 - lean.current.y) * k;
+    lean.current.x += (target.y * 0.16 - lean.current.x) * damping;
+    lean.current.y += (target.x * 0.24 - lean.current.y) * damping;
+    easedProgress.current +=
+      (progress.current - easedProgress.current) *
+      (1 - Math.exp(-4 * delta));
 
-    g.rotation.x = lean.current.x + Math.sin(t * 0.21) * 0.03 - 0.06;
-    g.rotation.y = lean.current.y + t * 0.045;
-    g.position.y = (0.5 - s) * 0.22;
+    group.rotation.x = -0.18 + lean.current.x;
+    group.rotation.y = 0.18 + lean.current.y;
+    group.position.y = (0.5 - easedProgress.current) * 0.24;
+    group.scale.setScalar(0.94 + easedProgress.current * 0.06);
 
-    // The field opens as the section passes, and the whole thing eases closer.
-    if (field.current) {
-      const spread = 1 + s * 0.14;
-      field.current.scale.setScalar(spread);
+    if (knot.current) {
+      knot.current.rotation.x = time * 0.055;
+      knot.current.rotation.y = -time * 0.075;
+      knot.current.rotation.z = Math.sin(time * 0.28) * 0.08;
     }
 
-    if (core.current) {
-      core.current.rotation.y = -t * 0.13;
-      core.current.rotation.z = Math.sin(t * 0.24) * 0.06;
-    }
-    if (shell.current) {
-      shell.current.rotation.y = t * 0.08;
-      shell.current.rotation.x = Math.cos(t * 0.17) * 0.05;
-    }
+    rings.current.forEach((ring, index) => {
+      if (!ring) return;
+      ring.rotation.z = time * (index === 1 ? -0.055 : 0.04) + index * 1.9;
+    });
 
-    for (const [i, mesh] of nodeRefs.current.entries()) {
-      const node = nodes[i];
-      if (!mesh || !node) continue;
-      // Each node breathes on its own phase along its own resting direction.
-      const wobble = Math.sin(t * 0.55 + node.phase) * node.drift;
-      mesh.position.copy(node.position).multiplyScalar(1 + wobble * 0.12);
-      mesh.position.y += Math.sin(t * 0.4 + node.phase) * 0.03;
-    }
+    signals.current.forEach((signal, index) => {
+      if (!signal) return;
+      const speed = 0.22 + index * 0.035;
+      const phase = time * speed + index * (Math.PI * 2) / 3;
+      const radius = 2.35 + index * 0.08;
+      signal.position.set(
+        Math.cos(phase) * radius,
+        Math.sin(phase) * radius * 0.62,
+        Math.sin(phase * 1.35 + index) * 0.72,
+      );
+      signal.rotation.x = time * 0.25 + index;
+      signal.rotation.y = time * 0.32 - index;
+    });
   });
 
   return (
-    <group ref={group}>
-      <group ref={field}>
-        {/* Wireframe only: the shell is the idea of an enclosure, not a solid. */}
-        <mesh ref={shell}>
-          <icosahedronGeometry args={[1.5, 1]} />
-          <meshBasicMaterial wireframe color={SHELL_EDGE} transparent opacity={0.14} />
+    <group ref={root}>
+      <group ref={knot} rotation={[-0.12, 0.2, -0.2]}>
+        <mesh>
+          <torusKnotGeometry args={[1.24, 0.34, 192, 28, 2, 3]} />
+          <meshStandardMaterial color={METAL} roughness={0.3} metalness={0.82} />
         </mesh>
-
-        <group ref={core}>
-          <mesh>
-            <octahedronGeometry args={[0.78, 0]} />
-            <meshStandardMaterial color={CORE} roughness={0.42} metalness={0.35} />
-            <Edges threshold={15} color={CORE_EDGE} lineWidth={1.4} />
-          </mesh>
-        </group>
-
-        <lineSegments geometry={links}>
-          <lineBasicMaterial color={LINK} transparent opacity={0.2} />
-        </lineSegments>
-
-        {nodes.map((node, i) => (
-          <mesh
-            key={i}
-            ref={(el) => {
-              nodeRefs.current[i] = el;
-            }}
-            position={node.position}
-          >
-            <icosahedronGeometry args={[node.size, 0]} />
-            <meshStandardMaterial
-              color={NODE}
-              roughness={0.35}
-              metalness={0.4}
-              emissive={node.lit ? CORE_EDGE : "#000000"}
-              emissiveIntensity={node.lit ? 0.55 : 0}
-            />
-            <Edges threshold={15} color={node.lit ? CORE_EDGE : SHELL_EDGE} lineWidth={1} />
-          </mesh>
-        ))}
+        <mesh scale={1.006}>
+          <torusKnotGeometry args={[1.24, 0.34, 192, 28, 2, 3]} />
+          <meshBasicMaterial
+            color={ACCENT}
+            wireframe
+            transparent
+            opacity={0.18}
+          />
+        </mesh>
       </group>
+
+      {[
+        [Math.PI / 2.5, 0.1, 0],
+        [Math.PI / 2.8, Math.PI / 2.3, 0.35],
+      ].map((rotation, index) => (
+        <mesh
+          key={index}
+          ref={(element) => {
+            rings.current[index] = element;
+          }}
+          rotation={rotation as [number, number, number]}
+        >
+          <torusGeometry args={[2.18 + index * 0.25, 0.014, 8, 160]} />
+          <meshBasicMaterial
+            color={index === 0 ? RING : VIOLET}
+            transparent
+            opacity={index === 0 ? 0.36 : 0.22}
+          />
+        </mesh>
+      ))}
+
+      {[0, 1, 2].map((index) => (
+        <mesh
+          key={index}
+          ref={(element) => {
+            signals.current[index] = element;
+          }}
+        >
+          {index === 0 ? (
+            <octahedronGeometry args={[0.12, 0]} />
+          ) : index === 1 ? (
+            <boxGeometry args={[0.16, 0.16, 0.16]} />
+          ) : (
+            <icosahedronGeometry args={[0.11, 1]} />
+          )}
+          <meshStandardMaterial
+            color={index === 1 ? VIOLET : ACCENT}
+            emissive={index === 1 ? VIOLET : ACCENT}
+            emissiveIntensity={0.55}
+            roughness={0.28}
+            metalness={0.55}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }
 
-/**
- * The About section's object — a system and the things wired to it, built from
- * primitives so it carries the site's own palette and costs no downloaded
- * asset. The pointer leans it; scroll opens the field. Frozen flat under
- * reduced motion, and thinned out on small screens.
- */
 export function AboutObject({ className }: { className?: string }) {
   const t = useTranslations("about");
   const reduced = useReducedMotion();
@@ -255,18 +211,17 @@ export function AboutObject({ className }: { className?: string }) {
   return (
     <div ref={rootRef} className={cn("relative", className)}>
       <Canvas
-        camera={{ position: [0, 0, 7.4], fov: 34 }}
-        dpr={compact ? [1, 1.5] : [1, 1.75]}
+        camera={{ position: [0, 0, compact ? 8.4 : 7.6], fov: 34 }}
+        dpr={compact ? [1, 1.35] : [1, 1.65]}
         gl={{ antialias: true, alpha: true }}
         frameloop={reduced ? "demand" : "always"}
         aria-label={t("objectAlt")}
       >
-        <ambientLight intensity={1.15} />
-        {/* Key from the top right, acid bounce from below left, violet fill. */}
-        <directionalLight position={[3.5, 5, 3]} intensity={2.9} color="#ffffff" />
-        <directionalLight position={[-3.5, -2, 1.5]} intensity={1.9} color="#b8f300" />
-        <directionalLight position={[-2, 3, -3]} intensity={1.3} color="#a78bfa" />
-        <System progress={progress} pointer={pointer} nodeCount={compact ? 10 : 17} />
+        <ambientLight intensity={0.85} />
+        <directionalLight position={[3.5, 5, 4]} intensity={3.4} color="#ffffff" />
+        <directionalLight position={[-4, -2, 2]} intensity={2.2} color={ACCENT} />
+        <directionalLight position={[-2, 3, -4]} intensity={1.7} color={VIOLET} />
+        <ProductLoop progress={progress} pointer={pointer} />
       </Canvas>
     </div>
   );

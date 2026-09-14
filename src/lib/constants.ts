@@ -12,14 +12,14 @@ export const SITE = {
 /**
  * Nav hrefs only — labels come from i18n keys `nav.*`. In page order.
  *
- * Five is the ceiling. Services (`#services`) comes off the list rather than
- * Experience: a client who wants to know what I build reads it on the way
- * past, but "has anyone employed him" is a question they go looking for.
+ * Five is the ceiling. Skills remains discoverable in the page and command
+ * palette, while Services earns the primary-nav slot because it explains what
+ * a visitor can actually engage me to build.
  */
 export const NAV_ITEMS = [
   { key: "work" as const, href: "#featured" },
   { key: "experience" as const, href: "#experience" },
-  { key: "stack" as const, href: "#stack" },
+  { key: "services" as const, href: "#services" },
   { key: "about" as const, href: "#about" },
   { key: "contact" as const, href: "#contact" },
 ];

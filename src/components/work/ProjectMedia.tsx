@@ -6,13 +6,9 @@ import { cn } from "@/lib/cn";
 
 type ProjectMediaProps = {
   id: ProjectId;
-  title: string;
   className?: string;
   size?: "hero" | "card";
   priority?: boolean;
-  /** Accepted for call-site compatibility; the frameless composition has no
-   *  plate to hang an action label on. */
-  showAction?: boolean;
 };
 
 /**

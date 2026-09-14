@@ -59,8 +59,8 @@ type Principle = {
 };
 
 /**
- * About — editorial story before any work.
- * Portrait · Story · Timeline · Principles · Now
+ * About — the person and working principles behind the product proof.
+ * Product loop · Story · Timeline · Principles · Now
  */
 export function About() {
   const t = useTranslations("about");
@@ -185,7 +185,7 @@ export function About() {
     >
       <div className="container-page">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-20">
-          {/* —— Portrait —— */}
+          {/* —— Interactive product loop —— */}
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-[calc(var(--nav-height)+1.75rem)]">
               <div
@@ -214,7 +214,7 @@ export function About() {
                   {tCommon("location")}
                 </p>
                 <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
-                  {t("portraitMeta")}
+                  {t("objectMeta")}
                 </p>
               </div>
             </div>

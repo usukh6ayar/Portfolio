@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/constants";
 import { ALL_PROJECT_IDS, PROJECTS } from "@/lib/projects";
 
+export const dynamic = "force-static";
+
 /**
  * Three routes, generated from the registry so a new project appears here.
  * Paths come off `PROJECTS[id].href` — the same value the case study declares

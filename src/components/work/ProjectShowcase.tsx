@@ -109,7 +109,7 @@ export function ProjectShowcase({
 
         {showcase.phone && (
           <div className="absolute inset-y-[4%] left-1/2 z-10 flex -translate-x-1/2 justify-center hover:z-30">
-            <TiltCard className="h-full" max={9} lift={14} glare={false}>
+            <TiltCard className="h-full" max={9} lift={14}>
               <PhoneScreen
                 src={showcase.phone.src}
                 alt={t(showcase.phone.key)}

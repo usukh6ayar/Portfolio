@@ -131,7 +131,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
           </div>
         </header>
 
-        <ProjectMedia id={id} title={title} size="hero" priority showAction={false} />
+        <ProjectMedia id={id} size="hero" priority />
 
         <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-14">
           <aside>
