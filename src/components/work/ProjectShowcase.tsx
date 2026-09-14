@@ -86,9 +86,19 @@ export function ProjectShowcase({
     <div className="relative w-full">
       <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
         {showcase.panels.map((panel) => (
-          // The tilt supplies the lift; only the stacking order is left to CSS.
-          <div key={panel.key} className={cn("absolute hover:z-30", panel.className)}>
-            <TiltCard className="rounded-lg" max={7} lift={12}>
+          // The exported WebP already contains transparent breathing room and
+          // its own alpha shadow. Rear panels are dimmed so their white app
+          // canvas reads as depth, not as a pale block beside the lead shot.
+          <div
+            key={panel.key}
+            className={cn(
+              "absolute hover:z-30",
+              !panel.lead &&
+                "opacity-70 brightness-[0.62] saturate-[0.72] transition-[filter,opacity] duration-300 hover:opacity-90 hover:brightness-[0.78]",
+              panel.className,
+            )}
+          >
+            <TiltCard max={7} lift={12}>
               <Image
                 src={panel.src}
                 alt={t(panel.key)}
@@ -101,7 +111,7 @@ export function ProjectShowcase({
                     ? "(max-width: 768px) 60vw, (max-width: 1280px) 48vw, 640px"
                     : "(max-width: 1024px) 60vw, 380px"
                 }
-                className="h-auto w-full rounded-lg shadow-[0_34px_80px_-40px_rgba(0,0,0,0.95)]"
+                className="h-auto w-full"
               />
             </TiltCard>
           </div>
