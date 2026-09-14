@@ -72,7 +72,7 @@ export function CommandPalette() {
 
     return [
       // Navigate — in page order, and the only place every section is listed:
-      // the nav bar carries four of these, this carries all of them.
+      // the nav bar carries five of these, this carries all of them.
       {
         id: "nav-featured",
         label: t("featured"),
@@ -86,6 +86,13 @@ export function CommandPalette() {
         hint: "#work",
         group: navigate,
         action: () => go("#work"),
+      },
+      {
+        id: "nav-experience",
+        label: t("experience"),
+        hint: "#experience",
+        group: navigate,
+        action: () => go("#experience"),
       },
       {
         id: "nav-services",

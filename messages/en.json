@@ -6,8 +6,9 @@
   "nav": {
     "primary": "Primary",
     "work": "Work",
+    "experience": "Experience",
     "about": "About",
-    "stack": "Capabilities",
+    "stack": "Skills",
     "contact": "Contact",
     "openCommand": "Open command palette",
     "openMenu": "Open menu",
@@ -45,7 +46,7 @@
     "ctaWork": "See what I've shipped",
     "ctaContact": "Start a project",
     "scrollHint": "Scroll to explore",
-    "portraitMeta": "Full-Stack · Technical Lead"
+    "portraitMeta": "Full-Stack · Team Lead"
   },
   "about": {
     "label": "About",
@@ -92,19 +93,9 @@
         "detail": "Enrolled in CS at the National University of Mongolia."
       },
       {
-        "year": "2023",
-        "title": "First dev job",
-        "detail": "Joined Nomin Holding LLC as a mobile developer."
-      },
-      {
         "year": "2025",
         "title": "Went full-stack",
         "detail": "Focused on the product stack end to end — React, Next.js, React Native, TypeScript, and the backend behind them."
-      },
-      {
-        "year": "Today",
-        "title": "Architecture & leadership",
-        "detail": "At Aether Tech Core LLC, owning the path from system design to production while leading the team."
       }
     ],
     "stackMap": {
@@ -318,6 +309,33 @@
       }
     }
   },
+  "experience": {
+    "label": "Experience",
+    "headline": "Where the work was done.",
+    "intro": "Two employers, and what I was actually responsible for at each. The products above are the output of the first one.",
+    "roles": {
+      "aether": {
+        "period": "2026 — Present",
+        "company": "Aether Tech Core LLC",
+        "role": "Full-Stack Developer & Team Lead",
+        "detail": "Frontend, backend, APIs, databases and application architecture on production web and mobile products. I've led the development team on both — two of us on NomadKids, three on SparkXP — owning the technical decisions, the task breakdown, code review and the direction a build takes.",
+        "tech": [
+          "Next.js",
+          "React",
+          "React Native",
+          "TypeScript",
+          "NestJS",
+          "PostgreSQL"
+        ]
+      },
+      "nomin": {
+        "period": "2023",
+        "company": "Nomin Holding LLC",
+        "role": "Mobile Developer",
+        "detail": "My first developer job, working on mobile applications."
+      }
+    }
+  },
   "services": {
     "label": "Services",
     "headline": "What I build.",
@@ -374,29 +392,34 @@
     ]
   },
   "skills": {
-    "label": "Capabilities",
-    "headline": "The stack I use.",
-    "intro": "The tools I reach for, grouped by the job they do. Secondary to the work — but the question comes up, so here it is.",
+    "label": "Skills & stack",
+    "headline": "From interface to infrastructure.",
+    "intro": "What I work across to design, build and ship a product. The first line of each group is what I reach for by default; the rest is what the job has actually needed.",
+    "coreLabel": "Core",
     "groups": [
       {
         "index": "01",
-        "title": "Product Interfaces",
+        "title": "Frontend",
         "description": "Clear web product UI — flows, systems, and interfaces people can trust day to day.",
-        "tech": [
-          "React",
+        "core": [
           "Next.js",
-          "TypeScript",
+          "React",
+          "TypeScript"
+        ],
+        "tech": [
+          "JavaScript",
           "Tailwind CSS"
         ]
       },
       {
         "index": "02",
-        "title": "Mobile Products",
-        "description": "Cross-platform mobile apps with product-grade UX — booking, learning, and consumer flows.",
+        "title": "Mobile",
+        "description": "Cross-platform iOS and Android with product-grade UX — learning, booking and consumer flows.",
+        "core": [
+          "React Native"
+        ],
         "tech": [
-          "React Native",
           "Expo",
-          "TypeScript",
           "Redux",
           "Firebase",
           "Flutter"
@@ -404,18 +427,37 @@
       },
       {
         "index": "03",
-        "title": "Backend Systems",
-        "description": "APIs and data layers that support the product — enough backend to ship, not oversold specialization.",
+        "title": "Backend",
+        "description": "The API the product runs on: schema design, authentication and authorization, background jobs, integrations.",
+        "core": [
+          "NestJS"
+        ],
         "tech": [
           "Node.js",
-          "NestJS",
           "Express",
-          "PostgreSQL"
+          "REST APIs",
+          "Authentication"
         ]
       },
       {
         "index": "04",
-        "title": "Motion & UI Craft",
+        "title": "Data & infrastructure",
+        "description": "Where the data lives and how the product gets in front of people — deployed, backed up, and monitored.",
+        "core": [
+          "PostgreSQL"
+        ],
+        "tech": [
+          "Prisma",
+          "Redis",
+          "BullMQ",
+          "Cloudflare R2",
+          "Railway",
+          "Vercel"
+        ]
+      },
+      {
+        "index": "05",
+        "title": "Motion & UI craft",
         "description": "Intentional motion and interaction detail that reinforce hierarchy without noise.",
         "tech": [
           "GSAP",
@@ -531,8 +573,9 @@
     "groupActions": "Actions",
     "about": "About",
     "featured": "Featured Work",
+    "experience": "Experience",
     "work": "Selected Works",
-    "stack": "Capabilities",
+    "stack": "Skills & Stack",
     "contact": "Contact",
     "sparkxp": "SparkXP",
     "nomadkids": "NomadKids",

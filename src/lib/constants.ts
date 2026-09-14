@@ -10,13 +10,16 @@ export const SITE = {
 } as const;
 
 /**
- * Nav hrefs only — labels come from i18n keys `nav.*`. In page order, and
- * capped at four: Capabilities (`#stack`) is reachable by scrolling and from
- * the command palette, and a fifth item costs more than it returns.
+ * Nav hrefs only — labels come from i18n keys `nav.*`. In page order.
+ *
+ * Five is the ceiling. Services (`#services`) comes off the list rather than
+ * Experience: a client who wants to know what I build reads it on the way
+ * past, but "has anyone employed him" is a question they go looking for.
  */
 export const NAV_ITEMS = [
   { key: "work" as const, href: "#featured" },
-  { key: "services" as const, href: "#services" },
+  { key: "experience" as const, href: "#experience" },
+  { key: "stack" as const, href: "#stack" },
   { key: "about" as const, href: "#about" },
   { key: "contact" as const, href: "#contact" },
 ];

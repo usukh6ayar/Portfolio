@@ -14,6 +14,8 @@ type Capability = {
   index: string;
   title: string;
   description: string;
+  /** What I reach for by default — set in the foreground, ahead of the rest. */
+  core?: string[];
   tech: string[];
 };
 
@@ -121,8 +123,21 @@ export function Skills() {
                   <p className="max-w-[34rem] text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
                     {group.description}
                   </p>
-                  {Array.isArray(group.tech) && (
-                    <p className="mt-4 font-mono text-[0.65rem] tracking-wide text-muted/80">
+                  {Array.isArray(group.core) && group.core.length > 0 && (
+                    <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1.5 font-mono text-[0.78rem] tracking-wide text-foreground">
+                      <span className="text-[0.6rem] uppercase tracking-[0.16em] text-accent">
+                        {t("coreLabel")}
+                      </span>
+                      {group.core.join(" · ")}
+                    </p>
+                  )}
+                  {Array.isArray(group.tech) && group.tech.length > 0 && (
+                    <p
+                      className={cn(
+                        "font-mono text-[0.65rem] tracking-wide text-muted/80",
+                        group.core?.length ? "mt-2" : "mt-4",
+                      )}
+                    >
                       {group.tech.join(" · ")}
                     </p>
                   )}
