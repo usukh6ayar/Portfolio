@@ -14,8 +14,7 @@
     "closeMenu": "Close menu",
     "menu": "Menu",
     "statusOpen": "Open",
-    "services": "Services",
-    "process": "Process"
+    "services": "Services"
   },
   "lang": {
     "switcher": "Language",
@@ -519,7 +518,6 @@
       "success": "Thank you — that arrived. I'll come back to you within a day.",
       "error": "That didn't send. Email me directly at {email} and it will reach me.",
       "orEmail": "Or email me directly:",
-      "required": "Required",
       "mailtoSubject": "Project inquiry — {name}",
       "mailtoType": "Project type"
     }
