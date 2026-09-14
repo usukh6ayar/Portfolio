@@ -192,7 +192,7 @@
       "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
       "galleryNote": "Explore the product screens. Select an image for a closer look.",
       "sparkxp": {
-        "role": "Team lead · Full-stack · Mobile",
+        "role": "Team lead · Full-stack",
         "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
         "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
         "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API on PostgreSQL and Redis. Teachers get classes, join codes and assignments; the admin dashboard drives content, the AI generation pipelines, buddy configuration and plan limits.",
@@ -203,10 +203,19 @@
           "AI runs through a gateway rather than scattered SDK calls — Gemini for vocabulary generation, reading comprehension questions, the in-app dictionary and speech-to-text; OpenAI's Batch API for word and idiom imagery; ElevenLabs for pronunciation audio and lesson-video transcription; Azure for text-to-speech.",
           "The AI buddy is a real-time loop — speech in, model, speech out — with monthly voice and STT minutes enforced from the learner's plan, and generated speech cached so a repeated line costs nothing the second time.",
           "The buddy's 3D avatar is a rigged GLB uploaded through the admin dashboard to Cloudflare R2 and referenced by URL, so a new character ships without an app release. That same model is the fox watching your cursor on this site."
-        ]
+        ],
+        "ownership": {
+          "team": "Three developers, including me. Two built the mobile app while I took the backend and the dashboard.",
+          "owned": [
+            "The NestJS API, and the PostgreSQL and Redis behind it",
+            "The admin dashboard the content team works in day to day",
+            "The AI gateway — generation, speech, and the plan limits enforced against it",
+            "Production deployment: the API on Railway, the dashboard on Vercel"
+          ]
+        }
       },
       "nomadkids": {
-        "role": "Full-stack · Web",
+        "role": "Technical lead · Full-stack",
         "overview": "NomadKids is a digital portfolio for Mongolian kindergartens: teachers record observations and developmental assessments, parents follow their own child's progress and photographs, and administrators manage kindergartens, groups, and staff.",
         "problem": "Kindergartens track child development on paper. Records scatter when a child changes group, year, or kindergarten, and the family is left with nothing to keep. The client's brief also sets strict rules on who may see a child's data.",
         "solution": "A Next.js front end against a NestJS and Prisma API, with authorization enforced server-side per role and per child rather than in the UI — roles live on membership, so one person can be both a teacher and a parent. Sessions use same-site HttpOnly cookies, a short access token with a rotating refresh, and no token ever stored in localStorage. Photos live in a private Cloudflare R2 bucket behind presigned URLs, and reports are rendered as A4 Mongolian-Cyrillic PDFs by a Puppeteer worker pulling off a BullMQ queue.",
@@ -250,13 +259,26 @@
             "surface": null,
             "detail": "In development: the parent experience as a React Native app, so daily updates arrive where families already are."
           }
-        ]
+        ],
+        "ownership": {
+          "team": "Two developers, including me. I led the build and wrote the specification the other worked against.",
+          "owned": [
+            "The architecture, and the written specification the team built against",
+            "The 28-table schema, with the authorization boundary designed into it rather than checked in the UI",
+            "The ESIS integration — 39 services against the ministry's v2 catalogue, chosen on least privilege",
+            "Deployment: nomadkids.mn, the API, the private media bucket, the content-security policy and HSTS"
+          ]
+        }
       },
       "contents": "On this page",
       "nextProject": "Next project",
       "roles": "Roles",
       "rolesNote": "Roles live on membership, not on the account — one person can be both a teacher and a parent, and every check runs server-side per role and per child.",
-      "statusNext": "In development"
+      "statusNext": "In development",
+      "ownership": "Role & ownership",
+      "ownershipRole": "Role",
+      "ownershipTeam": "Team",
+      "ownershipOwned": "Owned end to end"
     },
     "surfaces": {
       "app": "Mobile app",

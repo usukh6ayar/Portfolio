@@ -81,6 +81,14 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
   const roles = (tc.has(`${id}.roles`)
     ? (tc.raw(`${id}.roles`) as { name: string; detail: string; surface?: string | null }[])
     : []);
+  /**
+   * What I was, not what the product has — kept apart from `roles` above,
+   * which is the product's own cast of users.
+   */
+  const ownership = tc.raw(`${id}.ownership`) as {
+    team: string;
+    owned: string[];
+  };
   /** Back to the section this project actually lives in */
   const backHref = id === FEATURED_ID ? "/#featured" : "/#work";
 
@@ -89,6 +97,7 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
    *  leaves a hole in the sequence. */
   const sections: string[] = [
     "overview",
+    "ownership",
     ...(roles.length ? ["roles"] : []),
     "gallery",
     "highlights",
@@ -110,8 +119,11 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{t(`projects.${id}.summary`)}</p>
           </div>
           <div className="lg:pb-1">
+            {/* Weighted deliberately: what I was on this project should
+                register before the screenshots do. */}
             <p className="text-caption text-muted">{tc("role")}</p>
-            <p className="mt-2 text-sm leading-relaxed">{tc(`${id}.role`)}</p>
+            <p className="mt-2 font-display text-lg font-semibold tracking-tight text-foreground">{tc(`${id}.role`)}</p>
+            <p className="mt-2 max-w-[36ch] text-sm leading-relaxed text-muted">{ownership.team}</p>
             <ul className="mt-5 flex flex-wrap gap-2" aria-label={tc("stack")}>
               {stack.map((item) => <li key={item} className="rounded-md border border-border bg-surface-1 px-2.5 py-1 font-mono text-[0.6875rem] text-muted">{item}</li>)}
             </ul>
@@ -144,6 +156,35 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                   </div>
                 ))}
               </div>
+            </section>
+
+            {/* The audit's finding was that the leadership was real but only
+                ever stated inside prose. Scope is evidence; a title is not. */}
+            <section id="ownership" className="case-section" aria-labelledby="ownership-title">
+              <SectionTitle number={number("ownership")} title={tc("ownership")} id="ownership-title" />
+              <dl className="mt-6 divide-y divide-border rounded-xl border border-border bg-surface-1 px-5 sm:px-7">
+                <div className="grid gap-3 py-6 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+                  <dt className="text-sm font-medium">{tc("ownershipRole")}</dt>
+                  <dd className="text-sm leading-[1.85] text-muted">{tc(`${id}.role`)}</dd>
+                </div>
+                <div className="grid gap-3 py-6 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+                  <dt className="text-sm font-medium">{tc("ownershipTeam")}</dt>
+                  <dd className="text-sm leading-[1.85] text-muted">{ownership.team}</dd>
+                </div>
+                <div className="grid gap-3 py-6 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+                  <dt className="text-sm font-medium text-accent">{tc("ownershipOwned")}</dt>
+                  <dd>
+                    <ul className="space-y-3">
+                      {ownership.owned.map((item) => (
+                        <li key={item} className="flex gap-3 text-sm leading-[1.85] text-muted">
+                          <span aria-hidden className="mt-[0.7em] h-1 w-1 shrink-0 rounded-full bg-accent/70" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              </dl>
             </section>
 
             {roles.length > 0 ? (

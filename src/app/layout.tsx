@@ -75,6 +75,46 @@ const personJsonLd = {
   sameAs: SOCIAL_ITEMS.filter((item) => item.external).map((item) => item.href),
 };
 
+/**
+ * The same thing said the other way round: Person answers "who is this",
+ * ProfessionalService answers "what can I hire them for". The offers are read
+ * straight off the Services section, so the two cannot say different things.
+ */
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: `${SITE.name} — ${en.hero.roleLabel}`,
+  url: `${SITE.url}#services`,
+  description: en.services.intro,
+  provider: {
+    "@type": "Person",
+    name: SITE.name,
+    url: SITE.url,
+  },
+  areaServed: {
+    "@type": "Country",
+    name: "Mongolia",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Ulaanbaatar",
+    addressCountry: "MN",
+  },
+  email: `mailto:${SITE.email}`,
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: en.services.headline,
+    itemListElement: en.services.offers.map((offer) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: offer.title,
+        description: offer.detail,
+      },
+    })),
+  },
+};
+
 export const viewport: Viewport = {
   themeColor: "#0A0A0A",
   colorScheme: "dark",
@@ -98,6 +138,10 @@ export default function RootLayout({
           type="application/ld+json"
           // The payload is built from local constants, never user input.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
         />
         <AppProviders>
           <SkipLink />
