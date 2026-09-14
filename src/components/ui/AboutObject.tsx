@@ -1,25 +1,44 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
+import { Center, Text3D } from "@react-three/drei";
 import * as THREE from "three";
 import { useTranslations } from "next-intl";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
-function useScrollProgress(root: React.RefObject<HTMLElement | null>) {
+const FONT = "/fonts/helvetiker_bold.typeface.json";
+const WORD = Array.from("USUKHBAYAR");
+const CODE = [
+  "const craft = ['design', 'code', 'ship'];",
+  "const product = build({",
+  "  clarity: true,",
+  "  ownership: 'end-to-end',",
+  "});",
+  "ship(product);",
+];
+
+function smoothstep(start: number, end: number, value: number) {
+  const x = THREE.MathUtils.clamp((value - start) / (end - start), 0, 1);
+  return x * x * (3 - 2 * x);
+}
+
+function useScrollProgress(target: React.RefObject<HTMLElement | null>) {
   const progress = useRef(0);
 
   useEffect(() => {
-    const element = root.current;
+    const element = target.current;
     if (!element) return;
 
     const read = () => {
       const rect = element.getBoundingClientRect();
-      const centre = rect.top + rect.height / 2;
+      const start = window.innerHeight * 0.12;
+      const end = window.innerHeight * 0.88;
+      const distance = Math.max(1, rect.height + start - end);
       progress.current = THREE.MathUtils.clamp(
-        1 - centre / window.innerHeight,
+        (start - rect.top) / distance,
         0,
         1,
       );
@@ -32,16 +51,16 @@ function useScrollProgress(root: React.RefObject<HTMLElement | null>) {
       window.removeEventListener("scroll", read);
       window.removeEventListener("resize", read);
     };
-  }, [root]);
+  }, [target]);
 
   return progress;
 }
 
-function usePointer(root: React.RefObject<HTMLElement | null>) {
+function usePointer(target: React.RefObject<HTMLElement | null>) {
   const pointer = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const element = root.current;
+    const element = target.current;
     if (!element) return;
 
     const read = (event: PointerEvent) => {
@@ -61,167 +80,287 @@ function usePointer(root: React.RefObject<HTMLElement | null>) {
 
     window.addEventListener("pointermove", read, { passive: true });
     return () => window.removeEventListener("pointermove", read);
-  }, [root]);
+  }, [target]);
 
   return pointer;
 }
 
-const ACCENT = "#b8f300";
-const VIOLET = "#a78bfa";
-const METAL = "#252a31";
-const RING = "#707a89";
+function drawCode(
+  context: CanvasRenderingContext2D,
+  visibleCharacters: number,
+  cursorVisible: boolean,
+) {
+  const { width, height } = context.canvas;
+  context.clearRect(0, 0, width, height);
 
-/**
- * A continuous product loop rather than a generic node network. The knot is
- * one unbroken surface (product ownership end to end); the three orbiting
- * signals stand for interface, system and delivery moving around one core.
- */
-function ProductLoop({
+  const lineHeight = 66;
+  const topBaseline = 74;
+  const bottomBaseline = 610;
+  let remaining = visibleCharacters;
+  let cursorX = 116;
+  let cursorY = topBaseline;
+
+  CODE.forEach((line, index) => {
+    const row = index < 3 ? index : index - 3;
+    const y =
+      (index < 3 ? topBaseline : bottomBaseline) + row * lineHeight;
+    const shown = line.slice(0, Math.max(0, remaining));
+
+    context.font = "500 25px ui-monospace, SFMono-Regular, Menlo, monospace";
+    context.fillStyle = "rgba(245, 245, 240, 0.23)";
+    context.textAlign = "right";
+    context.fillText(String(index + 1).padStart(2, "0"), 82, y);
+
+    context.font = "600 31px ui-monospace, SFMono-Regular, Menlo, monospace";
+    context.textAlign = "left";
+    context.fillStyle =
+      index === CODE.length - 1
+        ? "rgba(184, 243, 0, 0.74)"
+        : index === 3
+          ? "rgba(167, 139, 250, 0.58)"
+          : "rgba(245, 245, 240, 0.52)";
+    context.fillText(shown, 116, y);
+
+    if (remaining >= 0 && remaining <= line.length) {
+      cursorX = 116 + context.measureText(shown).width + 7;
+      cursorY = y;
+    }
+    remaining -= line.length + 1;
+  });
+
+  if (cursorVisible) {
+    context.fillStyle = "rgba(184, 243, 0, 0.82)";
+    context.fillRect(cursorX, cursorY - 31, 4, 40);
+  }
+}
+
+function useCodeTexture() {
+  const surface = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1280;
+    canvas.height = 800;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas 2D is unavailable");
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    return { context, texture };
+  }, []);
+  const textureRef = useRef(surface.texture);
+
+  useEffect(() => () => surface.texture.dispose(), [surface]);
+
+  const redraw = useCallback(
+    (visibleCharacters: number, cursorVisible: boolean) => {
+      drawCode(surface.context, visibleCharacters, cursorVisible);
+      textureRef.current.needsUpdate = true;
+    },
+    [surface],
+  );
+
+  return { texture: surface.texture, redraw };
+}
+
+function KineticType({
   progress,
   pointer,
+  reduced,
 }: {
   progress: React.RefObject<number>;
   pointer: React.RefObject<{ x: number; y: number }>;
+  reduced: boolean;
 }) {
   const root = useRef<THREE.Group>(null);
-  const knot = useRef<THREE.Group>(null);
-  const rings = useRef<(THREE.Mesh | null)[]>([]);
-  const signals = useRef<(THREE.Mesh | null)[]>([]);
-  const easedProgress = useRef(0);
-  const lean = useRef({ x: 0, y: 0 });
+  const letters = useRef<Array<THREE.Group | null>>([]);
+  const codeMaterial = useRef<THREE.MeshBasicMaterial>(null);
+  const easedProgress = useRef(reduced ? 0.5 : 0);
+  const pointerLean = useRef({ x: 0, y: 0 });
+  const lastCodeFrame = useRef({ characters: -1, cursor: false });
+  const { texture, redraw } = useCodeTexture();
+  const totalCharacters = CODE.reduce(
+    (total, line) => total + line.length + 1,
+    0,
+  );
 
   useFrame(({ clock }, delta) => {
     const group = root.current;
     if (!group) return;
 
-    const time = clock.getElapsedTime();
-    const damping = 1 - Math.exp(-3.2 * delta);
-    const target = pointer.current;
-
-    lean.current.x += (target.y * 0.16 - lean.current.x) * damping;
-    lean.current.y += (target.x * 0.24 - lean.current.y) * damping;
+    const targetProgress = reduced ? 0.5 : progress.current;
     easedProgress.current +=
-      (progress.current - easedProgress.current) *
-      (1 - Math.exp(-4 * delta));
+      (targetProgress - easedProgress.current) * (1 - Math.exp(-5.4 * delta));
+    const p = easedProgress.current;
+    const assembled = reduced ? 1 : smoothstep(0.08, 0.36, p);
+    const scattered = reduced ? 0 : smoothstep(0.72, 0.96, p);
 
-    group.rotation.x = -0.18 + lean.current.x;
-    group.rotation.y = 0.18 + lean.current.y;
-    group.position.y = (0.5 - easedProgress.current) * 0.24;
-    group.scale.setScalar(0.94 + easedProgress.current * 0.06);
+    letters.current.forEach((letter, index) => {
+      if (!letter) return;
+      const centerX = (index - (WORD.length - 1) / 2) * 0.69;
+      const direction = index % 2 === 0 ? -1 : 1;
+      const vertical = ((index * 7) % 5) - 2;
+      const startX = centerX + direction * (1.9 + (index % 3) * 0.22);
+      const startY = vertical * 0.28;
+      const startZ = -1.2 - (index % 4) * 0.22;
+      const endX = centerX + direction * (2.8 + (index % 3) * 0.3);
+      const endY = -vertical * 0.32 + direction * 0.28;
+      const endZ = 0.9 + (index % 4) * 0.18;
 
-    if (knot.current) {
-      knot.current.rotation.x = time * 0.055;
-      knot.current.rotation.y = -time * 0.075;
-      knot.current.rotation.z = Math.sin(time * 0.28) * 0.08;
+      const settledX = THREE.MathUtils.lerp(startX, centerX, assembled);
+      const settledY = THREE.MathUtils.lerp(startY, 0, assembled);
+      const settledZ = THREE.MathUtils.lerp(startZ, 0, assembled);
+      letter.position.set(
+        THREE.MathUtils.lerp(settledX, endX, scattered),
+        THREE.MathUtils.lerp(settledY, endY, scattered),
+        THREE.MathUtils.lerp(settledZ, endZ, scattered),
+      );
+
+      const startTurn = direction * (Math.PI * 0.48 + index * 0.025);
+      const endTurn = -direction * (Math.PI * 0.56 + index * 0.02);
+      letter.rotation.set(
+        THREE.MathUtils.lerp(
+          THREE.MathUtils.lerp(vertical * 0.12, 0, assembled),
+          -vertical * 0.14,
+          scattered,
+        ),
+        THREE.MathUtils.lerp(
+          THREE.MathUtils.lerp(startTurn, 0, assembled),
+          endTurn,
+          scattered,
+        ),
+        THREE.MathUtils.lerp(
+          THREE.MathUtils.lerp(direction * 0.18, 0, assembled),
+          direction * 0.24,
+          scattered,
+        ),
+      );
+
+      const scale = THREE.MathUtils.lerp(
+        THREE.MathUtils.lerp(0.72, 1, assembled),
+        0.58,
+        scattered,
+      );
+      letter.scale.setScalar(scale);
+    });
+
+    const damping = 1 - Math.exp(-4 * delta);
+    pointerLean.current.x +=
+      (pointer.current.y * 0.045 - pointerLean.current.x) * damping;
+    pointerLean.current.y +=
+      (pointer.current.x * 0.075 - pointerLean.current.y) * damping;
+    group.rotation.x = pointerLean.current.x;
+    group.rotation.y = pointerLean.current.y;
+    group.position.y = Math.sin(clock.getElapsedTime() * 0.55) * 0.045;
+
+    const codeIn = smoothstep(0.28, 0.43, p);
+    const codeOut = smoothstep(0.67, 0.84, p);
+    if (codeMaterial.current) {
+      codeMaterial.current.opacity = reduced ? 0.72 : codeIn * (1 - codeOut);
     }
 
-    rings.current.forEach((ring, index) => {
-      if (!ring) return;
-      ring.rotation.z = time * (index === 1 ? -0.055 : 0.04) + index * 1.9;
-    });
-
-    signals.current.forEach((signal, index) => {
-      if (!signal) return;
-      const speed = 0.22 + index * 0.035;
-      const phase = time * speed + index * (Math.PI * 2) / 3;
-      const radius = 2.35 + index * 0.08;
-      signal.position.set(
-        Math.cos(phase) * radius,
-        Math.sin(phase) * radius * 0.62,
-        Math.sin(phase * 1.35 + index) * 0.72,
-      );
-      signal.rotation.x = time * 0.25 + index;
-      signal.rotation.y = time * 0.32 - index;
-    });
+    const typing = reduced ? 1 : smoothstep(0.3, 0.64, p);
+    const characters = Math.round(totalCharacters * typing);
+    const cursor = Math.floor(clock.getElapsedTime() * 2) % 2 === 0;
+    if (
+      characters !== lastCodeFrame.current.characters ||
+      cursor !== lastCodeFrame.current.cursor
+    ) {
+      redraw(characters, cursor);
+      lastCodeFrame.current = { characters, cursor };
+    }
   });
 
   return (
     <group ref={root}>
-      <group ref={knot} rotation={[-0.12, 0.2, -0.2]}>
-        <mesh>
-          <torusKnotGeometry args={[1.24, 0.34, 192, 28, 2, 3]} />
-          <meshStandardMaterial color={METAL} roughness={0.3} metalness={0.82} />
-        </mesh>
-        <mesh scale={1.006}>
-          <torusKnotGeometry args={[1.24, 0.34, 192, 28, 2, 3]} />
-          <meshBasicMaterial
-            color={ACCENT}
-            wireframe
-            transparent
-            opacity={0.18}
-          />
-        </mesh>
-      </group>
+      <mesh position={[0, 0, -0.35]} scale={[1.04, 1, 1]}>
+        <planeGeometry args={[7.5, 4.65]} />
+        <meshBasicMaterial
+          ref={codeMaterial}
+          map={texture}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
 
-      {[
-        [Math.PI / 2.5, 0.1, 0],
-        [Math.PI / 2.8, Math.PI / 2.3, 0.35],
-      ].map((rotation, index) => (
-        <mesh
-          key={index}
-          ref={(element) => {
-            rings.current[index] = element;
-          }}
-          rotation={rotation as [number, number, number]}
-        >
-          <torusGeometry args={[2.18 + index * 0.25, 0.014, 8, 160]} />
-          <meshBasicMaterial
-            color={index === 0 ? RING : VIOLET}
-            transparent
-            opacity={index === 0 ? 0.36 : 0.22}
-          />
-        </mesh>
-      ))}
-
-      {[0, 1, 2].map((index) => (
-        <mesh
-          key={index}
-          ref={(element) => {
-            signals.current[index] = element;
+      {WORD.map((letter, index) => (
+        <group
+          key={`${letter}-${index}`}
+          ref={(node) => {
+            letters.current[index] = node;
           }}
         >
-          {index === 0 ? (
-            <octahedronGeometry args={[0.12, 0]} />
-          ) : index === 1 ? (
-            <boxGeometry args={[0.16, 0.16, 0.16]} />
-          ) : (
-            <icosahedronGeometry args={[0.11, 1]} />
-          )}
-          <meshStandardMaterial
-            color={index === 1 ? VIOLET : ACCENT}
-            emissive={index === 1 ? VIOLET : ACCENT}
-            emissiveIntensity={0.55}
-            roughness={0.28}
-            metalness={0.55}
-          />
-        </mesh>
+          <Center>
+            <Text3D
+              font={FONT}
+              size={0.82}
+              height={0.18}
+              curveSegments={8}
+              bevelEnabled
+              bevelSize={0.018}
+              bevelThickness={0.025}
+              bevelSegments={3}
+            >
+              {letter}
+              <meshStandardMaterial
+                color={index === 0 || index === 5 ? "#b8f300" : "#f5f5f0"}
+                metalness={0.38}
+                roughness={0.28}
+              />
+            </Text3D>
+          </Center>
+        </group>
       ))}
     </group>
   );
 }
 
-export function AboutObject({ className }: { className?: string }) {
+export function AboutObject({
+  className,
+  sectionRef,
+}: {
+  className?: string;
+  sectionRef: React.RefObject<HTMLElement | null>;
+}) {
   const t = useTranslations("about");
   const reduced = useReducedMotion();
   const compact = useMediaQuery("(max-width: 640px)");
   const rootRef = useRef<HTMLDivElement>(null);
-  const progress = useScrollProgress(rootRef);
+  const progress = useScrollProgress(sectionRef);
   const pointer = usePointer(rootRef);
 
   return (
     <div ref={rootRef} className={cn("relative", className)}>
       <Canvas
-        camera={{ position: [0, 0, compact ? 8.4 : 7.6], fov: 34 }}
+        camera={{ position: [0, 0.1, 10.2], fov: 32 }}
         dpr={compact ? [1, 1.35] : [1, 1.65]}
         gl={{ antialias: true, alpha: true }}
         frameloop={reduced ? "demand" : "always"}
         aria-label={t("objectAlt")}
       >
-        <ambientLight intensity={0.85} />
-        <directionalLight position={[3.5, 5, 4]} intensity={3.4} color="#ffffff" />
-        <directionalLight position={[-4, -2, 2]} intensity={2.2} color={ACCENT} />
-        <directionalLight position={[-2, 3, -4]} intensity={1.7} color={VIOLET} />
-        <ProductLoop progress={progress} pointer={pointer} />
+        <ambientLight intensity={1.55} />
+        <directionalLight position={[4, 5, 5]} intensity={3.1} />
+        <directionalLight
+          position={[-4, 1, 3]}
+          intensity={1.15}
+          color="#b8f300"
+        />
+        <directionalLight
+          position={[1, 3, -4]}
+          intensity={0.85}
+          color="#a78bfa"
+        />
+        <Suspense fallback={null}>
+          <group scale={compact ? 0.78 : 1}>
+            <KineticType
+              progress={progress}
+              pointer={pointer}
+              reduced={reduced}
+            />
+          </group>
+        </Suspense>
       </Canvas>
     </div>
   );

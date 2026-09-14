@@ -17,7 +17,11 @@ const AboutObject = dynamic(
   { ssr: false },
 );
 
-function LazyObject() {
+function LazyObject({
+  sectionRef,
+}: {
+  sectionRef: React.RefObject<HTMLElement | null>;
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
 
@@ -42,7 +46,7 @@ function LazyObject() {
 
   return (
     <div ref={rootRef} className="absolute inset-0">
-      {near && <AboutObject className="h-full w-full" />}
+      {near && <AboutObject className="h-full w-full" sectionRef={sectionRef} />}
     </div>
   );
 }
@@ -185,28 +189,25 @@ export function About() {
     >
       <div className="container-page">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-20">
-          {/* —— Interactive product loop —— */}
+          {/* —— Scroll-controlled kinetic signature —— */}
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-[calc(var(--nav-height)+1.75rem)]">
+            <div className="relative lg:sticky lg:top-[var(--nav-height)] lg:flex lg:h-[calc(100svh-var(--nav-height))] lg:flex-col lg:justify-center">
               <div
                 ref={imageWrapRef}
                 // No frame: the object stands on the page, not in a card.
                 className={cn(
-                  "relative aspect-square w-full",
+                  "relative aspect-[4/3] w-full",
                   !reduced && "opacity-0",
                 )}
               >
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,rgba(184,243,0,0.05),transparent_70%)]"
-                />
-                <LazyObject />
+                <LazyObject sectionRef={rootRef} />
               </div>
 
               <div
                 data-about-text
                 className={cn(
                   "mt-4 flex items-center justify-between gap-4",
+                  "lg:absolute lg:inset-x-0 lg:bottom-4 lg:mt-0",
                   !reduced && "opacity-0",
                 )}
               >
