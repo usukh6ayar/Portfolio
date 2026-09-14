@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { GalleryImage } from "@/lib/projects";
-import { PHONE_CROPS, PhoneCutout, cropKey } from "@/components/work/PhoneCutout";
+import { PhoneScreen, shotKey, isPhoneShot } from "@/components/work/PhoneScreen";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { cn } from "@/lib/cn";
 
@@ -30,8 +30,8 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
   const shots = images
     .map((image, index) => ({ ...image, index }))
     .filter((image) => surface === "all" || image.surface === surface);
-  const phones = shots.filter((shot) => PHONE_CROPS[cropKey(shot.src)]);
-  const webs = shots.filter((shot) => !PHONE_CROPS[cropKey(shot.src)]);
+  const phones = shots.filter((shot) => isPhoneShot(shot.src));
+  const webs = shots.filter((shot) => !isPhoneShot(shot.src));
 
   const close = () => {
     setOpen(null);
@@ -63,15 +63,15 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
       {phones.length > 0 && (
         <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-4">
           {phones.map((shot) => {
-            const key = cropKey(shot.src);
+            const key = shotKey(shot.src);
             const caption = tg(`captions.${key}`);
             return (
               <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
                 onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
                 className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
                 <TiltCard className="flex h-[clamp(13rem,22vw,19rem)] items-center justify-center" max={10} lift={16} glare={false}>
-                  <PhoneCutout src={shot.src} alt={`${alt} — ${caption}`} crop={PHONE_CROPS[key]}
-                    sizes="(max-width: 640px) 45vw, 220px"
+                  <PhoneScreen src={shot.src} alt={`${alt} — ${caption}`}
+                    sizes="(max-width: 640px) 45vw, 240px"
                     className="h-full shadow-[0_26px_50px_-28px_rgba(0,0,0,0.95)]" />
                 </TiltCard>
                 <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.14em]">
@@ -86,13 +86,13 @@ export function CaseStudyGallery({ images, alt }: { images: GalleryImage[]; alt:
       {webs.length > 0 && (
         <div className={cn("grid grid-cols-1 gap-x-6 gap-y-9 sm:grid-cols-2", phones.length > 0 && "mt-10")}>
           {webs.map((shot) => {
-            const caption = tg(`captions.${cropKey(shot.src)}`);
+            const caption = tg(`captions.${shotKey(shot.src)}`);
             return (
               <button key={shot.src} type="button" aria-label={tg("open", { surface: caption })}
                 onClick={(event) => { openerRef.current = event.currentTarget; setOpen(shot.index); }}
                 className="group/shot block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-accent">
                 <TiltCard className="rounded-lg" max={8} lift={14}>
-                  <Image src={shot.src} alt={`${alt} — ${caption}`} width={1200} height={900}
+                  <Image src={shot.src} alt={`${alt} — ${caption}`} width={2400} height={1556}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 480px"
                     className="h-auto w-full rounded-lg shadow-[0_30px_70px_-40px_rgba(0,0,0,0.95)]" />
                 </TiltCard>
@@ -131,9 +131,9 @@ function GalleryDialog({ images, index, alt, onClose, onStep, onJump, shots, pos
   const tg = useTranslations("work.gallery");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const shown = images[index];
-  const key = cropKey(shown.src);
+  const key = shotKey(shown.src);
   const caption = tg(`captions.${key}`);
-  const crop = PHONE_CROPS[key];
+  const phone = isPhoneShot(shown.src);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -167,12 +167,12 @@ function GalleryDialog({ images, index, alt, onClose, onStep, onJump, shots, pos
       {/* Anywhere off the shot closes it — the controls stop the bubble. */}
       <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-3 sm:p-6"
         onClick={(event) => { if (event.target === event.currentTarget) close(); }}>
-        {crop ? (
-          <PhoneCutout src={shown.src} alt={`${alt} — ${caption}`} crop={crop} priority
-            sizes="(max-width: 1280px) 60vw, 640px"
+        {phone ? (
+          <PhoneScreen src={shown.src} alt={`${alt} — ${caption}`} priority
+            sizes="(max-width: 1280px) 40vw, 460px"
             className="gallery-shot h-[min(84dvh,58rem)] max-w-[92vw] shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         ) : (
-          <Image src={shown.src} alt={`${alt} — ${caption}`} width={1760} height={1320}
+          <Image src={shown.src} alt={`${alt} — ${caption}`} width={2400} height={1556}
             sizes="(max-width: 1280px) 94vw, 1400px" loading="eager"
             className="gallery-shot h-[min(88dvh,62rem)] w-auto max-w-[94vw] rounded-xl object-contain shadow-[0_50px_120px_-40px_rgba(0,0,0,1)]" />
         )}
@@ -185,7 +185,7 @@ function GalleryDialog({ images, index, alt, onClose, onStep, onJump, shots, pos
           <div role="tablist" aria-label={tg("filter")} className="flex flex-wrap items-center justify-center gap-1.5">
             {shots.map((shot, i) => (
               <button key={shot.src} type="button" role="tab" aria-selected={i === position}
-                aria-label={tg(`captions.${cropKey(shot.src)}`)}
+                aria-label={tg(`captions.${shotKey(shot.src)}`)}
                 onClick={() => onJump(i)}
                 className={cn("h-1.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
                   i === position ? "w-7 bg-accent" : "w-1.5 bg-white/25 hover:bg-white/50")} />

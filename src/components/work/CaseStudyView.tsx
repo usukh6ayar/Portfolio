@@ -161,13 +161,14 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                           <Image
                             src={shot.src}
                             alt={`${title} — ${role.name}`}
-                            width={1200}
-                            height={900}
+                            width={2400}
+                            height={1556}
                             sizes="(max-width: 640px) 100vw, 420px"
                             className="h-auto w-full rounded-lg shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)]"
                           />
                         ) : (
-                          <div className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-border">
+                          // Same box a shot would occupy, so the grid rows line up.
+                          <div className="flex aspect-[2400/1556] items-center justify-center rounded-lg border border-dashed border-border">
                             <span className="rounded-full border border-accent/30 px-3 py-1 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-accent">
                               {tc("statusNext")}
                             </span>

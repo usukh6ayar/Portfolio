@@ -3,19 +3,15 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { ProjectId } from "@/lib/projects";
-import { PHONE_CROPS, PhoneCutout } from "@/components/work/PhoneCutout";
+import { PhoneScreen } from "@/components/work/PhoneScreen";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { cn } from "@/lib/cn";
 
-/** The plate a single phone is cut out of, measured in PhoneCutout. */
-const PHONE_SRC = "/images/work/sparkxp-app-hero.webp";
-const PHONE_KEY = "sparkxp-app-home";
-
 type Panel = {
   key: string;
-  surface: string;
   src: string;
   className: string;
+  lead?: boolean;
 };
 
 /**
@@ -26,47 +22,48 @@ type Panel = {
  */
 const SHOWCASES: Record<
   ProjectId,
-  { phone?: boolean; surfaces: readonly string[]; panels: readonly Panel[] }
+  {
+    /** A device screen standing in front of the web panels. */
+    phone?: { key: string; src: string };
+    surfaces: readonly string[];
+    panels: readonly Panel[];
+  }
 > = {
-  sparkxp: {
-    phone: true,
-    surfaces: ["app", "landing", "admin"],
-    panels: [
-      {
-        key: "sparkxp-landing-hero",
-        surface: "landing",
-        src: "/images/work/sparkxp-landing-hero.webp",
-        className: "left-0 top-[8%] w-[46%] -rotate-[1.5deg]",
-      },
-      {
-        key: "sparkxp-admin-buddy",
-        surface: "admin",
-        src: "/images/work/sparkxp-admin-buddy.webp",
-        className: "right-0 top-[26%] w-[46%] rotate-[1.5deg]",
-      },
-    ],
-  },
   nomadkids: {
-    surfaces: ["director", "teacher", "cook", "parent"],
+    surfaces: ["director", "teacher", "cook", "accountant", "parent"],
     panels: [
       {
         key: "nomadkids-director",
-        surface: "director",
         src: "/images/work/nomadkids-director.webp",
-        className: "left-0 top-[4%] w-[44%] -rotate-[1.5deg]",
+        className: "left-0 top-[6%] w-[46%] -rotate-[1.5deg]",
       },
       {
         key: "nomadkids-cook",
-        surface: "cook",
         src: "/images/work/nomadkids-cook.webp",
-        className: "right-0 top-[22%] w-[44%] rotate-[1.5deg]",
+        className: "right-0 top-[24%] w-[46%] rotate-[1.5deg]",
       },
       {
         key: "nomadkids-teacher",
-        surface: "teacher",
         src: "/images/work/nomadkids-teacher.webp",
         className:
-          "left-1/2 top-[16%] z-10 w-[52%] -translate-x-1/2 shadow-[0_40px_90px_-40px_rgba(0,0,0,1)]",
+          "left-1/2 top-[16%] z-10 w-[54%] -translate-x-1/2 shadow-[0_40px_90px_-40px_rgba(0,0,0,1)]",
+        lead: true,
+      },
+    ],
+  },
+  sparkxp: {
+    phone: { key: "sparkxp-mobile-light", src: "/images/work/sparkxp-mobile-light.webp" },
+    surfaces: ["app", "landing", "admin"],
+    panels: [
+      {
+        key: "sparkxp-web-taniltsuulga",
+        src: "/images/work/sparkxp-web-taniltsuulga.webp",
+        className: "left-0 top-[10%] w-[48%] -rotate-[1.5deg]",
+      },
+      {
+        key: "sparkxp-admin-buddy",
+        src: "/images/work/sparkxp-admin-buddy.webp",
+        className: "right-0 top-[26%] w-[48%] rotate-[1.5deg]",
       },
     ],
   },
@@ -85,32 +82,23 @@ export function ProjectShowcase({
   const ts = useTranslations("work.surfaces");
   const showcase = SHOWCASES[id];
 
-  // The tilt supplies the lift; only the stacking order is left to CSS.
-  const lift = "hover:z-30";
-
   return (
     <div className="relative w-full">
       <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
         {showcase.panels.map((panel) => (
-          <div
-            key={panel.key}
-            className={cn("absolute", lift, panel.className)}
-          >
+          // The tilt supplies the lift; only the stacking order is left to CSS.
+          <div key={panel.key} className={cn("absolute hover:z-30", panel.className)}>
             <TiltCard className="rounded-lg" max={7} lift={12}>
               <Image
                 src={panel.src}
                 alt={t(panel.key)}
-                width={1200}
-                height={900}
-                priority={
-                  priority &&
-                  !showcase.phone &&
-                  panel.className.includes("z-10")
-                }
+                width={2400}
+                height={1556}
+                priority={priority && panel.lead}
                 sizes={
                   size === "hero"
-                    ? "(max-width: 768px) 60vw, (max-width: 1280px) 46vw, 620px"
-                    : "(max-width: 1024px) 60vw, 360px"
+                    ? "(max-width: 768px) 60vw, (max-width: 1280px) 48vw, 640px"
+                    : "(max-width: 1024px) 60vw, 380px"
                 }
                 className="h-auto w-full rounded-lg shadow-[0_34px_80px_-40px_rgba(0,0,0,0.95)]"
               />
@@ -119,22 +107,16 @@ export function ProjectShowcase({
         ))}
 
         {showcase.phone && (
-          <div
-            className={cn(
-              "absolute inset-y-[4%] left-1/2 z-10 flex -translate-x-1/2 justify-center",
-              lift,
-            )}
-          >
+          <div className="absolute inset-y-[4%] left-1/2 z-10 flex -translate-x-1/2 justify-center hover:z-30">
             <TiltCard className="h-full" max={9} lift={14} glare={false}>
-              <PhoneCutout
-                src={PHONE_SRC}
-                alt={t(PHONE_KEY)}
-                crop={PHONE_CROPS["sparkxp-app-hero"]}
+              <PhoneScreen
+                src={showcase.phone.src}
+                alt={t(showcase.phone.key)}
                 priority={priority}
                 sizes={
                   size === "hero"
-                    ? "(max-width: 1280px) 40vw, 420px"
-                    : "(max-width: 1024px) 40vw, 260px"
+                    ? "(max-width: 1280px) 34vw, 360px"
+                    : "(max-width: 1024px) 34vw, 220px"
                 }
                 className="h-full shadow-[0_30px_70px_-20px_rgba(0,0,0,0.95)]"
               />

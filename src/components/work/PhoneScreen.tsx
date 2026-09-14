@@ -1,0 +1,51 @@
+"use client";
+
+import Image from "next/image";
+import { cn } from "@/lib/cn";
+
+/** Device captures are raw screens — 1080×2341, no bezel drawn into them. */
+export const PHONE_RATIO = 1080 / 2341;
+
+export function isPhoneShot(src: string) {
+  return /-mobile-/.test(src);
+}
+
+/** The filename is the caption key: `/images/work/x.webp` → `x`. */
+export function shotKey(src: string) {
+  return src.split("/").pop()!.replace(/\.webp$/, "");
+}
+
+/**
+ * A phone screen standing on the page. The capture has no device frame, so the
+ * only thing added is the corner radius a phone actually has — no bezel, no
+ * plate, nothing between the screen and the background.
+ */
+export function PhoneScreen({
+  src,
+  alt,
+  sizes,
+  priority = false,
+  className,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn("relative overflow-hidden", className)}
+      style={{ aspectRatio: `${PHONE_RATIO}`, borderRadius: "11% / 5%" }}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        priority={priority}
+        className="object-cover"
+      />
+    </div>
+  );
+}

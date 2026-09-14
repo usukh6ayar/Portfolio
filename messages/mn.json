@@ -232,6 +232,11 @@
             "detail": "Гал тогоо бүхэлдээ: долоо хоногийн цэс, түүхий эд, порц тутмын илчлэгтэй технологийн карт, нөөцийн үлдэгдэл, хүнсний захиалга. Бүтээгдэхүүний төрөл, хоолны ангиллыг гараар бичихгүй — ESIS-ийн лавлахаас татаж авна."
           },
           {
+            "name": "Нягтлан",
+            "surface": "accountant",
+            "detail": "Цэцэрлэгийн өөрийн санхүүг хариуцна — санхүүжилт, нэхэмжлэл, ирцтэй тулгалт. Платформын орлогоос тусдаа, өөр хилийн цаана байдаг."
+          },
+          {
             "name": "Эцэг эх",
             "surface": "parent",
             "detail": "Зөвхөн өөрийн хүүхдийг хардаг — ахиц, зураг, тайлан. Хандалт нь хүүхэд тус бүрээр хязгаарлагдана."
@@ -256,7 +261,8 @@
       "teacher": "Багшийн хэсэг",
       "parent": "Эцэг эхийн хэсэг",
       "director": "Захирлын хэсэг",
-      "cook": "Гал тогооны хэсэг"
+      "cook": "Гал тогооны хэсэг",
+      "accountant": "Нягтлангийн хэсэг"
     },
     "buddy": {
       "label": "Хамтрагчийн аватар",
@@ -272,19 +278,18 @@
       "filter": "Зураг шүүх",
       "all": "Бүх зураг",
       "captions": {
-        "sparkxp-app-lessons": "Хичээл, суралцах зам",
-        "sparkxp-app-review": "Үгийн давтлага",
-        "sparkxp-app-buddychat": "AI хамтрагчтай яриа",
-        "sparkxp-app-quiz": "Дасгал, сорил",
-        "sparkxp-landing-hero": "Бүтээгдэхүүний танилцуулга",
-        "sparkxp-landing-pricing": "Багц, үнэ",
-        "sparkxp-admin-buddy": "Хамтрагчийн удирдлага",
-        "sparkxp-admin-usage": "Хэрэглээний самбар",
-        "nomadkids-parent": "Эцэг эхийн хэсэг",
-        "sparkxp-app-home": "Нүүр хуудас, AI хамтрагч",
         "nomadkids-director": "Удирдлагын самбар",
         "nomadkids-teacher": "Багшийн самбар",
-        "nomadkids-cook": "Технологийн карт"
+        "nomadkids-cook": "Гал тогоо, цэс",
+        "nomadkids-nyagtlan": "Санхүүжилт, нэхэмжлэл",
+        "nomadkids-parent": "Эцэг эхийн хэсэг",
+        "sparkxp-mobile-light": "Нүүр — гэгээн",
+        "sparkxp-mobile-dark": "Нүүр — бараан",
+        "sparkxp-mobile-buddy": "AI хамтрагч",
+        "sparkxp-web-taniltsuulga": "Танилцуулга хуудас",
+        "sparkxp-admin-lessons": "Хичээлийн удирдлага",
+        "sparkxp-admin-words": "Үгсийн сангийн урсгал",
+        "sparkxp-admin-buddy": "Buddy тохиргоо"
       }
     }
   },

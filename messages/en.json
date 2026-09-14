@@ -232,6 +232,11 @@
             "detail": "Owns the kitchen: the weekly menu, ingredients, and technology cards with calories per portion, stock levels and food orders. Product types and food categories are pulled from the ESIS reference catalogue rather than typed by hand."
           },
           {
+            "name": "Accountant",
+            "surface": "accountant",
+            "detail": "Owns the kindergarten’s own money — funding, invoices and reconciliation against attendance. Distinct from the platform’s revenue, which stays behind a separate boundary."
+          },
+          {
             "name": "Parent",
             "surface": "parent",
             "detail": "Follows their own child only — progress, photographs and reports, scoped per child by the authorization boundary."
@@ -256,7 +261,8 @@
       "teacher": "Teacher",
       "parent": "Parent",
       "director": "Director",
-      "cook": "Kitchen"
+      "cook": "Kitchen",
+      "accountant": "Accounting"
     },
     "buddy": {
       "label": "The buddy avatar",
@@ -272,19 +278,18 @@
       "filter": "Filter screenshots",
       "all": "All screens",
       "captions": {
-        "sparkxp-app-lessons": "Lessons & learning path",
-        "sparkxp-app-review": "Vocabulary review",
-        "sparkxp-app-buddychat": "AI buddy conversation",
-        "sparkxp-app-quiz": "Practice & quizzes",
-        "sparkxp-landing-hero": "Product introduction",
-        "sparkxp-landing-pricing": "Plans & pricing",
-        "sparkxp-admin-buddy": "Buddy management",
-        "sparkxp-admin-usage": "Usage dashboard",
-        "nomadkids-parent": "Parent experience",
-        "sparkxp-app-home": "Home & AI buddy",
         "nomadkids-director": "Management dashboard",
         "nomadkids-teacher": "Teacher dashboard",
-        "nomadkids-cook": "Technology cards"
+        "nomadkids-cook": "Kitchen & menu",
+        "nomadkids-nyagtlan": "Funding & invoices",
+        "nomadkids-parent": "Parent view",
+        "sparkxp-mobile-light": "Home — light",
+        "sparkxp-mobile-dark": "Home — dark",
+        "sparkxp-mobile-buddy": "AI buddy",
+        "sparkxp-web-taniltsuulga": "Product introduction",
+        "sparkxp-admin-lessons": "Lesson management",
+        "sparkxp-admin-words": "Vocabulary pipeline",
+        "sparkxp-admin-buddy": "Buddy configuration"
       }
     }
   },

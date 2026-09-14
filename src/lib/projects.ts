@@ -31,6 +31,7 @@ export type GalleryImage = {
     | "director"
     | "teacher"
     | "cook"
+    | "accountant"
     | "parent";
 };
 
@@ -49,8 +50,6 @@ export type ProjectLink = {
 export type ProjectMeta = {
   id: ProjectId;
   href: string;
-  /** Product screenshot — full bleed, not a device mock */
-  image: string | null;
   tone: "lime" | "violet" | "cool" | "warm" | "neutral";
   /** Case-study gallery — brand / in-app artwork, in display order */
   gallery?: GalleryImage[];
@@ -65,17 +64,15 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
   sparkxp: {
     id: "sparkxp",
     href: "/work/sparkxp",
-    image: "/images/work/sparkxp-app-hero.webp",
     tone: "violet",
     gallery: [
-      { src: "/images/work/sparkxp-app-lessons.webp", surface: "app" },
-      { src: "/images/work/sparkxp-app-review.webp", surface: "app" },
-      { src: "/images/work/sparkxp-app-buddychat.webp", surface: "app" },
-      { src: "/images/work/sparkxp-app-quiz.webp", surface: "app" },
-      { src: "/images/work/sparkxp-landing-hero.webp", surface: "landing" },
-      { src: "/images/work/sparkxp-landing-pricing.webp", surface: "landing" },
+      { src: "/images/work/sparkxp-mobile-light.webp", surface: "app" },
+      { src: "/images/work/sparkxp-mobile-dark.webp", surface: "app" },
+      { src: "/images/work/sparkxp-mobile-buddy.webp", surface: "app" },
+      { src: "/images/work/sparkxp-web-taniltsuulga.webp", surface: "landing" },
+      { src: "/images/work/sparkxp-admin-lessons.webp", surface: "admin" },
+      { src: "/images/work/sparkxp-admin-words.webp", surface: "admin" },
       { src: "/images/work/sparkxp-admin-buddy.webp", surface: "admin" },
-      { src: "/images/work/sparkxp-admin-usage.webp", surface: "admin" },
     ],
     links: [
       { kind: "live", href: "https://spark-xp-web.vercel.app" },
@@ -86,7 +83,6 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
   nomadkids: {
     id: "nomadkids",
     href: "/work/nomadkids",
-    image: null,
     tone: "cool",
     gallery: [
       // One board per role and nothing deeper: the detail screens gave away
@@ -94,6 +90,7 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
       { src: "/images/work/nomadkids-director.webp", surface: "director" },
       { src: "/images/work/nomadkids-teacher.webp", surface: "teacher" },
       { src: "/images/work/nomadkids-cook.webp", surface: "cook" },
+      { src: "/images/work/nomadkids-nyagtlan.webp", surface: "accountant" },
       { src: "/images/work/nomadkids-parent.webp", surface: "parent" },
     ],
     links: [
