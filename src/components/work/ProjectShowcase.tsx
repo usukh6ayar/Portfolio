@@ -86,19 +86,10 @@ export function ProjectShowcase({
     <div className="relative w-full">
       <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
         {showcase.panels.map((panel) => (
-          // The exported WebP already contains transparent breathing room and
-          // its own alpha shadow. Rear panels are dimmed so their white app
-          // canvas reads as depth, not as a pale block beside the lead shot.
-          <div
-            key={panel.key}
-            className={cn(
-              "absolute hover:z-30",
-              !panel.lead &&
-                "opacity-70 brightness-[0.62] saturate-[0.72] transition-[filter,opacity] duration-300 hover:opacity-90 hover:brightness-[0.78]",
-              panel.className,
-            )}
-          >
-            <TiltCard max={7} lift={12}>
+          // Keep the composition's positions, but use the exact same neutral
+          // tilt as the case-study gallery: no lighting or shadow treatment.
+          <div key={panel.key} className={cn("absolute hover:z-30", panel.className)}>
+            <TiltCard max={8} lift={14}>
               <Image
                 src={panel.src}
                 alt={t(panel.key)}
