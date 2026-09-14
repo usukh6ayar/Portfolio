@@ -92,9 +92,10 @@ export function ProjectShowcase({
               <Image
                 src={panel.src}
                 alt={t(panel.key)}
-                width={2400}
-                height={1556}
-                priority={priority && panel.lead}
+                width={3200}
+                height={2075}
+                preload={priority && panel.lead}
+                quality={90}
                 sizes={
                   size === "hero"
                     ? "(max-width: 768px) 60vw, (max-width: 1280px) 48vw, 640px"
@@ -112,7 +113,7 @@ export function ProjectShowcase({
               <PhoneScreen
                 src={showcase.phone.src}
                 alt={t(showcase.phone.key)}
-                priority={priority}
+                preload={priority}
                 sizes={
                   size === "hero"
                     ? "(max-width: 1280px) 34vw, 360px"

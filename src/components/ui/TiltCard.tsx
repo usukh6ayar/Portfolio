@@ -9,9 +9,12 @@ import { cn } from "@/lib/cn";
  *
  * The tilt alone never reads as three-dimensional — a rotated flat image still
  * looks flat. What sells it is light: a specular sheen that slides across the
- * surface, a rim that brightens on the edge facing the pointer, a contact
- * shadow on the page that swings the other way, and the content floating a
- * little above the card plane so it parallaxes against its own frame.
+ * surface, a rim that brightens on the edge facing the pointer, and a contact
+ * shadow on the page that swings the other way.
+ *
+ * Sheen and rim ride the *same* plane and the *same* corner radius as the
+ * content. Drawn on the card plane instead, they parallax away from the image
+ * under tilt and read as a square sheet of plastic floating around it.
  *
  * Transform-only, written straight to the nodes — no state, no re-render per
  * move. Flat under reduced motion; a touch device simply never hovers.
@@ -23,7 +26,7 @@ export function TiltCard({
   max = 8,
   /** How far the card rises toward the viewer while held. */
   lift = 14,
-  /** A rectangular sheen and rim — cut-out devices pass false. */
+  /** Sheen and rim, clipped to the card's radius — cut-out devices pass false. */
   glare = true,
 }: {
   children: ReactNode;
@@ -33,6 +36,7 @@ export function TiltCard({
   glare?: boolean;
 }) {
   const card = useRef<HTMLDivElement>(null);
+  const rim = useRef<HTMLDivElement>(null);
   const sheen = useRef<HTMLDivElement>(null);
   const shadow = useRef<HTMLDivElement>(null);
   const rect = useRef<DOMRect | null>(null);
@@ -47,8 +51,8 @@ export function TiltCard({
     if (card.current) {
       card.current.style.transform =
         "rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)";
-      card.current.style.boxShadow = "none";
     }
+    if (rim.current) rim.current.style.opacity = "0";
     if (sheen.current) sheen.current.style.opacity = "0";
     if (shadow.current) {
       shadow.current.style.opacity = "0.35";
@@ -65,10 +69,12 @@ export function TiltCard({
       card.current.style.transform =
         `rotateY(${x * max}deg) rotateX(${-y * max}deg) ` +
         `translateZ(${lift}px) scale(1.02)`;
+    }
+    if (rim.current) {
       // Rim light on the edge the pointer is over, as a light above it would.
-      card.current.style.boxShadow = glare
-        ? `inset ${-x * 10}px ${-y * 10}px 44px -22px rgba(255,255,255,0.26)`
-        : "none";
+      rim.current.style.opacity = "1";
+      rim.current.style.boxShadow =
+        `inset ${-x * 10}px ${-y * 10}px 44px -22px rgba(255,255,255,0.26)`;
     }
     if (sheen.current) {
       sheen.current.style.opacity = "1";
@@ -111,11 +117,12 @@ export function TiltCard({
 
       <div
         ref={card}
-        className="relative h-full [transform-style:preserve-3d]"
+        // The radius chains down from the stage's own class, so the rim and
+        // sheen below land on the content's corners, not a square bounding box.
+        className="relative h-full rounded-[inherit] [transform-style:preserve-3d]"
         style={{
           transform: "rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)",
-          transition:
-            "transform 260ms cubic-bezier(0.16,1,0.3,1), box-shadow 260ms ease-out",
+          transition: "transform 260ms cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         {/* Content floats above the card plane, so it parallaxes as it turns. */}
@@ -124,10 +131,14 @@ export function TiltCard({
         </div>
 
         {glare && (
-          // Clipped so the blur cannot bleed past the card's own edge.
+          // One layer for both: it carries the rim as an inset shadow and clips
+          // the sheen, and it rides just above the content so the light stays
+          // welded to the image rather than parallaxing off it.
           <div
+            ref={rim}
             aria-hidden
-            className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] [transform:translateZ(30px)]"
+            className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] opacity-0 [transform:translateZ(29px)]"
+            style={{ transition: "opacity 260ms ease-out, box-shadow 260ms ease-out" }}
           >
             <div
               ref={sheen}

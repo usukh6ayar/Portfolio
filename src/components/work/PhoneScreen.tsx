@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 
-/** Device captures are raw screens — 1080×2341, no bezel drawn into them. */
-export const PHONE_RATIO = 1080 / 2341;
+/** Device captures are raw screens — 1179×2556, no bezel drawn into them. */
+export const PHONE_RATIO = 1179 / 2556;
 
 export function isPhoneShot(src: string) {
   return /-mobile-/.test(src);
@@ -24,13 +24,13 @@ export function PhoneScreen({
   src,
   alt,
   sizes,
-  priority = false,
+  preload = false,
   className,
 }: {
   src: string;
   alt: string;
   sizes: string;
-  priority?: boolean;
+  preload?: boolean;
   className?: string;
 }) {
   return (
@@ -43,7 +43,8 @@ export function PhoneScreen({
         alt={alt}
         fill
         sizes={sizes}
-        priority={priority}
+        preload={preload}
+        quality={90}
         className="object-cover"
       />
     </div>

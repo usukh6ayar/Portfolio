@@ -208,7 +208,7 @@ export function Hero() {
                 alt={tAbout("portraitAlt")}
                 fill
                 sizes="(max-width: 1024px) 100vw, 46vw"
-                priority
+                preload
                 className="object-cover object-[center_22%]"
               />
               {/* A whisper of acid at the top corner so the frame belongs to
