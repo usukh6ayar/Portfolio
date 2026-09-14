@@ -496,25 +496,28 @@ The path from *interested* to *in touch* currently ends at a `mailto:`.
 
 ## T. Roadmap
 
+Status as of 2026-09-14: P0 and P1 are done in the codebase. The two items
+that are not repo work — 1 and 14, both on GitHub — are still open.
+
 ### P0 — this week (≈1 day, most of the gain)
 
-1. Fix git email attribution on GitHub *(2 minutes, highest ratio on the list)*
-2. Rewrite the hero — positioning, leadership, two CTAs
-3. Add `og:image`
-4. Promote NomadKids to `01`, one "Selected work" heading, both `h2`
-5. Replace "frontend and mobile" everywhere
-6. Rewrite the meta description
-7. Remove "open to full-stack roles" from the contact section
+1. ☐ Fix git email attribution on GitHub *(2 minutes, highest ratio on the list)* — **not repo work; still open**
+2. ☑ Rewrite the hero — positioning, leadership, two CTAs
+3. ☑ Add `og:image`
+4. ☑ Promote NomadKids to `01`, one "Selected work" heading, both `h2`
+5. ☑ Replace "frontend and mobile" everywhere
+6. ☑ Rewrite the meta description
+7. ☑ Remove "open to full-stack roles" from the contact section — and from About, where it had survived
 
 ### P1 — next two weeks
 
-8. Services section (copy in §I)
-9. Inquiry form with budget and timeline (§K)
-10. Role / Team / Ownership blocks in both case studies
-11. "How I work" — four steps
-12. `robots.txt`, `sitemap.xml`, JSON-LD, per-case-study metadata
-13. Sticky mobile CTA
-14. GitHub descriptions, topics, profile README, archive Photo-App
+8. ☑ Services section (copy in §I) — `Services.tsx`; Capabilities re-headlined so the two do not both say "What I build"
+9. ☑ Inquiry form with budget and timeline (§K) — posts to `NEXT_PUBLIC_FORM_ENDPOINT`; **set that variable to activate it**, otherwise it composes a mailto:
+10. ☑ Role / Team / Ownership blocks in both case studies — "Role & ownership", kept distinct from the product's own Roles section
+11. ☑ "How I work" — four steps
+12. ☑ `robots.txt`, `sitemap.xml`, JSON-LD, per-case-study metadata — `ProfessionalService` added; a generated card per case study
+13. ☑ Sticky mobile CTA
+14. ☐ GitHub descriptions, topics, profile README, archive Photo-App — **not repo work; still open**
 
 ### P2 — when there is time
 
