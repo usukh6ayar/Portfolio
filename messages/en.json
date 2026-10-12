@@ -333,7 +333,7 @@
         "period": "2023",
         "company": "Nomin Holding LLC",
         "role": "Mobile Developer",
-        "detail": "My first developer job. I worked on the company's occupational health and safety (OHS) mobile app, which moves safety information both ways: sending images, video and text in to OHS, and bringing OHS information back to the phone. I added new menus to the existing app and tracked down and fixed bugs across it.",
+        "detail": "My first developer job, on Employee v3 — Nomin's internal app where staff see their payroll information, attendance and more. I owned its occupational health and safety (OHS) section, which moves information both ways: sending images, video and text in to OHS, and bringing OHS information back to the phone. I also added new menus to the app and tracked down and fixed bugs across it.",
         "tech": [
           "React Native"
         ]
