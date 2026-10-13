@@ -193,22 +193,43 @@ function Rig({
   );
 }
 
+/**
+ * Where a searching fox looks: a quick turn, a hold, the next place. The rig's
+ * damping turns each jump into a head movement, so the holds read as looking.
+ */
+const SEARCH: [number, number][] = [
+  [-0.95, -0.1],
+  [0.9, -0.22],
+  [-0.4, 0.25],
+  [0.78, 0.08],
+  [0, -0.38],
+];
+const SEARCH_HOLD = 1.3;
+
+/** After this long without the pointer moving, a searching fox looks away again. */
+const SEARCH_RESUME_MS = 2600;
+
 /** Pointer position as -1..1 across the canvas, or a slow idle drift. */
 function Pointer({
   targetRef,
   idle,
+  search = false,
 }: {
   targetRef: React.RefObject<{ x: number; y: number }>;
   idle: boolean;
+  /** Look around instead of drifting, and go back to it when the pointer rests. */
+  search?: boolean;
 }) {
   const { gl } = useThree();
   const client = useRef<{ x: number; y: number } | null>(null);
+  const movedAt = useRef(0);
   const rect = useRef<DOMRect | null>(null);
 
   useEffect(() => {
     if (idle) return;
     const onMove = (e: PointerEvent) => {
       client.current = { x: e.clientX, y: e.clientY };
+      movedAt.current = performance.now();
     };
     // The canvas slides under a motionless cursor as the page scrolls, so the
     // cached rect is invalidated rather than measured on every frame.
@@ -228,14 +249,20 @@ function Pointer({
 
   useFrame(({ clock }) => {
     const at = client.current;
+    const resting = search && performance.now() - movedAt.current > SEARCH_RESUME_MS;
     // Until a pointer shows up — touch, or a visitor who has only scrolled —
     // the gaze wanders instead of staring blankly ahead.
-    if (idle || !at) {
+    if (idle || !at || resting) {
       const t = clock.getElapsedTime();
-      targetRef.current = {
-        x: Math.sin(t * 0.35) * 0.7,
-        y: Math.sin(t * 0.23) * 0.25,
-      };
+      if (search) {
+        const [x, y] = SEARCH[Math.floor(t / SEARCH_HOLD) % SEARCH.length];
+        targetRef.current = { x, y };
+      } else {
+        targetRef.current = {
+          x: Math.sin(t * 0.35) * 0.7,
+          y: Math.sin(t * 0.23) * 0.25,
+        };
+      }
       return;
     }
 
@@ -251,7 +278,17 @@ function Pointer({
   return null;
 }
 
-export function BuddyAvatar({ className }: { className?: string }) {
+export function BuddyAvatar({
+  className,
+  bare = false,
+  search = false,
+}: {
+  className?: string;
+  /** Just the fox: no frame, no backdrop, no caption. The caller sizes it. */
+  bare?: boolean;
+  /** Look around rather than drift, as on the 404 page. */
+  search?: boolean;
+}) {
   const t = useTranslations("work.buddy");
   const reduced = useReducedMotion();
   const targetRef = useRef({ x: 0, y: 0 });
@@ -268,6 +305,46 @@ export function BuddyAvatar({ className }: { className?: string }) {
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  const stage = (
+    <div
+      className={bare ? "relative h-full w-full" : "relative aspect-[4/3] w-full sm:aspect-[16/10]"}
+      onPointerEnter={() => {
+        hover.current = true;
+      }}
+      onPointerLeave={() => {
+        hover.current = false;
+      }}
+      onPointerDown={() => {
+        tapAt.current = performance.now();
+      }}
+    >
+      <Canvas
+        camera={{ position: [0, 0.08, 2.5], fov: 34 }}
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true }}
+        // A still model is the whole point under reduced motion: render once.
+        // Off screen there is nothing to animate, so stop drawing.
+        frameloop={reduced || !inView ? "demand" : "always"}
+      >
+        <ambientLight intensity={1.1} />
+        <directionalLight position={[2.5, 3, 2.5]} intensity={2.1} />
+        <directionalLight position={[-2.5, 1, -1.5]} intensity={0.6} color="#a78bfa" />
+        <Suspense fallback={null}>
+          <Rig targetRef={targetRef} reactions={{ hover, tapAt }} />
+          {!reduced && <Pointer targetRef={targetRef} idle={coarse} search={search} />}
+        </Suspense>
+      </Canvas>
+    </div>
+  );
+
+  if (bare) {
+    return (
+      <figure ref={figureRef} className={cn("relative", className)}>
+        {stage}
+      </figure>
+    );
+  }
 
   return (
     <figure
@@ -286,35 +363,7 @@ export function BuddyAvatar({ className }: { className?: string }) {
         }}
         aria-hidden
       />
-      <div
-        className="relative aspect-[4/3] w-full sm:aspect-[16/10]"
-        onPointerEnter={() => {
-          hover.current = true;
-        }}
-        onPointerLeave={() => {
-          hover.current = false;
-        }}
-        onPointerDown={() => {
-          tapAt.current = performance.now();
-        }}
-      >
-        <Canvas
-          camera={{ position: [0, 0.08, 2.5], fov: 34 }}
-          dpr={[1, 1.75]}
-          gl={{ antialias: true, alpha: true }}
-          // A still model is the whole point under reduced motion: render once.
-          // Off screen there is nothing to animate, so stop drawing.
-          frameloop={reduced || !inView ? "demand" : "always"}
-        >
-          <ambientLight intensity={1.1} />
-          <directionalLight position={[2.5, 3, 2.5]} intensity={2.1} />
-          <directionalLight position={[-2.5, 1, -1.5]} intensity={0.6} color="#a78bfa" />
-          <Suspense fallback={null}>
-            <Rig targetRef={targetRef} reactions={{ hover, tapAt }} />
-            {!reduced && <Pointer targetRef={targetRef} idle={coarse} />}
-          </Suspense>
-        </Canvas>
-      </div>
+      {stage}
       <figcaption className="relative border-t border-border px-5 py-3.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
         {reduced || coarse ? t("captionStatic") : t("caption")}
       </figcaption>

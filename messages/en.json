@@ -638,5 +638,13 @@
       "label": "How I work",
       "title": "Four steps, no surprises."
     }
+  },
+  "notFound": {
+    "title": "Spark looked everywhere.",
+    "body": "There's nothing at <path>{url}</path>. The page may have moved, or the link has a typo.",
+    "bodyNoPath": "This page doesn't exist. It may have moved, or the link has a typo.",
+    "code": "Error 404",
+    "home": "Back to the home page",
+    "work": "See the work"
   }
 }
