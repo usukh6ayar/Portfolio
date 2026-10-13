@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { MongolName } from "@/components/ui/MongolName";
 import { scrollToHash } from "@/components/providers/LenisProvider";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { PORTRAIT } from "@/lib/constants";
@@ -36,9 +37,10 @@ export function Hero() {
     const ctas = root.querySelectorAll<HTMLElement>("[data-hero-cta]");
     const foot = root.querySelectorAll<HTMLElement>("[data-hero-foot]");
     const portrait = root.querySelectorAll<HTMLElement>("[data-hero-portrait]");
+    const script = root.querySelectorAll<HTMLElement>("[data-hero-script]");
 
     if (reduced) {
-      gsap.set([intro, lines, body, ctas, foot, portrait], {
+      gsap.set([intro, lines, body, ctas, foot, portrait, script], {
         opacity: 1,
         y: 0,
         yPercent: 0,
@@ -62,6 +64,14 @@ export function Hero() {
         },
         0,
       )
+        // The name is written the way the script is: top to bottom, as the
+        // photograph settles.
+        .fromTo(
+          script,
+          { clipPath: "inset(0% 0% 100% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: 1.3, ease: "power2.inOut" },
+          0.5,
+        )
         .fromTo(
           intro,
           { opacity: 0, y: 14 },
@@ -226,6 +236,16 @@ export function Hero() {
                 aria-hidden
                 className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-transparent"
               />
+            </div>
+
+            {/* The same name in Mongolian script, set where the acid light
+                falls. The h1 already carries it for assistive technology. */}
+            <div
+              data-hero-script
+              aria-hidden
+              className="pointer-events-none absolute left-5 top-6 h-[38%] text-accent sm:left-7 sm:top-8"
+            >
+              <MongolName className="h-full w-auto" />
             </div>
 
             <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 px-5 pb-5 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted sm:px-6 sm:pb-6">
