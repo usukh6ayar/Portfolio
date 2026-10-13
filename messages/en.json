@@ -311,12 +311,12 @@
     },
     "reel": {
       "sparkxp": {
-        "app": "What students open every day: structured lessons, spaced-repetition vocabulary, XP and streaks, and an AI buddy for text and voice practice.",
-        "landing": "The public page that introduces the product before anyone signs in.",
-        "admin": "Where the content team works: lessons, vocabulary, the AI generation pipelines, buddy configuration and plan limits, all on the same API the app reads."
+        "app": "The student's home screen: assignments waiting, words due for review, a streak and XP, with lessons, tests and the AI buddy in the tab bar.",
+        "landing": "The public site, in Mongolian and English: features, how it works, pricing, and the download for iOS and Android.",
+        "admin": "Where the content team works: words, idioms, lessons, exercises, quizzes and IELTS material, alongside users, classes, schools and the AI buddy, all on the same API the app reads."
       }
     },
-    "reelIndex": "Who uses it"
+    "reelIndex": "Product surfaces"
   },
   "experience": {
     "label": "Experience",
