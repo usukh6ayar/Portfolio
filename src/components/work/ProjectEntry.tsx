@@ -27,6 +27,28 @@ const STEP = 0.7;
 
 type Role = { name: string; detail: string; surface?: string | null };
 
+let realignFrame = 0;
+
+/**
+ * Arriving on /#work or /#contact from another route, Next scrolls to the
+ * anchor before the pins exist; their spacers then push it down the page.
+ * Once every reel has built (one frame, however many there are), jump back.
+ */
+function realignToHash() {
+  if (realignFrame) cancelAnimationFrame(realignFrame);
+  realignFrame = requestAnimationFrame(() => {
+    realignFrame = 0;
+    const target = window.location.hash.length > 1
+      ? document.getElementById(window.location.hash.slice(1))
+      : null;
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - 80;
+    const lenis = (window as Window & { __lenis?: Lenis }).__lenis;
+    if (lenis) lenis.scrollTo(y, { immediate: true });
+    else window.scrollTo({ top: y });
+  });
+}
+
 /**
  * A project told through the people who use it. Each surface is shown at a
  * size where its interface can actually be read, one at a time, with a line
@@ -83,6 +105,7 @@ export function ProjectEntry({
 
     const mq = window.matchMedia(PIN_QUERY);
     let ctx: gsap.Context | null = null;
+    let first = true;
 
     const build = () => {
       ctx?.revert();
@@ -127,6 +150,9 @@ export function ProjectEntry({
 
       ScrollTrigger.sort();
       ScrollTrigger.refresh();
+      // Only on arrival — a language switch or resize must not move the reader.
+      if (first && mq.matches) realignToHash();
+      first = false;
     };
 
     build();
