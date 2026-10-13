@@ -7,6 +7,7 @@ import * as THREE from "three";
 import { useTranslations } from "next-intl";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useInView } from "@/hooks/useInView";
 import { cn } from "@/lib/cn";
 
 const FONT = "/fonts/helvetiker_bold.typeface.json";
@@ -330,6 +331,8 @@ export function AboutObject({
   const rootRef = useRef<HTMLDivElement>(null);
   const progress = useScrollProgress(sectionRef);
   const pointer = usePointer(rootRef);
+  // The canvas stays mounted once loaded; it only needs to draw while seen.
+  const inView = useInView(rootRef, "120px 0px");
 
   return (
     <div ref={rootRef} className={cn("relative", className)}>
@@ -337,7 +340,7 @@ export function AboutObject({
         camera={{ position: [0, 0.1, 10.2], fov: 32 }}
         dpr={compact ? [1, 1.35] : [1, 1.65]}
         gl={{ antialias: true, alpha: true }}
-        frameloop={reduced ? "demand" : "always"}
+        frameloop={reduced || !inView ? "demand" : "always"}
         aria-label={t("objectAlt")}
       >
         <ambientLight intensity={1.55} />

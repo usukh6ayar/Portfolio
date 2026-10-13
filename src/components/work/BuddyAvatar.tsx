@@ -6,6 +6,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useTranslations } from "next-intl";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useInView } from "@/hooks/useInView";
 import { cn } from "@/lib/cn";
 
 const MODEL = "/models/spark-fox.glb";
@@ -256,6 +257,8 @@ export function BuddyAvatar({ className }: { className?: string }) {
   const targetRef = useRef({ x: 0, y: 0 });
   const hover = useRef(false);
   const tapAt = useRef(0);
+  const figureRef = useRef<HTMLElement>(null);
+  const inView = useInView(figureRef, "120px 0px");
   const [coarse, setCoarse] = useState(false);
 
   useEffect(() => {
@@ -268,6 +271,7 @@ export function BuddyAvatar({ className }: { className?: string }) {
 
   return (
     <figure
+      ref={figureRef}
       className={cn(
         "relative overflow-hidden rounded-[1.5rem] border border-border bg-surface-1",
         "shadow-[0_24px_64px_-40px_rgba(0,0,0,0.65)]",
@@ -299,7 +303,8 @@ export function BuddyAvatar({ className }: { className?: string }) {
           dpr={[1, 1.75]}
           gl={{ antialias: true, alpha: true }}
           // A still model is the whole point under reduced motion: render once.
-          frameloop={reduced ? "demand" : "always"}
+          // Off screen there is nothing to animate, so stop drawing.
+          frameloop={reduced || !inView ? "demand" : "always"}
         >
           <ambientLight intensity={1.1} />
           <directionalLight position={[2.5, 3, 2.5]} intensity={2.1} />
