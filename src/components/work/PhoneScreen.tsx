@@ -25,12 +25,15 @@ export function PhoneScreen({
   alt,
   sizes,
   preload = false,
+  quality,
   className,
 }: {
   src: string;
   alt: string;
   sizes: string;
   preload?: boolean;
+  /** Set to resize through the image optimizer; omitted, the file is served as-is. */
+  quality?: number;
   className?: string;
 }) {
   return (
@@ -44,8 +47,10 @@ export function PhoneScreen({
         fill
         sizes={sizes}
         preload={preload}
-        // Served exactly as it sits in public/images/work — no second encode.
-        unoptimized
+        // Served exactly as it sits in public/images/work — no second encode —
+        // unless a caller asks for a resized copy.
+        unoptimized={quality === undefined}
+        quality={quality}
         className="object-cover"
       />
     </div>

@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   output: isSitesExport ? "export" : undefined,
   images: {
     unoptimized: isSitesExport,
+    // 90 keeps the small UI text in the work reel's screenshots crisp.
+    qualities: [75, 90],
   },
 };
 
