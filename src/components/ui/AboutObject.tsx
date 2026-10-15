@@ -11,8 +11,14 @@ import { useInView } from "@/hooks/useInView";
 import { MONGOL_NAME } from "@/lib/mongol-name";
 import { cn } from "@/lib/cn";
 
-/** Font units → scene units: the word stands just under the frame's height. */
-const UNIT = 4.9 / MONGOL_NAME.height;
+/** Font units → scene units: the word fills most of the frame's height. */
+const UNIT = 5.3 / MONGOL_NAME.height;
+/**
+ * The stem every letter hangs from sits this far right of the word's centre,
+ * in font units. The word turns about the stem, so it spins in place rather
+ * than sweeping from side to side.
+ */
+const STEM_X = 72;
 /** Extrusion in font units; a stroke is ~70, so the letters read as solid. */
 const DEPTH = 150;
 /** Idle turn, radians per second. */
@@ -175,7 +181,7 @@ function SpinningName({
         <mesh
           key={index}
           geometry={geometries[index]}
-          position={[glyph.x * UNIT, glyph.y * UNIT, 0]}
+          position={[(glyph.x - STEM_X) * UNIT, glyph.y * UNIT, 0]}
           scale={UNIT}
         >
           <meshStandardMaterial
@@ -218,7 +224,7 @@ export function AboutObject({ className }: { className?: string }) {
         <directionalLight position={[4, 5, 5]} intensity={2.6} />
         <directionalLight position={[-4, 1, -5]} intensity={1.2} />
         <Suspense fallback={null}>
-          <group scale={compact ? 0.78 : 1}>
+          <group scale={compact ? 0.94 : 1}>
             <SpinningName drag={drag} reduced={reduced} />
           </group>
         </Suspense>

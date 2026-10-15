@@ -192,7 +192,7 @@ export function About() {
                 ref={imageWrapRef}
                 // No frame: the object stands on the page, not in a card.
                 className={cn(
-                  "relative mx-auto aspect-square w-full max-w-[30rem] lg:aspect-auto lg:h-[68svh] lg:max-w-none",
+                  "relative mx-auto aspect-[4/5] w-full max-w-[30rem] lg:aspect-auto lg:h-[78svh] lg:max-w-none",
                   !reduced && "opacity-0",
                 )}
               >
