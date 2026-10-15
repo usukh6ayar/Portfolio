@@ -83,7 +83,7 @@ Implemented and present in the codebase:
 | Work reel | Each project's surfaces shown one at a time at readable size. Fine-pointer desktops pin the scene and scroll through it; touch, short screens and reduced motion get a native swipe strip |
 | Case study routes | Static `/work/[slug]` pages for each registered project, with a filterable screenshot gallery and lightbox |
 | 404 page | Spark searches for the missing page, watches the pointer when it moves, and the page names the address that failed |
-| 3D scenes | The name in Mongolian script, extruded and assembling on scroll, in About; the SparkXP buddy avatar (rigged GLB) on its case study. Loaded only near the viewport, and stop drawing when off screen |
+| 3D scenes | The name in Mongolian script, extruded in white, turning and draggable, in About; the SparkXP buddy avatar (rigged GLB) on its case study. Loaded only near the viewport, and stop drawing when off screen |
 | Inquiry form | Project type, budget and timeline; posts to `NEXT_PUBLIC_FORM_ENDPOINT` when set, otherwise composes a `mailto:` |
 | Session-only preloader | Full 000–100 sequence once per browser session |
 | Custom cursor | Fine-pointer devices only; transform-only tracking |

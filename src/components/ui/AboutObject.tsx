@@ -15,92 +15,83 @@ import { cn } from "@/lib/cn";
 const UNIT = 4.9 / MONGOL_NAME.height;
 /** Extrusion in font units; a stroke is ~70, so the letters read as solid. */
 const DEPTH = 150;
-/** The first letter of each half of the name — өсөх, баяр — is lit acid. */
-const ACCENT = new Set([0, 4]);
-/** Resting turn, so the extrusion shows even before the pointer moves. */
-const REST_TURN = -0.34;
+/** Idle turn, radians per second. */
+const SPIN = 0.45;
+/** Radians of turn per pixel dragged. */
+const DRAG = 0.009;
+/** How far the word may be tipped toward or away from the viewer. */
+const MAX_TILT = 0.5;
 
-function smoothstep(start: number, end: number, value: number) {
-  const x = THREE.MathUtils.clamp((value - start) / (end - start), 0, 1);
-  return x * x * (3 - 2 * x);
-}
+type Drag = {
+  active: boolean;
+  /** Turn and tilt the pointer has added in all, ever; frames read the change. */
+  turn: number;
+  tilt: number;
+  /** Radians per second the turn carries on with after a release. */
+  velocity: number;
+};
 
 /**
- * 0 → 1 through the scroll. "section": across the whole About section, for
- * the desktop layout where the object is pinned beside it. "element": as the
- * object itself crosses the viewport, for the stacked layout, where the object
- * scrolls away long before the section ends and would never be seen whole.
+ * Drag to turn the word. Horizontal drags spin it, vertical ones tip it. On
+ * touch only the horizontal drag is taken — `touch-action: pan-y` on the
+ * element leaves the vertical one to scroll the page.
  */
-function useScrollProgress(
-  target: React.RefObject<HTMLElement | null>,
-  mode: "section" | "element",
-) {
-  const progress = useRef(0);
+function useDrag(target: React.RefObject<HTMLElement | null>) {
+  const drag = useRef<Drag>({ active: false, turn: 0, tilt: 0, velocity: 0 });
 
   useEffect(() => {
     const element = target.current;
     if (!element) return;
+    let lastX = 0;
+    let lastY = 0;
+    let lastTime = 0;
 
-    const read = () => {
-      const rect = element.getBoundingClientRect();
-      const viewport = window.innerHeight;
-      if (mode === "element") {
-        progress.current = THREE.MathUtils.clamp(
-          (viewport - rect.top) / (viewport + rect.height),
-          0,
-          1,
-        );
-        return;
+    const down = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      element.setPointerCapture(event.pointerId);
+      drag.current.active = true;
+      drag.current.velocity = 0;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      lastTime = event.timeStamp;
+    };
+    const move = (event: PointerEvent) => {
+      if (!drag.current.active) return;
+      const dx = event.clientX - lastX;
+      const dy = event.clientY - lastY;
+      const dt = Math.max(1, event.timeStamp - lastTime) / 1000;
+      drag.current.turn += dx * DRAG;
+      drag.current.tilt += dy * DRAG;
+      // Smoothed, so one jittery sample doesn't decide the throw.
+      drag.current.velocity +=
+        ((dx * DRAG) / dt - drag.current.velocity) * 0.5;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      lastTime = event.timeStamp;
+    };
+    const up = (event: PointerEvent) => {
+      if (!drag.current.active) return;
+      drag.current.active = false;
+      // A pointer held still before letting go throws nothing.
+      if (event.timeStamp - lastTime > 80) drag.current.velocity = 0;
+      if (element.hasPointerCapture(event.pointerId)) {
+        element.releasePointerCapture(event.pointerId);
       }
-      const start = viewport * 0.12;
-      const end = viewport * 0.88;
-      const distance = Math.max(1, rect.height + start - end);
-      progress.current = THREE.MathUtils.clamp(
-        (start - rect.top) / distance,
-        0,
-        1,
-      );
     };
 
-    read();
-    window.addEventListener("scroll", read, { passive: true });
-    window.addEventListener("resize", read, { passive: true });
+    element.addEventListener("pointerdown", down);
+    element.addEventListener("pointermove", move);
+    element.addEventListener("pointerup", up);
+    element.addEventListener("pointercancel", up);
     return () => {
-      window.removeEventListener("scroll", read);
-      window.removeEventListener("resize", read);
+      element.removeEventListener("pointerdown", down);
+      element.removeEventListener("pointermove", move);
+      element.removeEventListener("pointerup", up);
+      element.removeEventListener("pointercancel", up);
     };
-  }, [target, mode]);
-
-  return progress;
-}
-
-function usePointer(target: React.RefObject<HTMLElement | null>) {
-  const pointer = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const element = target.current;
-    if (!element) return;
-
-    const read = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-      const rect = element.getBoundingClientRect();
-      pointer.current.x = THREE.MathUtils.clamp(
-        ((event.clientX - rect.left) / rect.width) * 2 - 1,
-        -1,
-        1,
-      );
-      pointer.current.y = THREE.MathUtils.clamp(
-        ((event.clientY - rect.top) / rect.height) * 2 - 1,
-        -1,
-        1,
-      );
-    };
-
-    window.addEventListener("pointermove", read, { passive: true });
-    return () => window.removeEventListener("pointermove", read);
   }, [target]);
 
-  return pointer;
+  return drag;
 }
 
 /**
@@ -123,7 +114,7 @@ function useGlyphGeometries() {
         bevelThickness: 12,
         bevelSegments: 3,
       });
-      // Centre the depth too, so each letter turns about its own middle.
+      // Centre the depth too, so the word turns about its own middle.
       geometry.translate(0, 0, -DEPTH / 2);
       return geometry;
     });
@@ -134,169 +125,101 @@ function useGlyphGeometries() {
 }
 
 /**
- * The name, written top to bottom. Scrolling into the section brings the
- * letters in from either side to join into the word, the way the script joins
- * its letters; scrolling past sends them apart again. The pointer tilts the
- * whole word so the depth reads.
+ * The name, written top to bottom, as one solid white word that turns slowly
+ * on its vertical axis. Dragging takes over the turn; let go and it carries
+ * on with the throw, then settles back into its own pace.
  */
-function KineticName({
-  progress,
-  pointer,
+function SpinningName({
+  drag,
   reduced,
 }: {
-  progress: React.RefObject<number>;
-  pointer: React.RefObject<{ x: number; y: number }>;
+  drag: React.RefObject<Drag>;
   reduced: boolean;
 }) {
   const root = useRef<THREE.Group>(null);
-  const letters = useRef<Array<THREE.Group | null>>([]);
-  const easedProgress = useRef(reduced ? 0.5 : 0);
-  const pointerLean = useRef({ x: 0, y: 0 });
+  const tilt = useRef(0);
+  const throwSpeed = useRef(0);
+  const seen = useRef({ turn: 0, tilt: 0 });
   const geometries = useGlyphGeometries();
 
   useFrame(({ clock }, delta) => {
     const group = root.current;
     if (!group) return;
+    const state = drag.current;
 
-    const targetProgress = reduced ? 0.5 : progress.current;
-    easedProgress.current +=
-      (targetProgress - easedProgress.current) * (1 - Math.exp(-5.4 * delta));
-    const p = easedProgress.current;
-    const assembled = reduced ? 1 : smoothstep(0.08, 0.4, p);
-    const scattered = reduced ? 0 : smoothstep(0.74, 0.97, p);
+    group.rotation.y += state.turn - seen.current.turn;
+    tilt.current = THREE.MathUtils.clamp(
+      tilt.current + state.tilt - seen.current.tilt,
+      -MAX_TILT,
+      MAX_TILT,
+    );
+    seen.current.turn = state.turn;
+    seen.current.tilt = state.tilt;
 
-    MONGOL_NAME.glyphs.forEach((glyph, index) => {
-      const letter = letters.current[index];
-      if (!letter) return;
-      const homeX = glyph.x * UNIT;
-      const homeY = glyph.y * UNIT;
-      const direction = index % 2 === 0 ? -1 : 1;
-      const wobble = ((index * 7) % 5) - 2;
-      const startX = homeX + direction * (1.7 + (index % 3) * 0.28);
-      const startY = homeY + wobble * 0.12;
-      const startZ = -1.3 - (index % 4) * 0.24;
-      const endX = homeX + direction * (2.4 + (index % 3) * 0.32);
-      const endY = homeY - wobble * 0.18;
-      const endZ = 0.9 + (index % 4) * 0.2;
-
-      const settledX = THREE.MathUtils.lerp(startX, homeX, assembled);
-      const settledY = THREE.MathUtils.lerp(startY, homeY, assembled);
-      const settledZ = THREE.MathUtils.lerp(startZ, 0, assembled);
-      letter.position.set(
-        THREE.MathUtils.lerp(settledX, endX, scattered),
-        THREE.MathUtils.lerp(settledY, endY, scattered),
-        THREE.MathUtils.lerp(settledZ, endZ, scattered),
-      );
-
-      const startTurn = direction * (Math.PI * 0.5 + index * 0.03);
-      const endTurn = -direction * (Math.PI * 0.55 + index * 0.025);
-      letter.rotation.set(
-        THREE.MathUtils.lerp(
-          THREE.MathUtils.lerp(wobble * 0.14, 0, assembled),
-          -wobble * 0.16,
-          scattered,
-        ),
-        THREE.MathUtils.lerp(
-          THREE.MathUtils.lerp(startTurn, 0, assembled),
-          endTurn,
-          scattered,
-        ),
-        THREE.MathUtils.lerp(
-          THREE.MathUtils.lerp(direction * 0.2, 0, assembled),
-          direction * 0.26,
-          scattered,
-        ),
-      );
-
-      const scale = THREE.MathUtils.lerp(
-        THREE.MathUtils.lerp(0.7, 1, assembled),
-        0.6,
-        scattered,
-      );
-      letter.scale.setScalar(scale * UNIT);
-    });
-
-    const damping = 1 - Math.exp(-4 * delta);
-    pointerLean.current.x +=
-      (pointer.current.y * 0.05 - pointerLean.current.x) * damping;
-    pointerLean.current.y +=
-      (pointer.current.x * 0.28 - pointerLean.current.y) * damping;
-    group.rotation.x = pointerLean.current.x;
-    group.rotation.y = REST_TURN + pointerLean.current.y;
-    group.position.y = Math.sin(clock.getElapsedTime() * 0.55) * 0.045;
+    if (state.active) {
+      throwSpeed.current = state.velocity;
+    } else {
+      group.rotation.y += ((reduced ? 0 : SPIN) + throwSpeed.current) * delta;
+      throwSpeed.current *= Math.exp(-2.2 * delta);
+      tilt.current *= Math.exp(-3 * delta);
+    }
+    group.rotation.x = tilt.current;
+    group.position.y = reduced
+      ? 0
+      : Math.sin(clock.getElapsedTime() * 0.55) * 0.045;
   });
 
   return (
     <group ref={root}>
       {MONGOL_NAME.glyphs.map((glyph, index) => (
-        <group
+        <mesh
           key={index}
-          ref={(node) => {
-            letters.current[index] = node;
-          }}
+          geometry={geometries[index]}
+          position={[glyph.x * UNIT, glyph.y * UNIT, 0]}
+          scale={UNIT}
         >
-          <mesh geometry={geometries[index]}>
-            <meshStandardMaterial
-              color={ACCENT.has(index) ? "#b8f300" : "#f5f5f0"}
-              metalness={0.38}
-              roughness={0.28}
-            />
-          </mesh>
-        </group>
+          <meshStandardMaterial
+            color="#ffffff"
+            metalness={0.12}
+            roughness={0.32}
+          />
+        </mesh>
       ))}
     </group>
   );
 }
 
-export function AboutObject({
-  className,
-  sectionRef,
-}: {
-  className?: string;
-  sectionRef: React.RefObject<HTMLElement | null>;
-}) {
+export function AboutObject({ className }: { className?: string }) {
   const t = useTranslations("about");
   const reduced = useReducedMotion();
   const compact = useMediaQuery("(max-width: 640px)");
   const rootRef = useRef<HTMLDivElement>(null);
-  // Matches About's lg breakpoint, where the object's column turns sticky.
-  const pinned = useMediaQuery("(min-width: 1024px)");
-  const progress = useScrollProgress(
-    pinned ? sectionRef : rootRef,
-    pinned ? "section" : "element",
-  );
-  const pointer = usePointer(rootRef);
+  const drag = useDrag(rootRef);
   // The canvas stays mounted once loaded; it only needs to draw while seen.
   const inView = useInView(rootRef, "120px 0px");
 
   return (
-    <div ref={rootRef} className={cn("relative", className)}>
+    <div
+      ref={rootRef}
+      className={cn(
+        "relative cursor-grab touch-pan-y select-none active:cursor-grabbing",
+        className,
+      )}
+    >
       <Canvas
         camera={{ position: [0, 0.1, 10.2], fov: 32 }}
         dpr={compact ? [1, 1.35] : [1, 1.65]}
         gl={{ antialias: true, alpha: true }}
-        frameloop={reduced || !inView ? "demand" : "always"}
+        frameloop={inView ? "always" : "demand"}
         aria-label={t("objectAlt")}
       >
-        <ambientLight intensity={1.55} />
-        <directionalLight position={[4, 5, 5]} intensity={3.1} />
-        <directionalLight
-          position={[-4, 1, 3]}
-          intensity={1.15}
-          color="#b8f300"
-        />
-        <directionalLight
-          position={[1, 3, -4]}
-          intensity={0.85}
-          color="#a78bfa"
-        />
+        {/* White light only, so the white letters stay white as they turn. */}
+        <ambientLight intensity={1.4} />
+        <directionalLight position={[4, 5, 5]} intensity={2.6} />
+        <directionalLight position={[-4, 1, -5]} intensity={1.2} />
         <Suspense fallback={null}>
           <group scale={compact ? 0.78 : 1}>
-            <KineticName
-              progress={progress}
-              pointer={pointer}
-              reduced={reduced}
-            />
+            <SpinningName drag={drag} reduced={reduced} />
           </group>
         </Suspense>
       </Canvas>
