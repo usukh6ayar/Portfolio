@@ -80,7 +80,7 @@ export function Services() {
             id="services-heading"
             data-services-reveal
             className={cn(
-              "mt-3 font-display text-[clamp(1.85rem,3.8vw,3rem)] font-semibold tracking-[-0.035em] text-foreground",
+              "mt-3 font-display text-[clamp(1.85rem,3.8vw,3rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground",
               !reduced && "opacity-0",
             )}
           >

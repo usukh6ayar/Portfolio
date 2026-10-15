@@ -4,17 +4,19 @@ import { useTranslations } from "next-intl";
 import { ProjectEntry } from "@/components/work/ProjectEntry";
 import { FEATURED_ID } from "@/lib/projects";
 
+/** The lead project. Its reel pins below the line that introduces the work. */
 export function FeaturedProject() {
   const t = useTranslations("work");
 
   return (
-    <section id="featured" className="scroll-mt-[var(--nav-height)] bg-background py-16 sm:py-24" aria-labelledby={`work-title-${FEATURED_ID}`}>
+    <section id="featured" className="scroll-mt-[var(--nav-height)] bg-background pt-16 sm:pt-24" aria-labelledby={`work-title-${FEATURED_ID}`}>
       <div className="container-page">
-        <div className="mb-8 flex items-center gap-4 border-t border-border pt-6 sm:mb-10">
-          <span className="font-mono text-xs text-accent">01</span>
-          <p className="text-caption text-muted">{t("featured.label")}</p>
+        <p className="max-w-[40rem] border-t border-border pt-6 text-base leading-[1.7] text-foreground/80">
+          {t("intro")}
+        </p>
+        <div className="mt-10 sm:mt-14">
+          <ProjectEntry id={FEATURED_ID} featured />
         </div>
-        <ProjectEntry id={FEATURED_ID} index={1} featured />
       </div>
     </section>
   );

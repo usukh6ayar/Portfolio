@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { ReactNode } from "react";
 import { EASE } from "@/lib/easings";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -29,6 +30,9 @@ export function PageTransition({ children }: { children: ReactNode }) {
               : { opacity: 0, y: -8, transition: { duration: 0.25 } }
           }
           transition={{ duration: 0.4, ease: EASE.outExpo }}
+          // Pins measured while this wrapper was still offset need measuring
+          // again once it settles to no transform.
+          onAnimationComplete={() => ScrollTrigger.refresh()}
           className="flex min-h-full flex-1 flex-col"
         >
           {children}

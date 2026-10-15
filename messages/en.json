@@ -105,13 +105,13 @@
       "api": "API",
       "data": "Data"
     },
-    "objectMeta": "Design · Code · Ship",
-    "objectAlt": "USUKHBAYAR assembling in dimensional type while code is written behind it as the page scrolls"
+    "objectMeta": "Usukhbayar, in Mongolian script",
+    "objectAlt": "Usukhbayar written in traditional Mongolian script as dimensional type, turning slowly; drag to rotate it"
   },
   "work": {
     "label": "Selected work",
     "headline": "Selected work.",
-    "intro": "Selected products I've built independently and led — from system architecture and backend through the interface and production.",
+    "intro": "Products I've led at Aether Tech Core — from system architecture and backend through the interface and production.",
     "viewCaseStudy": "View Case Study",
     "problem": "Problem",
     "solution": "Solution",
@@ -206,7 +206,7 @@
         }
       },
       "nomadkids": {
-        "role": "Technical Lead · Full-Stack Developer",
+        "role": "Team Lead · Full-Stack Developer",
         "overview": "NomadKids is a digital portfolio for Mongolian kindergartens: teachers record observations and developmental assessments, parents follow their own child's progress and photographs, and administrators manage kindergartens, groups, and staff.",
         "problem": "Kindergartens track child development on paper. Records scatter when a child changes group, year, or kindergarten, and the family is left with nothing to keep. The client's brief also sets strict rules on who may see a child's data.",
         "solution": "A Next.js front end against a NestJS and Prisma API, with authorization enforced server-side per role and per child rather than in the UI — roles live on membership, so one person can be both a teacher and a parent. Sessions use same-site HttpOnly cookies, a short access token with a rotating refresh, and no token ever stored in localStorage. Photos live in a private Cloudflare R2 bucket behind presigned URLs, and reports are rendered as A4 Mongolian-Cyrillic PDFs by a Puppeteer worker pulling off a BullMQ queue.",
@@ -308,7 +308,15 @@
         "sparkxp-admin-words": "Vocabulary pipeline",
         "sparkxp-admin-buddy": "Buddy configuration"
       }
-    }
+    },
+    "reel": {
+      "sparkxp": {
+        "app": "The student's home screen: assignments waiting, words due for review, a streak and XP, with lessons, tests and the AI buddy in the tab bar.",
+        "landing": "The public site, in Mongolian and English: features, how it works, pricing, and the download for iOS and Android.",
+        "admin": "Where the content team works: words, idioms, lessons, exercises, quizzes and IELTS material, alongside users, classes, schools and the AI buddy, all on the same API the app reads."
+      }
+    },
+    "reelIndex": "Product surfaces"
   },
   "experience": {
     "label": "Experience",
@@ -480,7 +488,7 @@
       "line2After": "."
     },
     "body": "Tell me what you're building and I'll tell you what it takes — honestly, including when it's more than you need. Usually replies within a day.",
-    "role": "Full-Stack Developer & Technical Lead",
+    "role": "Full-Stack Developer & Team Lead",
     "footerConnect": "Connect",
     "footerLocation": "Based",
     "localTime": "UB",
@@ -630,5 +638,13 @@
       "label": "How I work",
       "title": "Four steps, no surprises."
     }
+  },
+  "notFound": {
+    "title": "Spark looked everywhere.",
+    "body": "There's nothing at <path>{url}</path>. The page may have moved, or the link has a typo.",
+    "bodyNoPath": "This page doesn't exist. It may have moved, or the link has a typo.",
+    "code": "Error 404",
+    "home": "Back to the home page",
+    "work": "See the work"
   }
 }

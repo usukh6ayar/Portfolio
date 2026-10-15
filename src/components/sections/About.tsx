@@ -17,11 +17,7 @@ const AboutObject = dynamic(
   { ssr: false },
 );
 
-function LazyObject({
-  sectionRef,
-}: {
-  sectionRef: React.RefObject<HTMLElement | null>;
-}) {
+function LazyObject() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
 
@@ -46,7 +42,7 @@ function LazyObject({
 
   return (
     <div ref={rootRef} className="absolute inset-0">
-      {near && <AboutObject className="h-full w-full" sectionRef={sectionRef} />}
+      {near && <AboutObject className="h-full w-full" />}
     </div>
   );
 }
@@ -189,18 +185,18 @@ export function About() {
     >
       <div className="container-page">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-20">
-          {/* —— Scroll-controlled kinetic signature —— */}
+          {/* —— The name in Mongolian script, turning in 3D —— */}
           <div className="lg:col-span-5">
             <div className="relative lg:sticky lg:top-[var(--nav-height)] lg:flex lg:h-[calc(100svh-var(--nav-height))] lg:flex-col lg:justify-center">
               <div
                 ref={imageWrapRef}
                 // No frame: the object stands on the page, not in a card.
                 className={cn(
-                  "relative aspect-[4/3] w-full",
+                  "relative mx-auto aspect-[4/5] w-full max-w-[30rem] lg:aspect-auto lg:h-[78svh] lg:max-w-none",
                   !reduced && "opacity-0",
                 )}
               >
-                <LazyObject sectionRef={rootRef} />
+                <LazyObject />
               </div>
 
               <div

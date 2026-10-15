@@ -53,6 +53,11 @@ export type ProjectMeta = {
   tone: "lime" | "violet" | "cool" | "warm" | "neutral";
   /** Case-study gallery — brand / in-app artwork, in display order */
   gallery?: GalleryImage[];
+  /**
+   * The home-page reel: one gallery shot per surface, in the order the reel
+   * walks through them. Each src must also be in `gallery`.
+   */
+  reel?: string[];
   links?: ProjectLink[];
 };
 
@@ -74,6 +79,11 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
       { src: "/images/work/sparkxp-admin-words.webp", surface: "admin" },
       { src: "/images/work/sparkxp-admin-buddy.webp", surface: "admin" },
     ],
+    reel: [
+      "/images/work/sparkxp-mobile-light.webp",
+      "/images/work/sparkxp-web-taniltsuulga.webp",
+      "/images/work/sparkxp-admin-lessons.webp",
+    ],
     links: [
       { kind: "live", href: "https://spark-xp-web.vercel.app" },
       { kind: "admin", href: "https://spark-xp.vercel.app" },
@@ -92,6 +102,13 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
       { src: "/images/work/nomadkids-cook.webp", surface: "cook" },
       { src: "/images/work/nomadkids-nyagtlan.webp", surface: "accountant" },
       { src: "/images/work/nomadkids-parent.webp", surface: "parent" },
+    ],
+    reel: [
+      "/images/work/nomadkids-director.webp",
+      "/images/work/nomadkids-teacher.webp",
+      "/images/work/nomadkids-cook.webp",
+      "/images/work/nomadkids-nyagtlan.webp",
+      "/images/work/nomadkids-parent.webp",
     ],
     links: [
       { kind: "live", href: "https://nomadkids.mn" },

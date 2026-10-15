@@ -291,6 +291,97 @@ video {
 }
 
 /* ==========================================================================
+   Work reel — one surface at a time, readable
+   Default: a native horizontal snap strip (touch, reduced motion, short
+   screens). Pin mode: the media query below must match PIN_QUERY in
+   ProjectEntry.tsx, which is what actually pins the scene.
+   ========================================================================== */
+
+.reel-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-inline: calc(var(--page-gutter) * -1);
+  padding-inline: var(--page-gutter);
+  scroll-padding-inline: var(--page-gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.reel-stage::-webkit-scrollbar { display: none; }
+
+.reel-card {
+  position: relative;
+  flex: 0 0 min(86%, 34rem);
+  scroll-snap-align: start;
+}
+
+/* The web captures carry a transparent gutter and a baked shadow; the shot
+   box is the opaque window's own ratio and the image overhangs it. */
+.reel-shot {
+  position: relative;
+  aspect-ratio: 3002 / 1877;
+  overflow: hidden;
+  border-radius: 0.625rem;
+}
+.reel-shot > img.reel-web {
+  position: absolute;
+  top: -3.57%;
+  left: -3.298%;
+  width: 106.595%;
+  max-width: none;
+  height: auto;
+}
+.reel-shot[data-kind="phone"] {
+  aspect-ratio: 1;
+  overflow: visible;
+  display: flex;
+}
+
+/* A covered surface darkens rather than fading: a translucent card would let
+   the one beneath it show through. */
+.reel-dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--color-bg);
+  opacity: 0;
+}
+
+/* Clash's tight tracking is drawn for Latin; on the Manrope fallback it closes
+   up Mongolian word spaces. */
+:lang(mn) .reel-display { letter-spacing: -0.012em; }
+
+@media (min-width: 1024px) and (min-height: 700px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .reel {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: calc(var(--nav-height) + 1.5rem) 2rem;
+  }
+  .reel-media { container-type: inline-size; }
+  .reel-stage {
+    display: block;
+    position: relative;
+    height: calc(62.5cqw + 8.5rem);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .reel-card {
+    position: absolute;
+    inset: 0;
+    background: var(--color-bg);
+    transform-origin: 50% 0;
+  }
+  /* Until the pin is built only the first surface shows, so nothing flashes. */
+  .reel:not([data-mode="pin"]) .reel-card + .reel-card { opacity: 0; }
+  .reel-card-name { display: none; }
+  .reel-shot[data-kind="phone"] { aspect-ratio: 3002 / 1877; }
+}
+
+/* ==========================================================================
    Typography utilities
    ========================================================================== */
 

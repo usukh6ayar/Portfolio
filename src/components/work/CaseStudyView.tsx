@@ -258,7 +258,8 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                   </li>
                 ))}
               </ul>
-              {id === FEATURED_ID && (
+              {/* Spark belongs to SparkXP, not to whichever project is featured. */}
+              {id === "sparkxp" && (
                 <div className="mt-8 border-t border-border pt-8">
                   <h3 className="font-display text-xl font-medium">{tb("label")}</h3>
                   <LazyBuddyAvatar />

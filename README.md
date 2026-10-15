@@ -1,6 +1,6 @@
-# Usukhbayar — Product Engineer Portfolio
+# Usukhbayar — Full-Stack Developer & Team Lead Portfolio
 
-Bilingual (EN / MN) personal portfolio for a product engineer focused on frontend and mobile. Built as a dark, editorial product presentation — not a template resume site.
+Bilingual (EN / MN) personal portfolio for a full-stack developer and team lead who builds web and mobile products end to end, from architecture through production. Built as a dark, editorial product presentation — not a template resume site.
 
 **Live:** [usukhbayar.dev](https://usukhbayar.dev) · **Repository:** [github.com/usukh6ayar/Portfolio](https://github.com/usukh6ayar/Portfolio)
 
@@ -14,17 +14,17 @@ Bilingual (EN / MN) personal portfolio for a product engineer focused on fronten
 -->
 ```
 
-No production screenshot is checked into the repository yet.
+No homepage capture for this README is checked in yet. The site itself shows real product screenshots — see [Project Content](#project-content).
 
 ---
 
 ## About the Project
 
-This site presents Usukhbayar as a product engineer who designs carefully and ships real software. The home page is a single continuous narrative:
+This site presents Usukhbayar as a full-stack developer and team lead who ships real software. The home page is a single continuous narrative — proof first, then the record behind it, then what a client can hire for, then the person:
 
-**Hero → About → Flagship product → Selected work → Capabilities → Contact**
+**Hero → Featured work → Selected work → Experience → Services → Process → About → Capabilities → Contact**
 
-[SparkXP](/work/sparkxp) is treated as the flagship product with dedicated visual hierarchy. Secondary projects follow in an editorial alternating layout. Deeper context lives on dedicated case study routes.
+[NomadKids](/work/nomadkids) is the featured project and [SparkXP](/work/sparkxp) follows it. Both are products led at Aether Tech Core; the Experience section keeps that employment separate from the work itself. Each project is shown as a reel of its real product surfaces, with deeper context on dedicated case study routes.
 
 ---
 
@@ -62,6 +62,10 @@ Presentation is editorial: clear chapter structure, generous spacing, product sc
 - [Framer Motion](https://www.framer.com/motion/)
 - [Lenis](https://github.com/darkroomengineering/lenis)
 
+### 3D
+
+- [three.js](https://threejs.org/) with [React Three Fiber](https://r3f.docs.pmnd.rs/) and [drei](https://drei.docs.pmnd.rs/) — two lazy-loaded scenes (see [Key Features](#key-features))
+
 ### Experience
 
 - [next-intl](https://next-intl.dev/) (client locale, no `/en` · `/mn` routes)
@@ -75,18 +79,23 @@ Implemented and present in the codebase:
 | Feature | Notes |
 |---------|--------|
 | EN / MN localization | Client switch; messages in `messages/en.json` and `messages/mn.json` |
-| Editorial single-page narrative | Home story with section bridges between major chapters |
-| Case study routes | Static `/work/[slug]` pages for each registered project |
+| Editorial single-page narrative | Home story with section bridges before Services and Contact |
+| Work reel | Each project's surfaces shown one at a time at readable size. Fine-pointer desktops pin the scene and scroll through it; touch, short screens and reduced motion get a native swipe strip |
+| Case study routes | Static `/work/[slug]` pages for each registered project, with a filterable screenshot gallery and lightbox |
+| 404 page | Spark searches for the missing page, watches the pointer when it moves, and the page names the address that failed |
+| 3D scenes | The name in Mongolian script, extruded in white, turning and draggable, in About; the SparkXP buddy avatar (rigged GLB) on its case study. Loaded only near the viewport, and stop drawing when off screen |
+| Inquiry form | Project type, budget and timeline; posts to `NEXT_PUBLIC_FORM_ENDPOINT` when set, otherwise composes a `mailto:` |
 | Session-only preloader | Full 000–100 sequence once per browser session |
-| Custom cursor | Fine-pointer devices only; transform tracking via GSAP |
+| Custom cursor | Fine-pointer devices only; transform-only tracking |
 | Magnetic CTAs | Subtle pull on fine-pointer + motion-OK devices |
 | Command palette | `⌘K` / `Ctrl+K`; lazy-mounted until first open |
 | Lenis smooth scrolling | Synchronized with GSAP ScrollTrigger |
 | GSAP scroll reveals | Entrance animations with cleanup via `gsap.context` |
 | Reduced motion | Lenis, cursor, and theatrical motion skip initialization |
-| Mobile-aware systems | Coarse pointer: no custom cursor, no magnetic, simplified scroll FX |
+| Mobile-aware systems | Coarse pointer: no custom cursor, no magnetic, no pinned scenes, simplified scroll FX; sticky "Start a project" bar |
 | Scroll progress | Top progress bar (transform-only) |
 | Sticky navigation | Editorial nav + language toggle (target locale only) |
+| SEO | Metadata, generated Open Graph images (site + per case study), `sitemap.xml`, `robots.txt`, `Person` and `ProfessionalService` JSON-LD |
 
 ---
 
@@ -100,29 +109,32 @@ Hybrid model:
 ```text
 Portfolio/
 ├── messages/                 # en.json · mn.json (all UI copy)
-├── public/images/            # portrait + work media (when added)
+├── public/
+│   ├── images/               # portrait + work screenshots
+│   └── models/               # spark-fox.glb (SparkXP buddy avatar)
 ├── src/
-│   ├── app/                  # App Router (layout, home, work/[slug])
+│   ├── app/                  # App Router (layout, home, work/[slug], OG, sitemap, robots)
 │   ├── components/
-│   │   ├── layout/           # Nav, preloader, bridges, scroll progress
+│   │   ├── contact/          # Inquiry form
+│   │   ├── layout/           # Nav, preloader, bridges, scroll progress, sticky CTA
 │   │   ├── providers/        # i18n, Lenis, app shell, page transition
 │   │   ├── sections/         # Hero → Contact home chapters
-│   │   ├── ui/               # Cursor, command palette, magnetic button…
-│   │   └── work/             # Case study view + project media
+│   │   ├── ui/               # Cursor, command palette, magnetic button, 3D type…
+│   │   └── work/             # Work reel, case study view, gallery, buddy avatar
 │   ├── fonts/                # Clash Display (local woff2)
-│   ├── hooks/                # useMediaQuery, useReducedMotion
-│   └── lib/                  # constants, projects, fonts, i18n helpers
+│   ├── hooks/                # useMediaQuery, useReducedMotion, useInView
+│   └── lib/                  # constants, projects, experience, fonts, i18n helpers
 └── package.json
 ```
 
-**Project registry** (`src/lib/projects.ts`) owns structure (ids, routes, media paths, tone). **Copy** lives only in message files. **Non-copy site config** (email, social hrefs, portrait flag) lives in `src/lib/constants.ts`.
+**Project registry** (`src/lib/projects.ts`) owns structure (ids, routes, gallery, reel, links, tone). **Employment registry** (`src/lib/experience.ts`) owns roles. **Copy** lives only in message files. **Non-copy site config** (email, social hrefs, portrait) lives in `src/lib/constants.ts`.
 
 ### Registered work
 
 | ID | Route | Role |
 |----|--------|------|
-| `sparkxp` | `/work/sparkxp` | Flagship |
-| `nomadkids` | `/work/nomadkids` | Selected |
+| `nomadkids` | `/work/nomadkids` | Featured |
+| `sparkxp` | `/work/sparkxp` | Selected |
 
 ---
 
@@ -130,12 +142,13 @@ Portfolio/
 
 Documented choices in the current implementation (not measured Lighthouse claims):
 
-- **`prefers-reduced-motion`** — Lenis and custom cursor do not initialize; scroll systems use instant/simplified paths
-- **Coarse pointer / touch** — custom cursor and magnetic interactions never attach; scrubbed parallax and heavy bridge timelines are simplified or skipped
-- **Cursor tracking** — refs + GSAP `quickTo`, transform only; no React state per pointermove
-- **Animation cleanup** — GSAP contexts and ScrollTriggers reverted on unmount
-- **Images** — `next/image` with aspect-ratio containers and responsive `sizes` when assets are provided
-- **Keyboard** — command palette (`⌘K` / `Ctrl+K`, Escape); focus-visible styles in global CSS
+- **`prefers-reduced-motion`** — Lenis and custom cursor do not initialize; scroll systems use instant/simplified paths; the work reel does not pin; 3D scenes render a single still frame
+- **Coarse pointer / touch** — custom cursor and magnetic interactions never attach; pinned and scrubbed scenes are replaced with native scrolling or one-shot reveals
+- **Cursor tracking** — refs and direct transform writes; no React state per pointermove
+- **Animation cleanup** — GSAP contexts and ScrollTriggers reverted on unmount; pinned scenes re-measure on language switch
+- **3D** — three.js bundles are dynamically imported, mounted only near the viewport, and render on demand once scrolled away
+- **Images** — `next/image` with aspect-ratio containers. Work-reel screenshots go through the image optimizer (`qualities: [75, 90]`); the case-study gallery serves the original files
+- **Keyboard** — command palette (`⌘K` / `Ctrl+K`, Escape); native `<dialog>` lightbox with focus return; focus-visible styles in global CSS
 - **Session preloader** — does not replay on internal navigation or return visits within the same session
 
 ---
@@ -144,7 +157,7 @@ Documented choices in the current implementation (not measured Lighthouse claims
 
 ### Prerequisites
 
-- Node.js 20+ recommended
+- Node.js 20.9+ (required by Next.js 16)
 - npm (lockfile: `package-lock.json`)
 
 ### Installation
@@ -174,6 +187,13 @@ npm start
 npm run lint
 ```
 
+### Environment
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_FORM_ENDPOINT` | Optional. Formspree (or equivalent) URL for the inquiry form; without it the form opens a pre-filled email |
+| `SITES_EXPORT=1` | Optional. Builds a static export with unoptimized images, for preview publishing |
+
 ---
 
 ## Localization
@@ -198,37 +218,43 @@ Switching language updates `document.documentElement.lang`, persists preference,
 | Concern | Source |
 |---------|--------|
 | UI / story copy | `messages/en.json`, `messages/mn.json` |
-| Project ids, routes, media paths | `src/lib/projects.ts` |
-| Site URL, email, socials, portrait flag | `src/lib/constants.ts` |
+| Project ids, routes, gallery, reel, links | `src/lib/projects.ts` |
+| Employment history | `src/lib/experience.ts` + `experience.roles` in messages |
+| Site URL, email, socials, portrait | `src/lib/constants.ts` |
 | Case study pages | `src/app/work/[slug]/page.tsx` + `CaseStudyView` |
-| Work media | `PROJECTS[id].image` → typically under `public/images/work/` |
-| Portrait | `PORTRAIT` in constants → `public/images/portrait.jpg` when enabled |
+| Work screenshots | `public/images/work/` — 5 NomadKids role dashboards, 7 SparkXP shots (mobile app, landing page, admin) |
+| Portrait | `PORTRAIT` in constants → `public/images/portrait.jpg` |
 
-To add a screenshot: place the asset under `public/`, set `image` on the project in `src/lib/projects.ts`, and keep related copy in the message files.
+To add a screenshot:
+
+1. Place it under `public/images/work/`. Phone captures need `-mobile-` in the filename.
+2. Add it to the project's `gallery` in `src/lib/projects.ts`, with its `surface`.
+3. Add a caption to `work.gallery.captions` in both message files, keyed by the filename without extension.
+4. To show it on the home page, add its `src` to the project's `reel`. Reel captions come from `work.caseStudy.<id>.roles` (matched by surface) or `work.reel.<id>.<surface>`.
 
 ---
 
 ## Status
 
-**Product shell and narrative are implemented** — design system, i18n, motion systems, home story, case study routes, command palette, and performance-aware interaction layers.
+**Live and complete** — design system, i18n, motion systems, home story, work reel, case study routes with real product screenshots, inquiry form, command palette, and performance-aware interaction layers.
 
-**Content assets still pending:**
+**Still open:**
 
-- Portrait (`PORTRAIT.hasPortrait` is currently `false`)
-- Project product screenshots (`image: null` for all projects — placeholders render)
-- Production contact details (email configured in `src/lib/constants.ts`; GitHub / LinkedIn hrefs are stubs; Instagram is configured)
-- Canonical URL in metadata: `https://usukhbayar.dev` (`SITE.url`) — live; the apex is the primary domain on Vercel and `www` 308-redirects to it
+- Inquiry form delivery: `NEXT_PUBLIC_FORM_ENDPOINT` unset means submissions open the visitor's email client
+- No LinkedIn link: copy keys exist in the message files, but `SOCIAL_ITEMS` lists GitHub, Instagram and email only
+- NomadKids mobile app: shown as "In development" on its case study, with no screenshots yet
 
-No WebGL in this version by design.
+**Hosting:** Vercel. `https://usukhbayar.dev` (`SITE.url`) is the canonical apex domain; `www` 308-redirects to it.
 
 ---
 
 ## Author
 
 **Usukhbayar**  
-Product Engineer · Frontend & Mobile  
+Full-Stack Developer & Team Lead  
 Ulaanbaatar, Mongolia
 
+- GitHub: [github.com/usukh6ayar](https://github.com/usukh6ayar)
 - Instagram: [instagram.com/usukh6ayar](https://instagram.com/usukh6ayar)
 - Repository: [github.com/usukh6ayar/Portfolio](https://github.com/usukh6ayar/Portfolio)
 
