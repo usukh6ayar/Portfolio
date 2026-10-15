@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
+import { Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
 import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
 import { useTranslations } from "next-intl";
@@ -185,9 +186,9 @@ function SpinningName({
           scale={UNIT}
         >
           <meshStandardMaterial
-            color="#ffffff"
-            metalness={0.12}
-            roughness={0.32}
+            color="#dfe1e6"
+            metalness={1}
+            roughness={0.24}
           />
         </mesh>
       ))}
@@ -219,10 +220,53 @@ export function AboutObject({ className }: { className?: string }) {
         frameloop={inView ? "always" : "demand"}
         aria-label={t("objectAlt")}
       >
-        {/* White light only, so the white letters stay white as they turn. */}
-        <ambientLight intensity={1.4} />
-        <directionalLight position={[4, 5, 5]} intensity={2.6} />
-        <directionalLight position={[-4, 1, -5]} intensity={1.2} />
+        {/*
+         * Metal shows what it reflects, so the letters get a studio to
+         * reflect: white panels on black, built in place rather than an HDR
+         * fetched from a CDN. The bright strips run across the faces as the
+         * word turns. Neutral white, so the silver stays silver.
+         */}
+        <Environment resolution={256}>
+          {/* A grey room, so faces turned from every panel read as dark steel, not as holes. */}
+          <color attach="background" args={["#2c2d31"]} />
+          <Lightformer
+            form="rect"
+            intensity={4}
+            position={[0, 6, 3]}
+            scale={[12, 1.6, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={1.6}
+            position={[2.5, 1, 7]}
+            scale={[0.7, 9, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={2.6}
+            position={[-7, 0, 1]}
+            scale={[1.4, 14, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={2.6}
+            position={[7, -1, -1]}
+            scale={[1.4, 14, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={1}
+            position={[0, -6, 2]}
+            scale={[12, 1, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={2}
+            position={[0, 1, -7]}
+            scale={[0.9, 12, 1]}
+          />
+        </Environment>
+        <directionalLight position={[4, 5, 5]} intensity={1.2} />
         <Suspense fallback={null}>
           <group scale={compact ? 0.94 : 1}>
             <SpinningName drag={drag} reduced={reduced} />
