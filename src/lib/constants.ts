@@ -10,15 +10,29 @@ export const SITE = {
 } as const;
 
 /**
+ * Direct lines, shown as plain text in Contact. Most people who hire through
+ * this site would rather call or DM than fill in a form, and a link alone
+ * (mailto:, tel:) does nothing on a device with no app for it.
+ */
+export const DIRECT_CONTACT = {
+  phoneDisplay: "9069 3000",
+  phoneHref: "tel:+97690693000",
+  instagramHandle: "@usukh6ayar",
+  instagramDm: "https://ig.me/m/usukh6ayar",
+  instagramProfile: "https://instagram.com/usukh6ayar",
+  email: SITE.email,
+} as const;
+
+/**
  * Nav hrefs only — labels come from i18n keys `nav.*`. In page order.
  *
- * Five is the ceiling. Skills remains discoverable in the page and command
- * palette, while Services earns the primary-nav slot because it explains what
- * a visitor can actually engage me to build.
+ * Five is the ceiling. Skills and Experience remain discoverable in the page
+ * and command palette. Challenge takes Experience's slot while the 30-site
+ * series runs: it is what visitors arriving from a reel came to see.
  */
 export const NAV_ITEMS = [
   { key: "work" as const, href: "#featured" },
-  { key: "experience" as const, href: "#experience" },
+  { key: "challenge" as const, href: "#challenge" },
   { key: "services" as const, href: "#services" },
   { key: "about" as const, href: "#about" },
   { key: "contact" as const, href: "#contact" },

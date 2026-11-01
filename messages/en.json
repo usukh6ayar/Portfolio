@@ -15,7 +15,8 @@
     "closeMenu": "Close menu",
     "menu": "Menu",
     "statusOpen": "Open",
-    "services": "Services"
+    "services": "Services",
+    "challenge": "Challenge"
   },
   "lang": {
     "switcher": "Language",
@@ -351,25 +352,55 @@
   "services": {
     "label": "What I build",
     "headline": "What I build.",
-    "intro": "Four things I've taken all the way to production. If your problem looks like one of these, I can tell you what it takes in a first call.",
+    "intro": "Five things I've taken all the way to production. If your problem looks like one of these, I can tell you what it takes in a first call.",
     "offers": [
       {
         "index": "01",
+        "featured": true,
+        "title": "Interactive & Creative Websites",
+        "detail": "Brand sites that come alive as you scroll: 3D, motion and interactions people remember and share. Live examples are in the Challenge section above.",
+        "pricesLabel": "Starting prices",
+        "pricesNote": "Final price depends on scope. The first call is free.",
+        "packages": [
+          {
+            "name": "Invitation",
+            "price": "From ₮250K",
+            "detail": "Interactive wedding or event invite with RSVP"
+          },
+          {
+            "name": "Landing page",
+            "price": "From ₮1.5M",
+            "detail": "One page, scroll animation, mobile-first"
+          },
+          {
+            "name": "Interactive brand site",
+            "price": "From ₮3M",
+            "detail": "3–5 pages, one signature moment, CMS"
+          },
+          {
+            "name": "3D / WebGL experience",
+            "price": "From ₮6M",
+            "detail": "Custom 3D, shaders, product configurator"
+          }
+        ]
+      },
+      {
+        "index": "02",
         "title": "Business web systems",
         "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
       },
       {
-        "index": "02",
+        "index": "03",
         "title": "Mobile products",
         "detail": "Cross-platform iOS and Android with React Native and Expo, built against a backend I design at the same time — so the app and the API fit each other instead of being negotiated later."
       },
       {
-        "index": "03",
+        "index": "04",
         "title": "Backend & API systems",
         "detail": "NestJS and PostgreSQL: schema design, authentication and authorization, background jobs, file storage, third-party integrations. Including integration with Mongolia's national education system."
       },
       {
-        "index": "04",
+        "index": "05",
         "title": "From idea to production",
         "detail": "Discovery, architecture, build and deployment as one engagement. Domains, TLS, CI, backups and monitoring included — a product that is live, not a repository you have to find someone else to ship."
       }
@@ -502,6 +533,10 @@
       "projectType": "What are you building?",
       "projectTypes": [
         {
+          "value": "creative",
+          "label": "Interactive / creative website"
+        },
+        {
           "value": "web",
           "label": "A web app"
         },
@@ -574,6 +609,12 @@
       "orEmail": "Or email me directly:",
       "mailtoSubject": "Project inquiry — {name}",
       "mailtoType": "Project type"
+    },
+    "direct": {
+      "label": "Or reach me directly",
+      "phone": "Phone",
+      "instagram": "Instagram DM",
+      "email": "Email"
     }
   },
   "command": {
@@ -599,7 +640,8 @@
     "hint": "↑↓ navigate · ↵ select",
     "close": "Close command palette",
     "services": "Services",
-    "process": "How I Work"
+    "process": "How I Work",
+    "challenge": "30 Site Challenge"
   },
   "social": {
     "github": "GitHub",
@@ -632,7 +674,7 @@
     },
     "services": {
       "label": "Services",
-      "title": "Four things you can hire me for."
+      "title": "Five things you can hire me for."
     },
     "process": {
       "label": "How I work",
@@ -646,5 +688,19 @@
     "code": "Error 404",
     "home": "Back to the home page",
     "work": "See the work"
+  },
+  "challenge": {
+    "label": "Challenge",
+    "headline": "30 sites. One month.",
+    "intro": "A public challenge: every few days, one interactive site for a real kind of business, built from scratch and posted as a reel. Each one is live. Open it, scroll it, break it.",
+    "progress": "{done} of {total} live",
+    "open": "Open site",
+    "upNext": "Up next",
+    "soonTitle": "The first site drops soon",
+    "soonBody": "Follow along on Instagram to see each one the day it goes live.",
+    "follow": "Follow on Instagram",
+    "cta": "Want one like this for your business?",
+    "ctaButton": "Start a project",
+    "sites": {}
   }
 }

@@ -45,7 +45,12 @@ export function TextLink({
     </>
   );
 
-  if (external || href.startsWith("http") || href.startsWith("mailto:")) {
+  if (
+    external ||
+    href.startsWith("http") ||
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:")
+  ) {
     return (
       <a
         href={href}

@@ -62,7 +62,7 @@ function writeLocale(locale: Locale) {
 
 /**
  * next-intl without URL locales — single SPA, client-side switch.
- * Preference: localStorage → browser language → English.
+ * Preference: localStorage → Mongolian.
  */
 export function I18nProvider({ children }: { children: ReactNode }) {
   const locale = useSyncExternalStore(

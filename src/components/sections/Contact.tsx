@@ -9,7 +9,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { TextLink } from "@/components/ui/TextLink";
 import { InquiryForm } from "@/components/contact/InquiryForm";
-import { SOCIAL_ITEMS } from "@/lib/constants";
+import { DIRECT_CONTACT, SOCIAL_ITEMS } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -23,6 +23,11 @@ export function Contact() {
   const t = useTranslations("contact");
   const tCommon = useTranslations("common");
   const tSocial = useTranslations("social");
+  const direct = [
+    { key: "phone", href: DIRECT_CONTACT.phoneHref, value: DIRECT_CONTACT.phoneDisplay },
+    { key: "instagram", href: DIRECT_CONTACT.instagramDm, value: DIRECT_CONTACT.instagramHandle },
+    { key: "email", href: `mailto:${DIRECT_CONTACT.email}`, value: DIRECT_CONTACT.email },
+  ] as const;
   const { isReady } = useApp();
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
@@ -177,7 +182,8 @@ export function Contact() {
             {t("body")}
           </p>
 
-          {/* For the people who will not fill in a form, and there are some. */}
+          {/* For the people who will not fill in a form, and there are many:
+              the number and addresses are printed, not hidden behind links. */}
           <p
             data-contact-body
             className={cn(
@@ -185,29 +191,36 @@ export function Contact() {
               !reduced && "opacity-0",
             )}
           >
-            {t("form.orEmail")}
+            {t("direct.label")}
           </p>
 
-          <ul
+          <dl
             data-contact-body
             className={cn(
-              "mt-4 flex flex-wrap items-center gap-x-8 gap-y-3",
+              "mt-4 divide-y divide-border border-y border-border",
               !reduced && "opacity-0",
             )}
           >
-            {SOCIAL_ITEMS.map((item) => (
-              <li key={item.key}>
-                <TextLink
-                  href={item.href}
-                  external={item.external}
-                  arrow={item.key === "email"}
-                  className="text-[0.9375rem]"
-                >
-                  {tSocial(item.key)}
-                </TextLink>
-              </li>
+            {direct.map((row) => (
+              <div
+                key={row.key}
+                className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3.5"
+              >
+                <dt className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
+                  {t(`direct.${row.key}`)}
+                </dt>
+                <dd className="min-w-0 select-all break-all">
+                  <TextLink
+                    href={row.href}
+                    external={row.key === "instagram"}
+                    className="text-base text-foreground sm:text-[1.0625rem]"
+                  >
+                    {row.value}
+                  </TextLink>
+                </dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         </div>
 
         <div

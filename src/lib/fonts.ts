@@ -35,7 +35,7 @@ export const clashDisplay = localFont({
  * Keeps hierarchy when Mongolian headlines need full glyph coverage.
  */
 export const manrope = Manrope({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   weight: ["400", "500", "600"],
   variable: "--font-manrope",
   display: "swap",
@@ -46,7 +46,7 @@ export const manrope = Manrope({
  * Inter — body / UI, excellent Latin + Cyrillic
  */
 export const inter = Inter({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   weight: ["400", "500", "600"],
   variable: "--font-inter",
   display: "swap",
@@ -57,7 +57,7 @@ export const inter = Inter({
  * JetBrains Mono — labels, stack, counters, kbd
  */
 export const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   weight: ["400", "500"],
   variable: "--font-jetbrains",
   display: "swap",

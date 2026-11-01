@@ -13,26 +13,28 @@ import { StickyCta } from "@/components/layout/StickyCta";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { SITE, SOCIAL_ITEMS } from "@/lib/constants";
 import en from "../../messages/en.json";
+import mn from "../../messages/mn.json";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: en.meta.title,
+    default: mn.meta.title,
     template: `%s · ${SITE.name}`,
   },
-  description: en.meta.description,
+  description: mn.meta.description,
   metadataBase: new URL(SITE.url),
   openGraph: {
-    title: en.meta.title,
-    description: en.meta.description,
-    locale: "en_US",
+    title: mn.meta.title,
+    description: mn.meta.description,
+    locale: "mn_MN",
+    alternateLocale: ["en_US"],
     type: "website",
     siteName: SITE.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: en.meta.title,
-    description: en.meta.description,
+    title: mn.meta.title,
+    description: mn.meta.description,
   },
   robots: {
     index: true,
@@ -129,7 +131,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="mn"
       className={`${clashDisplay.variable} ${manrope.variable} ${inter.variable} ${jetbrainsMono.variable} h-full`}
       suppressHydrationWarning
     >

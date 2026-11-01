@@ -3,6 +3,7 @@ import { About } from "@/components/sections/About";
 import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { SelectedWorks } from "@/components/sections/SelectedWorks";
 import { Experience } from "@/components/sections/Experience";
+import { Challenge } from "@/components/sections/Challenge";
 import { Services } from "@/components/sections/Services";
 import { Process } from "@/components/sections/Process";
 import { Skills } from "@/components/sections/Skills";
@@ -11,7 +12,7 @@ import { SectionBridge } from "@/components/layout/SectionBridge";
 import { STACKED_ORDER } from "@/lib/projects";
 
 /**
- * Story: Hero → Work → Experience → Services → Process → About → Skills → Contact
+ * Story: Hero → Work → Challenge → Experience → Services → Process → About → Skills → Contact
  *
  * Proof, then the record behind it, then what it buys you, then who I am.
  * About sits low deliberately: a stranger has no reason to care who I am until
@@ -31,6 +32,8 @@ export default function HomePage() {
       {STACKED_ORDER.length > 0 && (
         <SelectedWorks />
       )}
+
+      <Challenge />
 
       <Experience />
 
