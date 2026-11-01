@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
+import { isImmersivePath } from "@/lib/routes";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { LenisProvider } from "@/components/providers/LenisProvider";
 import { Preloader } from "@/components/layout/Preloader";
@@ -51,6 +53,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   /** Defer palette mount until first open — zero work until needed */
   const [paletteMounted, setPaletteMounted] = useState(false);
+  /** Challenge sites are stand-alone: no preloader, no portfolio cursor */
+  const immersive = isImmersivePath(usePathname());
 
   const setReady = useCallback(() => setIsReady(true), []);
   const openCommand = useCallback(() => {
@@ -79,9 +83,12 @@ export function AppProviders({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  // Without the preloader nothing flips ready, so immersive routes start ready.
+  const ready = isReady || immersive;
+
   const value = useMemo(
     () => ({
-      isReady,
+      isReady: ready,
       setReady,
       isCommandOpen,
       openCommand,
@@ -89,7 +96,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       toggleCommand,
     }),
     [
-      isReady,
+      ready,
       setReady,
       isCommandOpen,
       openCommand,
@@ -102,8 +109,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <I18nProvider>
       <AppContext.Provider value={value}>
         <LenisProvider>
-          <CustomCursor />
-          <Preloader />
+          {!immersive && <CustomCursor />}
+          {!immersive && <Preloader />}
           {children}
           {paletteMounted && <CommandPalette />}
         </LenisProvider>

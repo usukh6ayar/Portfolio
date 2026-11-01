@@ -101,6 +101,13 @@ export function CommandPalette() {
         action: () => go("#work"),
       },
       {
+        id: "nav-challenge",
+        label: t("challenge"),
+        hint: "#challenge",
+        group: navigate,
+        action: () => go("#challenge"),
+      },
+      {
         id: "nav-experience",
         label: t("experience"),
         hint: "#experience",

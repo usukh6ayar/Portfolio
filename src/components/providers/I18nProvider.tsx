@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import { NextIntlClientProvider } from "next-intl";
+import { usePathname } from "next/navigation";
+import { isImmersivePath } from "@/lib/routes";
 import { getMessages } from "@/lib/i18n/messages";
 import {
   defaultLocale,
@@ -62,7 +64,7 @@ function writeLocale(locale: Locale) {
 
 /**
  * next-intl without URL locales — single SPA, client-side switch.
- * Preference: localStorage → browser language → English.
+ * Preference: localStorage → Mongolian.
  */
 export function I18nProvider({ children }: { children: ReactNode }) {
   const locale = useSyncExternalStore(
@@ -104,10 +106,13 @@ function LocaleDocumentSync({
   locale: Locale;
   title: string;
 }) {
+  // Challenge sites set their own <title> through metadata; keep it.
+  const keepTitle = isImmersivePath(usePathname());
+
   useEffect(() => {
     document.documentElement.lang = locale;
-    document.title = title;
-  }, [locale, title]);
+    if (!keepTitle) document.title = title;
+  }, [locale, title, keepTitle]);
 
   return null;
 }

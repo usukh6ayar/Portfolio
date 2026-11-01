@@ -12,10 +12,21 @@ import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
 
+type Package = {
+  name: string;
+  price: string;
+  detail: string;
+};
+
 type Offer = {
   index: string;
   title: string;
   detail: string;
+  /** Spans the full row and carries starting prices */
+  featured?: boolean;
+  pricesLabel?: string;
+  pricesNote?: string;
+  packages?: Package[];
 };
 
 /**
@@ -26,6 +37,10 @@ type Offer = {
  *
  * Laid out as cards rather than the Capabilities list, so that two sections of
  * four items do not read as the same section twice.
+ *
+ * The featured offer (creative websites) spans the row and is the only one
+ * with public starting prices: it is the one people arriving from a reel ask
+ * about, and a visible floor saves both sides a round of DMs.
  */
 export function Services() {
   const t = useTranslations("services");
@@ -105,6 +120,7 @@ export function Services() {
                 data-services-reveal
                 className={cn(
                   "flex flex-col bg-background p-7 sm:p-9",
+                  offer.featured && "sm:col-span-2",
                   !reduced && "opacity-0",
                 )}
               >
@@ -117,6 +133,36 @@ export function Services() {
                 <p className="mt-3 max-w-[34rem] text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
                   {offer.detail}
                 </p>
+                {offer.featured && Array.isArray(offer.packages) && (
+                  <div className="mt-8">
+                    <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
+                      {offer.pricesLabel}
+                    </p>
+                    <ul className="mt-4 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+                      {offer.packages.map((pkg) => (
+                        <li
+                          key={pkg.name}
+                          className="flex min-w-0 flex-col gap-1.5 bg-surface-1 p-5"
+                        >
+                          <span className="text-sm text-foreground/85">
+                            {pkg.name}
+                          </span>
+                          <span className="font-display text-lg font-semibold tabular-nums tracking-tight text-accent">
+                            {pkg.price}
+                          </span>
+                          <span className="text-[0.8125rem] leading-relaxed text-muted">
+                            {pkg.detail}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {offer.pricesNote && (
+                      <p className="mt-3 text-[0.8125rem] text-muted">
+                        {offer.pricesNote}
+                      </p>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
         </ul>

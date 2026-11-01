@@ -1,29 +1,17 @@
 export const locales = ["en", "mn"] as const;
 export type Locale = (typeof locales)[number];
 
-export const defaultLocale: Locale = "en";
+/**
+ * Mongolian first: the people who hire through this site are Mongolian
+ * businesses, and most of their phones report an English UI language, so
+ * browser detection would hand them the English page. English stays one
+ * tap away in the language switch.
+ */
+export const defaultLocale: Locale = "mn";
 export const LOCALE_STORAGE_KEY = "portfolio-locale";
 
 export function isLocale(value: string | null | undefined): value is Locale {
   return value === "en" || value === "mn";
-}
-
-/** Map browser language tags → app locale */
-export function detectBrowserLocale(): Locale {
-  if (typeof navigator === "undefined") return defaultLocale;
-
-  const candidates = [
-    navigator.language,
-    ...(navigator.languages ?? []),
-  ].filter(Boolean);
-
-  for (const tag of candidates) {
-    const base = tag.toLowerCase().split("-")[0];
-    if (base === "mn") return "mn";
-    if (base === "en") return "en";
-  }
-
-  return defaultLocale;
 }
 
 export function resolveInitialLocale(): Locale {
@@ -34,7 +22,7 @@ export function resolveInitialLocale(): Locale {
   } catch {
     // ignore
   }
-  return detectBrowserLocale();
+  return defaultLocale;
 }
 
 export function persistLocale(locale: Locale) {
