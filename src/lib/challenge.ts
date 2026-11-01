@@ -41,9 +41,20 @@ export const LIVE_SITES = CHALLENGE_SITES.filter(
   (site) => site.status === "live",
 ).sort((a, b) => a.n - b.n);
 
-/** Drafts are reachable in development only, so work in progress never ships. */
+/** The template site; always built so the route never has zero pages. */
+export const STARTER_SLUG = "starter";
+
+/**
+ * Drafts are reachable in development only, so work in progress never ships.
+ * The starter is the exception: a static export refuses a dynamic route with
+ * no pages, so it is always built, and kept out of search (see the page).
+ */
 export const ROUTABLE_SITES =
-  process.env.NODE_ENV === "production" ? LIVE_SITES : CHALLENGE_SITES;
+  process.env.NODE_ENV === "production"
+    ? CHALLENGE_SITES.filter(
+        (site) => site.status === "live" || site.slug === STARTER_SLUG,
+      )
+    : CHALLENGE_SITES;
 
 export function getChallengeSite(slug: string): ChallengeSite | undefined {
   return ROUTABLE_SITES.find((site) => site.slug === slug);

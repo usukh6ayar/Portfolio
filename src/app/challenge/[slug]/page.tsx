@@ -34,6 +34,7 @@ export async function generateMetadata({
   return {
     title: copy.title,
     description: copy.tagline,
+    ...(site.status === "live" ? {} : { robots: { index: false, follow: false } }),
     alternates: { canonical: href },
     openGraph: {
       title: `${copy.title} · ${SITE.name}`,
