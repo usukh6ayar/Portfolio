@@ -87,7 +87,6 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
     links: [
       { kind: "live", href: "https://spark-xp-web.vercel.app" },
       { kind: "admin", href: "https://spark-xp.vercel.app" },
-      { kind: "repo", href: "https://github.com/usukh6ayar/SparkXP" },
     ],
   },
   nomadkids: {
@@ -112,7 +111,6 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
     ],
     links: [
       { kind: "live", href: "https://nomadkids.mn" },
-      { kind: "repo", href: "https://github.com/usukh6ayar/NomadKids" },
     ],
   },
 };
