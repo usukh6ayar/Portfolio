@@ -1,67 +1,42 @@
 /**
- * 30 Site Challenge — the registry.
+ * 30 Site Challenge — what the home section lists.
  *
- * Structure only (slug, order, status, tech, media). Copy lives in
- * messages/*.json under `challenge.sites.<slug>`; the component for each slug
- * is mapped in src/challenge/components.tsx.
+ * The sites themselves live in a separate repo (usukh6ayar/challenge) and
+ * deploy to challenge.usukhbayar.dev, so an experiment can never break the
+ * page that takes orders. This file only records what is live and where.
  *
- * To ship a new site:
- *   1. copy src/challenge/sites/starter → src/challenge/sites/<slug>
- *   2. add it to src/challenge/components.tsx
- *   3. add `challenge.sites.<slug>` (title, tagline) to both message files
- *   4. add an entry below with status "draft"; flip to "live" when posting
- *   5. drop the reel in /public/challenge/<slug>.mp4 and a poster .jpg
+ * To list a new site once it is deployed:
+ *   1. add an entry below (n, slug, tech)
+ *   2. add `challenge.sites.<slug>` { title, tagline } to both message files
+ *   3. put a 4:5 poster at /public/challenge/<slug>.jpg and, optionally,
+ *      a short muted loop at /public/challenge/<slug>.mp4
  */
 
 export const CHALLENGE_TOTAL = 30;
-
-export type ChallengeStatus = "draft" | "live";
+export const CHALLENGE_ORIGIN = "https://challenge.usukhbayar.dev";
 
 export type ChallengeSite = {
   slug: string;
-  /** Position in the series, 1–30. 0 = internal starter. */
+  /** Position in the series, 1–30 */
   n: number;
-  status: ChallengeStatus;
   tech: string[];
-  /** Optional /public paths for the home grid */
-  reel?: string;
+  /** Override when a site lives somewhere other than CHALLENGE_ORIGIN/<slug> */
+  url?: string;
+  /** /public paths; default to /challenge/<slug>.jpg and no video */
   poster?: string;
+  reel?: string;
 };
 
-export const CHALLENGE_SITES: ChallengeSite[] = [
-  {
-    slug: "starter",
-    n: 0,
-    status: "draft",
-    tech: ["Next.js", "R3F", "GSAP", "Lenis"],
-  },
-];
+export const CHALLENGE_SITES: ChallengeSite[] = [];
 
-export const LIVE_SITES = CHALLENGE_SITES.filter(
-  (site) => site.status === "live",
-).sort((a, b) => a.n - b.n);
+export const LIVE_SITES = [...CHALLENGE_SITES].sort((a, b) => a.n - b.n);
 
-/** The template site; always built so the route never has zero pages. */
-export const STARTER_SLUG = "starter";
-
-/**
- * Drafts are reachable in development only, so work in progress never ships.
- * The starter is the exception: a static export refuses a dynamic route with
- * no pages, so it is always built, and kept out of search (see the page).
- */
-export const ROUTABLE_SITES =
-  process.env.NODE_ENV === "production"
-    ? CHALLENGE_SITES.filter(
-        (site) => site.status === "live" || site.slug === STARTER_SLUG,
-      )
-    : CHALLENGE_SITES;
-
-export function getChallengeSite(slug: string): ChallengeSite | undefined {
-  return ROUTABLE_SITES.find((site) => site.slug === slug);
+export function challengeUrl(site: ChallengeSite): string {
+  return site.url ?? `${CHALLENGE_ORIGIN}/${site.slug}`;
 }
 
-export function challengeHref(slug: string): string {
-  return `/challenge/${slug}`;
+export function challengePoster(site: ChallengeSite): string {
+  return site.poster ?? `/challenge/${site.slug}.jpg`;
 }
 
 export function formatSiteNumber(n: number): string {

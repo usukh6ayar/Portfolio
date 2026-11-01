@@ -701,14 +701,6 @@
     "follow": "Instagram-д дагах",
     "cta": "Танай бизнест ийм сайт хэрэгтэй юу?",
     "ctaButton": "Төсөл эхлүүлэх",
-    "back": "usukhbayar.dev",
-    "order": "Ийм сайт захиалах",
-    "siteLabel": "Сайт {n} / {total}",
-    "sites": {
-      "starter": {
-        "title": "Starter шалгалт",
-        "tagline": "Scroll хийгээд starter ажиллаж байгааг шалгана: smooth scroll, 3D, бичлэгийн горим."
-      }
-    }
+    "sites": {}
   }
 }

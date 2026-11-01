@@ -586,9 +586,3 @@ video {
   white-space: nowrap;
   border: 0;
 }
-
-/* Challenge record mode (?record=1): no cursor in screen recordings */
-.record-mode,
-.record-mode * {
-  cursor: none !important;
-}

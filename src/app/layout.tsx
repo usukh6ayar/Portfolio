@@ -10,7 +10,6 @@ import { PageTransition } from "@/components/providers/PageTransition";
 import { Navigation } from "@/components/layout/Navigation";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { StickyCta } from "@/components/layout/StickyCta";
-import { SiteChrome } from "@/components/layout/SiteChrome";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { SITE, SOCIAL_ITEMS } from "@/lib/constants";
 import en from "../../messages/en.json";
@@ -148,10 +147,8 @@ export default function RootLayout({
         />
         <AppProviders>
           <SkipLink />
-          <SiteChrome>
-            <ScrollProgress />
-            <Navigation />
-          </SiteChrome>
+          <ScrollProgress />
+          <Navigation />
           <main
             id="main"
             tabIndex={-1}

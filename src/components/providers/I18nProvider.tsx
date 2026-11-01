@@ -10,8 +10,6 @@ import {
   type ReactNode,
 } from "react";
 import { NextIntlClientProvider } from "next-intl";
-import { usePathname } from "next/navigation";
-import { isImmersivePath } from "@/lib/routes";
 import { getMessages } from "@/lib/i18n/messages";
 import {
   defaultLocale,
@@ -106,13 +104,10 @@ function LocaleDocumentSync({
   locale: Locale;
   title: string;
 }) {
-  // Challenge sites set their own <title> through metadata; keep it.
-  const keepTitle = isImmersivePath(usePathname());
-
   useEffect(() => {
     document.documentElement.lang = locale;
-    if (!keepTitle) document.title = title;
-  }, [locale, title, keepTitle]);
+    document.title = title;
+  }, [locale, title]);
 
   return null;
 }

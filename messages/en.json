@@ -701,14 +701,6 @@
     "follow": "Follow on Instagram",
     "cta": "Want one like this for your business?",
     "ctaButton": "Start a project",
-    "back": "usukhbayar.dev",
-    "order": "Order a site like this",
-    "siteLabel": "Site {n} / {total}",
-    "sites": {
-      "starter": {
-        "title": "Starter check",
-        "tagline": "Scroll to see the starter working: smooth scroll, a 3D scene and record mode."
-      }
-    }
+    "sites": {}
   }
 }

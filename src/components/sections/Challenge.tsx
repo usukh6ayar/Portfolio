@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
@@ -13,7 +13,8 @@ import { scrollToHash } from "@/components/providers/LenisProvider";
 import {
   CHALLENGE_TOTAL,
   LIVE_SITES,
-  challengeHref,
+  challengePoster,
+  challengeUrl,
   formatSiteNumber,
   type ChallengeSite,
 } from "@/lib/challenge";
@@ -205,26 +206,31 @@ function SiteCard({
 
   return (
     <li data-challenge-reveal className={cn("bg-background", hiddenClass)}>
-      <Link
-        href={challengeHref(site.slug)}
+      <a
+        href={challengeUrl(site)}
+        target="_blank"
+        rel="noopener noreferrer"
         className="group flex h-full flex-col focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
       >
         <div className="relative aspect-[4/5] w-full max-w-full overflow-hidden bg-surface-1">
-          {site.reel ? (
+          <Image
+            src={challengePoster(site)}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+          />
+          {site.reel && (
             <video
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+              className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
               src={site.reel}
-              poster={site.poster}
               muted
               loop
               playsInline
-              autoPlay
               preload="none"
+              onMouseEnter={(e) => void e.currentTarget.play().catch(() => {})}
+              onMouseLeave={(e) => e.currentTarget.pause()}
             />
-          ) : (
-            <span className="absolute inset-0 grid place-items-center font-display text-6xl font-semibold text-surface-2">
-              {formatSiteNumber(site.n)}
-            </span>
           )}
         </div>
         <div className="flex flex-1 flex-col gap-2 p-6">
@@ -235,11 +241,14 @@ function SiteCard({
             {title}
           </h3>
           <p className="text-sm leading-relaxed text-muted">{tagline}</p>
-          <p className="mt-auto pt-3 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-muted">
-            {site.tech.join(" · ")}
+          <p className="mt-auto flex items-center justify-between gap-3 pt-3 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-muted">
+            <span>{site.tech.join(" · ")}</span>
+            <span aria-hidden className="text-accent transition-transform duration-300 group-hover:translate-x-0.5">
+              ↗
+            </span>
           </p>
         </div>
-      </Link>
+      </a>
     </li>
   );
 }
