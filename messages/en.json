@@ -701,6 +701,11 @@
     "follow": "Follow on Instagram",
     "cta": "Want one like this for your business?",
     "ctaButton": "Start a project",
-    "sites": {}
+    "sites": {
+      "mdent": {
+        "title": "MDent — Dental clinic",
+        "tagline": "A dental clinic site with online booking: services, doctors, free slots, calendar."
+      }
+    }
   }
 }

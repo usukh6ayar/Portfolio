@@ -117,6 +117,7 @@ export function Challenge() {
             {LIVE_SITES.map((site) => (
               <SiteCard key={site.slug} site={site} hiddenClass={hidden} />
             ))}
+            <UpNext done={done} next={Math.max(...LIVE_SITES.map((s) => s.n)) + 1} hiddenClass={hidden} />
           </ul>
         ) : (
           <div
@@ -191,6 +192,34 @@ function Meter({ done }: { done: number }) {
       ))}
     </div>
   );
+}
+
+/**
+ * Quiet "up next" cells that close the last row of the grid, so a row that
+ * isn't full yet never shows the bare grid background. Two columns from sm,
+ * three from lg; nothing on phones, where the list is a single column.
+ */
+function UpNext({ done, next, hiddenClass }: { done: number; next: number; hiddenClass: string | false }) {
+  const t = useTranslations("challenge");
+  const sm = done % 2 ? 1 : 0;
+  const lg = (3 - (done % 3)) % 3;
+  if (next > CHALLENGE_TOTAL) return null;
+  return [0, 1].map((i) => {
+    if (i >= sm && i >= lg) return null;
+    const show = cn("hidden", i < sm ? "sm:flex" : "sm:hidden", i < lg ? "lg:flex" : "lg:hidden");
+    return (
+      <li key={i} data-challenge-reveal aria-hidden={i > 0} className={cn(show, "flex-col justify-end gap-2 bg-background p-6", hiddenClass)}>
+        {i === 0 && (
+          <>
+            <span className="font-mono text-[0.7rem] tabular-nums tracking-wide text-muted">
+              #{formatSiteNumber(next)}
+            </span>
+            <p className="font-display text-lg font-semibold tracking-tight text-foreground/50">{t("upNext")}</p>
+          </>
+        )}
+      </li>
+    );
+  });
 }
 
 function SiteCard({

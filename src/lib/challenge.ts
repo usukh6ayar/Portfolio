@@ -27,7 +27,9 @@ export type ChallengeSite = {
   reel?: string;
 };
 
-export const CHALLENGE_SITES: ChallengeSite[] = [];
+export const CHALLENGE_SITES: ChallengeSite[] = [
+  { slug: "mdent", n: 3, tech: ["Next.js", "GSAP", "Lenis", "TypeScript"] },
+];
 
 export const LIVE_SITES = [...CHALLENGE_SITES].sort((a, b) => a.n - b.n);
 
