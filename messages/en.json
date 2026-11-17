@@ -144,6 +144,19 @@
       ]
     },
     "projects": {
+      "udshijan": {
+        "title": "Udshijan",
+        "category": "E-commerce · Online store",
+        "year": "2026",
+        "summary": "An online store for clothing, beauty, home and electronics in one place: cart, orders, Byl online payments, wholesale, and an admin panel for products and orders.",
+        "stack": [
+          "Next.js",
+          "PostgreSQL",
+          "Drizzle",
+          "Vercel Blob",
+          "Byl"
+        ]
+      },
       "sparkxp": {
         "title": "SparkXP",
         "category": "Education · Mobile product",
@@ -183,6 +196,30 @@
       "highlights": "Engineering highlights",
       "placeholderNote": "Full case study details and screens will land here as real assets and copy are ready. Nothing here is invented for effect.",
       "galleryNote": "Explore the product screens. Select an image for a closer look.",
+      "udshijan": {
+        "role": "Full-stack developer · Solo",
+        "overview": "Udshijan is an online store for everyday goods, delivering across Ulaanbaatar. I built the home page, catalog and filters, product pages, search, wishlist, cart, checkout, order pages, wholesale and the admin panel on my own, as one Next.js app.",
+        "problem": "The store had to do more than show products: it had to take real payments and keep stock right. An order whose payment was started and abandoned could not hold stock forever, a late payment could not be lost, and cart, checkout and server could not disagree by a single tögrög. The owner also needed to run products, photos and orders without a developer.",
+        "solution": "Next.js 16 (Cache Components) on PostgreSQL at Neon, through Drizzle ORM. Prices, coupons, shipping and VAT live in one pure module that cart, checkout and the server-side order all share. Online payment goes through Byl's hosted checkout (QPay, SocialPay, card, Pocket) and is confirmed two ways: an HMAC-signed webhook, and a status check when the customer comes back. Unpaid online orders cancel after 30 minutes and their stock returns. Product photos are cropped square and resized in the browser before they upload to Vercel Blob.",
+        "outcome": "The store is live at udshijan.vercel.app. Vercel functions and the database moved to Asia (Singapore, sin1), and the admin lost its redundant round trips. Real sales figures go here once there are some to report.",
+        "highlights": [
+          "One price calculation: cart, checkout and the server's placeOrder price lines, coupons, shipping and VAT with the same pure function (no DB, no React), so the total on screen is always the total charged.",
+          "Byl online payments: the webhook signature is checked with constant-time HMAC-SHA256, and duplicate or out-of-order events are tolerated. In live mode an order is not marked paid unless the amount paid matches its total.",
+          "Stock that can't leak: unpaid online orders are cancelled after 30 minutes inside one transaction that restocks them. A payment that lands after cancellation shows in the admin flagged for a refund.",
+          "Admin panel: add and edit products (with photo cropping and ordering), orders, contact and wholesale requests, and settings. The password is stored as a scrypt hash, and changing it signs out every earlier session.",
+          "Guarded by tests: pricing, search, payments, the webhook and admin actions are covered by 30 Vitest test files."
+        ],
+        "ownership": {
+          "team": "One developer. Everything from turning the design into screens to the production deploy.",
+          "owned": [
+            "Every storefront page: home, catalog, search, product, cart, checkout, orders, wholesale",
+            "PostgreSQL schema (Drizzle) and the order and stock transactions",
+            "Byl online payment integration and webhook",
+            "Admin panel and sign-in",
+            "Vercel deploy and the move to the Singapore region"
+          ]
+        }
+      },
       "sparkxp": {
         "role": "Team Lead · Full-Stack Developer",
         "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
@@ -280,7 +317,10 @@
       "parent": "Parent",
       "director": "Director",
       "cook": "Kitchen",
-      "accountant": "Accounting"
+      "accountant": "Accounting",
+      "store": "Storefront",
+      "mobile": "Mobile",
+      "wholesale": "Wholesale"
     },
     "buddy": {
       "label": "The buddy avatar",
@@ -296,6 +336,15 @@
       "filter": "Filter screenshots",
       "all": "All screens",
       "captions": {
+        "udshijan-web-home": "Storefront home",
+        "udshijan-web-catalog": "Catalog & filters",
+        "udshijan-web-product": "Product — colour & size",
+        "udshijan-mobile-home": "Home — mobile",
+        "udshijan-mobile-product": "Product — mobile",
+        "udshijan-mobile-cart": "Cart",
+        "udshijan-web-bulk": "Wholesale",
+        "udshijan-admin-products": "Admin — products & stock",
+        "udshijan-admin-edit": "Admin — edit product",
         "nomadkids-director": "Management dashboard",
         "nomadkids-teacher": "Teacher dashboard",
         "nomadkids-cook": "Kitchen & menu",
@@ -311,6 +360,12 @@
       }
     },
     "reel": {
+      "udshijan": {
+        "store": "The storefront: categories, search, sale and wholesale one click away. The catalog filters by price, brand and type.",
+        "mobile": "A product page on the phone: a bottom tab bar, an always-visible Add to cart, and the wishlist and cart one tap away.",
+        "wholesale": "The wholesale page for shops, organisations and resellers. A request for wholesale access is saved to the database and lands straight in the admin panel.",
+        "admin": "Where the owner works: search products, filter by category, change stock straight from the list, and see what is running low on its own. Editing a product is one page in five steps: details, photos, price and stock, colours and sizes, and specifics."
+      },
       "sparkxp": {
         "app": "The student's home screen: assignments waiting, words due for review, a streak and XP, with lessons, tests and the AI buddy in the tab bar.",
         "landing": "The public site, in Mongolian and English: features, how it works, pricing, and the download for iOS and Android.",
@@ -630,6 +685,7 @@
     "work": "Selected Works",
     "stack": "Skills & Stack",
     "contact": "Contact",
+    "udshijan": "Udshijan",
     "sparkxp": "SparkXP",
     "nomadkids": "NomadKids",
     "copyEmail": "Copy Email",

@@ -54,6 +54,22 @@ const SHOWCASES: Record<
       },
     ],
   },
+  udshijan: {
+    phone: { key: "udshijan-mobile-home", src: "/images/work/udshijan-mobile-home.webp" },
+    surfaces: ["store", "mobile", "wholesale", "admin"],
+    panels: [
+      {
+        key: "udshijan-web-catalog",
+        src: "/images/work/udshijan-web-catalog.webp",
+        className: "left-0 top-[10%] w-[48%] -rotate-[1.5deg]",
+      },
+      {
+        key: "udshijan-admin-products",
+        src: "/images/work/udshijan-admin-products.webp",
+        className: "right-0 top-[26%] w-[48%] rotate-[1.5deg]",
+      },
+    ],
+  },
   sparkxp: {
     phone: { key: "sparkxp-mobile-light", src: "/images/work/sparkxp-mobile-light.webp" },
     surfaces: ["app", "landing", "admin"],
