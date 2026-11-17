@@ -43,6 +43,7 @@
       "line2Accent": "build, and ship",
       "line3": "products people actually use."
     },
+    "clientLine": "Websites, apps and systems that actually run your business — from design to production.",
     "subcopy": "Full-stack developer in Ulaanbaatar. I've led the development of two products end to end — web, mobile and the backend systems behind them — from architecture through production.",
     "ctaWork": "See what I've shipped",
     "ctaContact": "Start a project",
@@ -496,7 +497,8 @@
         ],
         "tech": [
           "JavaScript",
-          "Tailwind CSS"
+          "Tailwind CSS",
+          "Zustand"
         ]
       },
       {
@@ -508,9 +510,7 @@
         ],
         "tech": [
           "Expo",
-          "Redux",
-          "Firebase",
-          "Flutter"
+          "Zustand"
         ]
       },
       {
