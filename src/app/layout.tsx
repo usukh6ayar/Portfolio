@@ -136,6 +136,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="grain min-h-full bg-background font-sans text-foreground antialiased">
+        {/* Without JS nothing ever runs the preloader out or the reveals in:
+            drop the overlay and show everything the motion would have
+            faded up. */}
+        <noscript>
+          <style>{`[data-preloader]{display:none!important}.opacity-0,[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <script
           type="application/ld+json"
           // The payload is built from local constants, never user input.
