@@ -10,7 +10,7 @@ export const FEATURED_ID = "nomadkids" as const;
  * copy in messages/*.json (work.projects.<id>, work.caseStudy.<id>, command.<id>)
  * and an entry in PROJECTS below. Ids double as case-study slugs.
  */
-export const STACKED_ORDER = ["sparkxp"] as const;
+export const STACKED_ORDER = ["udshijan", "sparkxp"] as const;
 
 export const ALL_PROJECT_IDS = [FEATURED_ID, ...STACKED_ORDER] as const;
 
@@ -32,7 +32,10 @@ export type GalleryImage = {
     | "teacher"
     | "cook"
     | "accountant"
-    | "parent";
+    | "parent"
+    | "store"
+    | "mobile"
+    | "wholesale";
 };
 
 /**
@@ -62,6 +65,34 @@ export type ProjectMeta = {
 };
 
 export const PROJECTS: Record<ProjectId, ProjectMeta> = {
+  /**
+   * A shop, not a SaaS: the storefront on desktop and phone, and the wholesale
+   * page. The admin panel stays out of the gallery — its orders and requests
+   * carry real customers' names, phones and addresses.
+   */
+  udshijan: {
+    id: "udshijan",
+    href: "/work/udshijan",
+    tone: "warm",
+    gallery: [
+      { src: "/images/work/udshijan-web-home.webp", surface: "store" },
+      { src: "/images/work/udshijan-web-catalog.webp", surface: "store" },
+      { src: "/images/work/udshijan-web-product.webp", surface: "store" },
+      { src: "/images/work/udshijan-mobile-home.webp", surface: "mobile" },
+      { src: "/images/work/udshijan-mobile-product.webp", surface: "mobile" },
+      { src: "/images/work/udshijan-mobile-cart.webp", surface: "mobile" },
+      { src: "/images/work/udshijan-web-bulk.webp", surface: "wholesale" },
+    ],
+    reel: [
+      "/images/work/udshijan-web-home.webp",
+      "/images/work/udshijan-mobile-product.webp",
+      "/images/work/udshijan-web-bulk.webp",
+    ],
+    links: [
+      { kind: "live", href: "https://udshijan.vercel.app" },
+      { kind: "repo", href: "https://github.com/usukh6ayar/Udshijan" },
+    ],
+  },
   /**
    * One product, three surfaces: the student/teacher app, the public landing
    * page, and the admin dashboard the content team works in.
