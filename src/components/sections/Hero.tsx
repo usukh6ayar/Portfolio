@@ -143,12 +143,15 @@ export function Hero() {
                   {t("statement.line1")}
                 </span>
               </span>
+              {/* Block spans break the lines visually, but their text runs
+                  together for readers and crawlers ("хийж,бүтээж") without
+                  a real space between them. */}{" "}
               <span className="block overflow-hidden">
                 <span data-hero-line className={cn("block", !reduced && "opacity-0")}>
                   {t("statement.line2Before")}
                   <span className="text-accent">{t("statement.line2Accent")}</span>
                 </span>
-              </span>
+              </span>{" "}
               <span className="block overflow-hidden">
                 <span data-hero-line className={cn("block", !reduced && "opacity-0")}>
                   {t("statement.line3")}
