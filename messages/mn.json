@@ -31,9 +31,7 @@
     "location": "Улаанбаатар, Монгол",
     "loading": "Ачаалж байна",
     "close": "Хаах",
-    "skipToContent": "Үндсэн хэсэг рүү очих",
-    "stickyCta": "Төсөл эхлүүлэх",
-    "stickyCtaLabel": "Төсөл эхлүүлэх — хүсэлтийн маягт руу очих"
+    "skipToContent": "Үндсэн хэсэг рүү очих"
   },
   "hero": {
     "roleLabel": "Full-Stack хөгжүүлэгч · Багийн ахлагч",
@@ -414,7 +412,8 @@
           "React Native"
         ]
       }
-    }
+    },
+    "resultLabel": "Үр дүн"
   },
   "services": {
     "label": "Юу бүтээдэг вэ",

@@ -9,7 +9,6 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import { PageTransition } from "@/components/providers/PageTransition";
 import { Navigation } from "@/components/layout/Navigation";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
-import { StickyCta } from "@/components/layout/StickyCta";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { SITE, SOCIAL_ITEMS } from "@/lib/constants";
 import en from "../../messages/en.json";
@@ -162,7 +161,6 @@ export default function RootLayout({
           >
             <PageTransition>{children}</PageTransition>
           </main>
-          <StickyCta />
         </AppProviders>
       </body>
     </html>

@@ -31,9 +31,7 @@
     "location": "Ulaanbaatar, Mongolia",
     "loading": "Loading",
     "close": "Close",
-    "skipToContent": "Skip to content",
-    "stickyCta": "Start a project",
-    "stickyCtaLabel": "Start a project — jump to the inquiry form"
+    "skipToContent": "Skip to content"
   },
   "hero": {
     "roleLabel": "Full-Stack Developer · Team Lead",
@@ -414,7 +412,8 @@
           "React Native"
         ]
       }
-    }
+    },
+    "resultLabel": "Result"
   },
   "services": {
     "label": "What I build",

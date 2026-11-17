@@ -6,6 +6,8 @@
  * personal project is not a job, and the work itself is already on the page.
  */
 
+import type { Locale } from "@/lib/i18n/settings";
+
 export const EXPERIENCE_ORDER = ["aether", "nomin"] as const;
 
 export type ExperienceId = (typeof EXPERIENCE_ORDER)[number];
@@ -16,6 +18,11 @@ export type ExperienceMeta = {
   href?: string;
   /** Rendered more prominently — the role a client is hiring off. */
   current?: boolean;
+  /**
+   * One line on what the work achieved, in both locales. Hidden while empty;
+   * only real, checkable outcomes belong here.
+   */
+  result?: Record<Locale, string>;
 };
 
 export const EXPERIENCE: Record<ExperienceId, ExperienceMeta> = {
@@ -26,5 +33,8 @@ export const EXPERIENCE: Record<ExperienceId, ExperienceMeta> = {
   },
   nomin: {
     id: "nomin",
+    // TODO(usukh): a real outcome of the HSE module work, e.g. how many
+    // employees used it or what it replaced. Leave empty to keep it hidden.
+    result: { mn: "", en: "" },
   },
 };
