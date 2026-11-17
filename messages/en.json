@@ -410,18 +410,16 @@
     "intro": "Five things I've taken all the way to production. If your problem looks like one of these, I can tell you what it takes in a first call.",
     "offers": [
       {
-        "index": "01",
+        "title": "Business web systems",
+        "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
+      },
+      {
         "featured": true,
         "title": "Interactive & Creative Websites",
-        "detail": "Brand sites that come alive as you scroll: 3D, motion and interactions people remember and share. Live examples are in the Challenge section above.",
+        "detail": "Brand sites that come alive as you scroll: 3D, motion and interactions people remember and share. Live examples are at challenge.usukhbayar.dev.",
         "pricesLabel": "Starting prices",
-        "pricesNote": "Final price depends on scope. The first call is free.",
+        "pricesNote": "Prices exclude VAT; the final price depends on scope. The first call is free.",
         "packages": [
-          {
-            "name": "Invitation",
-            "price": "From ₮250K",
-            "detail": "Interactive wedding or event invite with RSVP"
-          },
           {
             "name": "Landing page",
             "price": "From ₮1.5M",
@@ -440,22 +438,14 @@
         ]
       },
       {
-        "index": "02",
-        "title": "Business web systems",
-        "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
-      },
-      {
-        "index": "03",
         "title": "Mobile products",
         "detail": "Cross-platform iOS and Android with React Native and Expo, built against a backend I design at the same time — so the app and the API fit each other instead of being negotiated later."
       },
       {
-        "index": "04",
         "title": "Backend & API systems",
         "detail": "NestJS and PostgreSQL: schema design, authentication and authorization, background jobs, file storage, third-party integrations. Including integration with Mongolia's national education system."
       },
       {
-        "index": "05",
         "title": "From idea to production",
         "detail": "Discovery, architecture, build and deployment as one engagement. Domains, TLS, CI, backups and monitoring included — a product that is live, not a repository you have to find someone else to ship."
       }
