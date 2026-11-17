@@ -343,6 +343,8 @@
         "udshijan-mobile-product": "Product — mobile",
         "udshijan-mobile-cart": "Cart",
         "udshijan-web-bulk": "Wholesale",
+        "udshijan-admin-products": "Admin — products & stock",
+        "udshijan-admin-edit": "Admin — edit product",
         "nomadkids-director": "Management dashboard",
         "nomadkids-teacher": "Teacher dashboard",
         "nomadkids-cook": "Kitchen & menu",
@@ -361,7 +363,8 @@
       "udshijan": {
         "store": "The storefront: categories, search, sale and wholesale one click away. The catalog filters by price, brand and type.",
         "mobile": "A product page on the phone: a bottom tab bar, an always-visible Add to cart, and the wishlist and cart one tap away.",
-        "wholesale": "The wholesale page for shops, organisations and resellers. A request for wholesale access is saved to the database and lands straight in the admin panel."
+        "wholesale": "The wholesale page for shops, organisations and resellers. A request for wholesale access is saved to the database and lands straight in the admin panel.",
+        "admin": "Where the owner works: search products, filter by category, change stock straight from the list, and see what is running low on its own. Editing a product is one page in five steps: details, photos, price and stock, colours and sizes, and specifics."
       },
       "sparkxp": {
         "app": "The student's home screen: assignments waiting, words due for review, a streak and XP, with lessons, tests and the AI buddy in the tab bar.",

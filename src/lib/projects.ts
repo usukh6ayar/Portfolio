@@ -66,9 +66,9 @@ export type ProjectMeta = {
 
 export const PROJECTS: Record<ProjectId, ProjectMeta> = {
   /**
-   * A shop, not a SaaS: the storefront on desktop and phone, and the wholesale
-   * page. The admin panel stays out of the gallery — its orders and requests
-   * carry real customers' names, phones and addresses.
+   * A shop, not a SaaS: the storefront on desktop and phone, the wholesale
+   * page, and the admin's product screens. Only product screens — the orders
+   * and requests pages carry real customers' names, phones and addresses.
    */
   udshijan: {
     id: "udshijan",
@@ -82,11 +82,14 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
       { src: "/images/work/udshijan-mobile-product.webp", surface: "mobile" },
       { src: "/images/work/udshijan-mobile-cart.webp", surface: "mobile" },
       { src: "/images/work/udshijan-web-bulk.webp", surface: "wholesale" },
+      { src: "/images/work/udshijan-admin-products.webp", surface: "admin" },
+      { src: "/images/work/udshijan-admin-edit.webp", surface: "admin" },
     ],
     reel: [
       "/images/work/udshijan-web-home.webp",
       "/images/work/udshijan-mobile-product.webp",
       "/images/work/udshijan-web-bulk.webp",
+      "/images/work/udshijan-admin-products.webp",
     ],
     links: [
       { kind: "live", href: "https://udshijan.vercel.app" },
