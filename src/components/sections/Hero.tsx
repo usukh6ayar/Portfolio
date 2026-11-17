@@ -159,10 +159,21 @@ export function Hero() {
               </span>
             </p>
 
+            {/* The line a business owner reads first; the subcopy under it is
+                the engineering record that backs it up. */}
             <p
               data-hero-body
               className={cn(
-                "mt-6 max-w-[36rem] text-[0.9375rem] leading-[1.75] text-muted sm:text-base",
+                "mt-6 max-w-[36rem] text-base leading-[1.6] text-foreground sm:text-[1.0625rem]",
+                !reduced && "opacity-0",
+              )}
+            >
+              {t("clientLine")}
+            </p>
+            <p
+              data-hero-body
+              className={cn(
+                "mt-3 max-w-[36rem] text-[0.9375rem] leading-[1.75] text-muted sm:text-base",
                 !reduced && "opacity-0",
               )}
             >
