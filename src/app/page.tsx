@@ -4,12 +4,14 @@ import { FeaturedProject } from "@/components/sections/FeaturedProject";
 import { SelectedWorks } from "@/components/sections/SelectedWorks";
 import { Experience } from "@/components/sections/Experience";
 import { Challenge } from "@/components/sections/Challenge";
+import { LatestWork } from "@/components/sections/LatestWork";
 import { Services } from "@/components/sections/Services";
 import { Process } from "@/components/sections/Process";
 import { Skills } from "@/components/sections/Skills";
 import { Contact } from "@/components/sections/Contact";
 import { SectionBridge } from "@/components/layout/SectionBridge";
 import { STACKED_ORDER } from "@/lib/projects";
+import { SHOW_CHALLENGE } from "@/lib/challenge";
 
 /**
  * Story: Hero → Work → Challenge → Experience → Services → Process → About → Skills → Contact
@@ -33,7 +35,9 @@ export default function HomePage() {
         <SelectedWorks />
       )}
 
-      <Challenge />
+      {/* The series earns a section at MIN_CHALLENGE_ENTRIES sites; before
+          that its newest site is one card under the project work. */}
+      {SHOW_CHALLENGE ? <Challenge /> : <LatestWork />}
 
       <Experience />
 

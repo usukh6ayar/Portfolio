@@ -697,7 +697,7 @@
     "close": "Close command palette",
     "services": "Services",
     "process": "How I Work",
-    "challenge": "30 Site Challenge"
+    "challenge": "Challenge"
   },
   "social": {
     "github": "GitHub",
@@ -747,21 +747,18 @@
   },
   "challenge": {
     "label": "Challenge",
-    "headline": "30 sites. One month.",
-    "intro": "A public challenge: every few days, one interactive site for a real kind of business, built from scratch and posted as a reel. Each one is live. Open it, scroll it, break it.",
-    "progress": "{done} of {total} live",
+    "headline": "One interactive site for every kind of business.",
+    "intro": "A public challenge: one interactive site for a real kind of business, built from scratch and posted as a reel. Every site shipped so far is live. Open it, scroll it, break it.",
+    "shipped": "{count, plural, one {site shipped} other {sites shipped}}",
     "open": "Open site",
-    "upNext": "Up next",
+    "upNext": "Coming soon",
+    "upNextBody": "The next site is in the works",
     "soonTitle": "The first site drops soon",
     "soonBody": "Follow along on Instagram to see each one the day it goes live.",
-    "follow": "Follow on Instagram",
-    "cta": "Want one like this for your business?",
-    "ctaButton": "Start a project",
-    "sites": {
-      "mdent": {
-        "title": "MDent — Dental clinic",
-        "tagline": "A dental clinic site with online booking: services, doctors, free slots, calendar."
-      }
-    }
+    "follow": "Follow on Instagram"
+  },
+  "latestWork": {
+    "label": "Latest work",
+    "open": "Open site"
   }
 }
