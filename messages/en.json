@@ -202,7 +202,7 @@
         "overview": "Udshijan is an online store for everyday goods, delivering across Ulaanbaatar. I built the home page, catalog and filters, product pages, search, wishlist, cart, checkout, order pages, wholesale and the admin panel on my own, as one Next.js app.",
         "problem": "The store had to do more than show products: it had to take real payments and keep stock right. An order whose payment was started and abandoned could not hold stock forever, a late payment could not be lost, and cart, checkout and server could not disagree by a single tögrög. The owner also needed to run products, photos and orders without a developer.",
         "solution": "Next.js 16 (Cache Components) on PostgreSQL at Neon, through Drizzle ORM. Prices, coupons, shipping and VAT live in one pure module that cart, checkout and the server-side order all share. Online payment goes through Byl's hosted checkout (QPay, SocialPay, card, Pocket) and is confirmed two ways: an HMAC-signed webhook, and a status check when the customer comes back. Unpaid online orders cancel after 30 minutes and their stock returns. Product photos are cropped square and resized in the browser before they upload to Vercel Blob.",
-        "outcome": "The store is live at udshijan.vercel.app. Vercel functions and the database moved to Asia (Singapore, sin1), and the admin lost its redundant round trips. Real sales figures go here once there are some to report.",
+        "outcome": "The store is live at udshijan.vercel.app. Vercel functions and the database moved to Asia (Singapore, sin1), and the admin lost its redundant round trips.",
         "highlights": [
           "One price calculation: cart, checkout and the server's placeOrder price lines, coupons, shipping and VAT with the same pure function (no DB, no React), so the total on screen is always the total charged.",
           "Byl online payments: the webhook signature is checked with constant-time HMAC-SHA256, and duplicate or out-of-order events are tolerated. In live mode an order is not marked paid unless the amount paid matches its total.",
@@ -226,7 +226,7 @@
         "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
         "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
         "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API on PostgreSQL and Redis. Teachers get classes, join codes and assignments; the admin dashboard drives content, the AI generation pipelines, buddy configuration and plan limits.",
-        "outcome": "The API is deployed on Railway and the admin dashboard on Vercel; the student and teacher app is in active development ahead of its store release. Measured results go here once the app is in users' hands — not before.",
+        "outcome": "The API is deployed on Railway and the admin dashboard on Vercel; the student and teacher app is in active development ahead of its store release.",
         "highlights": [
           "Three surfaces, one product: the Expo app for students and teachers, the public landing page, and the admin dashboard — all on a single NestJS API.",
           "Technical leadership: led a three-person team, owning the backend architecture, admin dashboard and production deployment while guiding two mobile developers.",
@@ -308,7 +308,18 @@
       "ownership": "Role & ownership",
       "ownershipRole": "Role",
       "ownershipTeam": "Team",
-      "ownershipOwned": "Owned end to end"
+      "ownershipOwned": "Owned end to end",
+      "architecture": "Architecture",
+      "tradeOffs": "Challenges & trade-offs",
+      "demo": "Demo video",
+      "status": "Status",
+      "tradeOptions": "Options considered",
+      "tradeDecision": "Decision",
+      "tradeWhy": "Why"
+    },
+    "proof": {
+      "results": "Results",
+      "testimonial": "Testimonial"
     },
     "surfaces": {
       "app": "Mobile app",

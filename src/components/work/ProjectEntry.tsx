@@ -11,6 +11,7 @@ import { useApp } from "@/components/providers/AppProviders";
 import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { GalleryImage, ProjectId } from "@/lib/projects";
+import { ResultsRow, TestimonialBlock } from "@/components/work/ProofBlocks";
 import { PROJECTS } from "@/lib/projects";
 import { ProjectLinks } from "@/components/work/ProjectLinks";
 import { PhoneScreen, isPhoneShot, shotKey } from "@/components/work/PhoneScreen";
@@ -215,6 +216,9 @@ export function ProjectEntry({
           <p className="mt-4 max-w-[34rem] text-[0.9375rem] leading-[1.7] text-muted">
             {t(`${copyRoot}.summary`)}
           </p>
+          {/* Both render nothing until lib/case-study.ts has real data. */}
+          <ResultsRow id={id} compact className="mt-6 max-w-[34rem]" />
+          <TestimonialBlock id={id} compact className="mt-6 max-w-[34rem]" />
 
           {/* The index: who this was built for. Not a sequence, so no numbers. */}
           <ul className="mt-8 hidden lg:block" aria-label={t("reelIndex")}>
