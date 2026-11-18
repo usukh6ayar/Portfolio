@@ -19,7 +19,7 @@ type Package = {
 };
 
 type Offer = {
-  index: string;
+  index?: string;
   title: string;
   detail: string;
   /** Spans the full row and carries starting prices */
@@ -41,6 +41,10 @@ type Offer = {
  * The featured offer (creative websites) spans the row and is the only one
  * with public starting prices: it is the one people arriving from a reel ask
  * about, and a visible floor saves both sides a round of DMs.
+ *
+ * Numbers come from the order in messages, and a card left alone on a row
+ * (before the featured one, or last) widens to fill it, so reordering the
+ * offers never leaves a hole in the grid.
  */
 export function Services() {
   const t = useTranslations("services");
@@ -48,6 +52,7 @@ export function Services() {
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
   const offers = t.raw("offers") as Offer[];
+  const wide = widenLoneCards(offers);
 
   useEffect(() => {
     if (!isReady || !rootRef.current || reduced) return;
@@ -114,18 +119,18 @@ export function Services() {
 
         <ul className="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:mt-16 sm:grid-cols-2">
           {Array.isArray(offers) &&
-            offers.map((offer) => (
+            offers.map((offer, i) => (
               <li
-                key={offer.index}
+                key={offer.title}
                 data-services-reveal
                 className={cn(
                   "flex flex-col bg-background p-7 sm:p-9",
-                  offer.featured && "sm:col-span-2",
+                  wide[i] && "sm:col-span-2",
                   !reduced && "opacity-0",
                 )}
               >
                 <span className="font-mono text-[0.7rem] tabular-nums tracking-wide text-accent">
-                  {offer.index}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className="mt-5 font-display text-xl font-semibold tracking-tight text-foreground sm:text-[1.35rem]">
                   {offer.title}
@@ -138,7 +143,7 @@ export function Services() {
                     <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
                       {offer.pricesLabel}
                     </p>
-                    <ul className="mt-4 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+                    <ul className="mt-4 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
                       {offer.packages.map((pkg) => (
                         <li
                           key={pkg.name}
@@ -185,4 +190,23 @@ export function Services() {
       </div>
     </section>
   );
+}
+
+/** Which cards span both columns: featured ones, and any card a span would strand. */
+function widenLoneCards(offers: Offer[]): boolean[] {
+  const wide = offers.map((offer) => Boolean(offer.featured));
+  let col = 0;
+  offers.forEach((_, i) => {
+    if (wide[i]) {
+      col = 0;
+      return;
+    }
+    const nextIsWide = i + 1 >= offers.length || wide[i + 1];
+    if (col === 0 && nextIsWide) {
+      wide[i] = true;
+      return;
+    }
+    col = (col + 1) % 2;
+  });
+  return wide;
 }

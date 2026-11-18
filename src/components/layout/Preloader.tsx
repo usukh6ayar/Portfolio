@@ -13,6 +13,11 @@ const SESSION_KEY = "portfolio-preloader-seen";
 /**
  * Theatrical counter only once per browser session.
  * Return visits and case-study navigation skip the show.
+ *
+ * The digits are written by the effect and the "%" is a CSS pseudo-element,
+ * so the server HTML carries no "000%" for crawlers or no-JS readers to see.
+ * Without JS the overlay is hidden altogether (see the <noscript> rule in
+ * the root layout).
  */
 export function Preloader() {
   const t = useTranslations("common");
@@ -26,6 +31,7 @@ export function Preloader() {
   useEffect(() => {
     if (started.current) return;
     started.current = true;
+    if (countRef.current) countRef.current.textContent = "000";
 
     let seen = false;
     try {
@@ -102,6 +108,7 @@ export function Preloader() {
     <AnimatePresence>
       {visible && (
         <motion.div
+          data-preloader
           className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background"
           initial={{ opacity: 1 }}
           exit={{
@@ -118,14 +125,12 @@ export function Preloader() {
               {t("name")}
             </p>
 
-            <div className="flex w-full items-end justify-between gap-4">
+            <div className="flex w-full items-end justify-between gap-4" aria-hidden>
               <span
                 ref={countRef}
-                className="font-mono text-4xl font-medium tabular-nums tracking-tight text-foreground"
-              >
-                000
-              </span>
-              <span className="mb-1 font-mono text-xs text-muted">%</span>
+                className="min-h-[1em] font-mono text-4xl font-medium tabular-nums tracking-tight text-foreground"
+              />
+              <span className="mb-1 font-mono text-xs text-muted after:content-['%']" />
             </div>
 
             <div

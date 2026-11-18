@@ -7,15 +7,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { TextLink } from "@/components/ui/TextLink";
-import { scrollToHash } from "@/components/providers/LenisProvider";
 import {
-  CHALLENGE_TOTAL,
   LIVE_SITES,
   challengePoster,
   challengeUrl,
   formatSiteNumber,
+  siteNumber,
   type ChallengeSite,
 } from "@/lib/challenge";
 import { DIRECT_CONTACT } from "@/lib/constants";
@@ -24,11 +23,12 @@ import { cn } from "@/lib/cn";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Challenge — the 30-site series, in the open.
+ * Challenge — one interactive site per kind of business, in the open.
  *
  * Sits right under the case studies: those prove the engineering, this proves
- * the craft that people arriving from a reel came to see. The 30-cell meter is
- * the section's one signature element; everything else follows Services.
+ * the craft that people arriving from a reel came to see. The page only
+ * renders it once SHOW_CHALLENGE holds (see lib/challenge.ts); the count and
+ * every number on it come from the published entries, never a target.
  */
 export function Challenge() {
   const t = useTranslations("challenge");
@@ -103,11 +103,9 @@ export function Challenge() {
           <div data-challenge-reveal className={cn("lg:col-span-5", hidden)}>
             <p className="font-display text-[clamp(2.5rem,5vw,3.5rem)] font-semibold leading-none tracking-[-0.04em] tabular-nums text-foreground">
               {formatSiteNumber(done)}
-              <span className="text-muted">/{CHALLENGE_TOTAL}</span>
             </p>
-            <Meter done={done} />
             <p className="mt-3 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-              {t("progress", { done, total: CHALLENGE_TOTAL })}
+              {t("shipped", { count: done })}
             </p>
           </div>
         </div>
@@ -117,7 +115,7 @@ export function Challenge() {
             {LIVE_SITES.map((site) => (
               <SiteCard key={site.slug} site={site} hiddenClass={hidden} />
             ))}
-            <UpNext done={done} next={Math.max(...LIVE_SITES.map((s) => s.n)) + 1} hiddenClass={hidden} />
+            <UpNext done={done} hiddenClass={hidden} />
           </ul>
         ) : (
           <div
@@ -128,10 +126,7 @@ export function Challenge() {
             )}
           >
             <div className="max-w-md">
-              <p className="font-mono text-[0.7rem] tabular-nums tracking-wide text-accent">
-                #{formatSiteNumber(1)}
-              </p>
-              <h3 className="mt-3 font-display text-xl font-semibold tracking-tight text-foreground">
+              <h3 className="font-display text-xl font-semibold tracking-tight text-foreground">
                 {t("soonTitle")}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -149,48 +144,8 @@ export function Challenge() {
           </div>
         )}
 
-        <div
-          data-challenge-reveal
-          className={cn(
-            "mt-10 flex flex-col items-start gap-4 sm:mt-12 sm:flex-row sm:items-center sm:gap-6",
-            hidden,
-          )}
-        >
-          <p className="text-[0.9375rem] text-foreground/85">{t("cta")}</p>
-          <MagneticButton
-            href="#contact"
-            variant="primary"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToHash("#contact");
-            }}
-          >
-            {t("ctaButton")}
-          </MagneticButton>
-        </div>
       </div>
     </section>
-  );
-}
-
-/** 30 cells, one per site; filled cells are live. */
-function Meter({ done }: { done: number }) {
-  return (
-    <div
-      className="mt-5 grid grid-cols-[repeat(15,minmax(0,1fr))] gap-1"
-      role="img"
-      aria-label={`${done} / ${CHALLENGE_TOTAL}`}
-    >
-      {Array.from({ length: CHALLENGE_TOTAL }, (_, i) => (
-        <span
-          key={i}
-          className={cn(
-            "aspect-square rounded-[3px]",
-            i < done ? "bg-accent" : "bg-surface-2",
-          )}
-        />
-      ))}
-    </div>
   );
 }
 
@@ -199,11 +154,10 @@ function Meter({ done }: { done: number }) {
  * isn't full yet never shows the bare grid background. Two columns from sm,
  * three from lg; nothing on phones, where the list is a single column.
  */
-function UpNext({ done, next, hiddenClass }: { done: number; next: number; hiddenClass: string | false }) {
+function UpNext({ done, hiddenClass }: { done: number; hiddenClass: string | false }) {
   const t = useTranslations("challenge");
   const sm = done % 2 ? 1 : 0;
   const lg = (3 - (done % 3)) % 3;
-  if (next > CHALLENGE_TOTAL) return null;
   return [0, 1].map((i) => {
     if (i >= sm && i >= lg) return null;
     const show = cn("hidden", i < sm ? "sm:flex" : "sm:hidden", i < lg ? "lg:flex" : "lg:hidden");
@@ -211,10 +165,10 @@ function UpNext({ done, next, hiddenClass }: { done: number; next: number; hidde
       <li key={i} data-challenge-reveal aria-hidden={i > 0} className={cn(show, "flex-col justify-end gap-2 bg-background p-6", hiddenClass)}>
         {i === 0 && (
           <>
-            <span className="font-mono text-[0.7rem] tabular-nums tracking-wide text-muted">
-              #{formatSiteNumber(next)}
+            <span className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted">
+              {t("upNext")}
             </span>
-            <p className="font-display text-lg font-semibold tracking-tight text-foreground/50">{t("upNext")}</p>
+            <p className="font-display text-lg font-semibold tracking-tight text-foreground/50">{t("upNextBody")}</p>
           </>
         )}
       </li>
@@ -229,9 +183,7 @@ function SiteCard({
   site: ChallengeSite;
   hiddenClass: string | false;
 }) {
-  const t = useTranslations("challenge");
-  const title = t(`sites.${site.slug}.title`);
-  const tagline = t(`sites.${site.slug}.tagline`);
+  const { locale } = useLocaleSwitch();
 
   return (
     <li data-challenge-reveal className={cn("bg-background", hiddenClass)}>
@@ -264,12 +216,13 @@ function SiteCard({
         </div>
         <div className="flex flex-1 flex-col gap-2 p-6">
           <span className="font-mono text-[0.7rem] tabular-nums tracking-wide text-accent">
-            #{formatSiteNumber(site.n)}
+            #{siteNumber(site)}
+            <span className="text-muted"> · {site.business[locale]}</span>
           </span>
           <h3 className="font-display text-lg font-semibold tracking-tight text-foreground">
-            {title}
+            {site.title[locale]}
           </h3>
-          <p className="text-sm leading-relaxed text-muted">{tagline}</p>
+          <p className="text-sm leading-relaxed text-muted">{site.tagline[locale]}</p>
           <p className="mt-auto flex items-center justify-between gap-3 pt-3 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-muted">
             <span>{site.tech.join(" · ")}</span>
             <span aria-hidden className="text-accent transition-transform duration-300 group-hover:translate-x-0.5">

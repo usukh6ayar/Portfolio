@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
+import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { useApp } from "@/components/providers/AppProviders";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { EXPERIENCE, EXPERIENCE_ORDER } from "@/lib/experience";
@@ -29,6 +30,7 @@ type Role = {
  */
 export function Experience() {
   const t = useTranslations("experience");
+  const { locale } = useLocaleSwitch();
   const { isReady } = useApp();
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
@@ -154,6 +156,15 @@ export function Experience() {
                   <p className="mt-4 max-w-[42rem] text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
                     {role.detail}
                   </p>
+
+                  {meta.result?.[locale].trim() && (
+                    <p className="mt-4 max-w-[42rem] text-sm leading-relaxed text-foreground/85 sm:text-[0.9375rem]">
+                      <span className="mr-2 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-accent">
+                        {t("resultLabel")}
+                      </span>
+                      {meta.result[locale]}
+                    </p>
+                  )}
 
                   {Array.isArray(role.tech) && role.tech.length > 0 && (
                     <p className="mt-4 font-mono text-[0.65rem] tracking-wide text-muted/80">

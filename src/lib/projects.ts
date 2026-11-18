@@ -6,6 +6,12 @@
 export const FEATURED_ID = "nomadkids" as const;
 
 /**
+ * SparkXP's public site. TODO(usukh): swap for the custom domain once it is
+ * live; every link to the site reads this one value.
+ */
+export const SPARKXP_LIVE_URL = "https://spark-xp-web.vercel.app";
+
+/**
  * Secondary "Selected Works" projects, in display order. Every id here needs
  * copy in messages/*.json (work.projects.<id>, work.caseStudy.<id>, command.<id>)
  * and an entry in PROJECTS below. Ids double as case-study slugs.
@@ -119,7 +125,7 @@ export const PROJECTS: Record<ProjectId, ProjectMeta> = {
       "/images/work/sparkxp-admin-lessons.webp",
     ],
     links: [
-      { kind: "live", href: "https://spark-xp-web.vercel.app" },
+      { kind: "live", href: SPARKXP_LIVE_URL },
       { kind: "admin", href: "https://spark-xp.vercel.app" },
       { kind: "repo", href: "https://github.com/usukh6ayar/SparkXP" },
     ],

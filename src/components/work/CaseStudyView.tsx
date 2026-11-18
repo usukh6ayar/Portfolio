@@ -8,6 +8,10 @@ import { useTranslations } from "next-intl";
 import { ProjectMedia } from "@/components/work/ProjectMedia";
 import { ProjectLinks } from "@/components/work/ProjectLinks";
 import { CaseStudyGallery } from "@/components/work/CaseStudyGallery";
+import { ResultsRow, TestimonialBlock } from "@/components/work/ProofBlocks";
+import { ArchitectureDiagram } from "@/components/work/ArchitectureDiagram";
+import { useLocaleSwitch } from "@/components/providers/I18nProvider";
+import { CASE_STUDY_EXTRAS } from "@/lib/case-study";
 import { scrollToHash } from "@/components/providers/LenisProvider";
 
 import type { ProjectId } from "@/lib/projects";
@@ -72,7 +76,12 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
   const t = useTranslations("work");
   const tc = useTranslations("work.caseStudy");
   const tb = useTranslations("work.buddy");
+  const { locale } = useLocaleSwitch();
   const project = PROJECTS[id];
+  /** Drafts and slots; each block below renders only when it has data. */
+  const extras = CASE_STUDY_EXTRAS[id];
+  const status = extras.status?.[locale].trim();
+  const demoVideo = extras.demoVideo?.trim();
   const title = t(`projects.${id}.title`);
   const category = t(`projects.${id}.category`);
   const year = t(`projects.${id}.year`);
@@ -100,7 +109,10 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
     "overview",
     "ownership",
     ...(roles.length ? ["roles"] : []),
+    ...(extras.architecture?.length ? ["architecture"] : []),
+    ...(extras.tradeOffs.length ? ["tradeOffs"] : []),
     "gallery",
+    ...(demoVideo ? ["demo"] : []),
     "highlights",
   ];
   const number = (section: string) =>
@@ -124,6 +136,15 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
             <p className="text-caption text-muted">{category}<span className="mx-3 text-border-strong">/</span>{year}</p>
             <h1 className="mt-5 font-display text-[clamp(2.5rem,6.5vw,5.5rem)] font-semibold leading-[1.05] tracking-[-0.045em]">{title}</h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{t(`projects.${id}.summary`)}</p>
+            {status && (
+              <p className="mt-5 inline-flex max-w-xl items-start gap-2.5 rounded-lg border border-border bg-surface-1 px-3.5 py-2.5 text-sm leading-relaxed text-foreground/85">
+                <span aria-hidden className="mt-[0.45em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                <span>
+                  <span className="sr-only">{tc("status")}: </span>
+                  {status}
+                </span>
+              </p>
+            )}
           </div>
           <div className="lg:pb-1">
             {/* Weighted deliberately: what I was on this project should
@@ -171,6 +192,8 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
                   </div>
                 ))}
               </div>
+              <ResultsRow id={id} className="mt-8" />
+              <TestimonialBlock id={id} className="mt-8" />
             </section>
 
             {/* The audit's finding was that the leadership was real but only
@@ -240,11 +263,63 @@ export function CaseStudyView({ id }: CaseStudyViewProps) {
               </section>
             ) : null}
 
+            {extras.architecture?.length ? (
+              <section id="architecture" className="case-section" aria-labelledby="architecture-title">
+                <SectionTitle number={number("architecture")} title={tc("architecture")} id="architecture-title" />
+                <div className="mt-6">
+                  <ArchitectureDiagram tiers={extras.architecture} label={`${title} — ${tc("architecture")}`} />
+                </div>
+              </section>
+            ) : null}
+
+            {extras.tradeOffs.length ? (
+              <section id="tradeOffs" className="case-section" aria-labelledby="tradeOffs-title">
+                <SectionTitle number={number("tradeOffs")} title={tc("tradeOffs")} id="tradeOffs-title" />
+                <ol className="mt-6 space-y-4">
+                  {extras.tradeOffs.map((item, index) => (
+                    <li key={item.problem.en} className="rounded-xl border border-border bg-surface-1 px-5 py-6 sm:px-7">
+                      <p className="flex gap-4 text-[0.9375rem] font-medium leading-relaxed text-foreground">
+                        <span aria-hidden className="pt-0.5 font-mono text-[0.625rem] text-accent/70">{String(index + 1).padStart(2, "0")}</span>
+                        {item.problem[locale]}
+                      </p>
+                      <dl className="mt-4 grid gap-3 sm:pl-8">
+                        {([
+                          ["tradeOptions", item.options],
+                          ["tradeDecision", item.decision],
+                          ["tradeWhy", item.why],
+                        ] as const).map(([key, value]) =>
+                          value?.[locale] ? (
+                            <div key={key} className="grid gap-1 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+                              <dt className={`text-sm ${key === "tradeDecision" ? "text-accent" : "text-foreground/80"}`}>{tc(key)}</dt>
+                              <dd className="text-sm leading-[1.8] text-muted">{value[locale]}</dd>
+                            </div>
+                          ) : null,
+                        )}
+                      </dl>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ) : null}
+
             {project.gallery?.length ? (
               <section id="gallery" className="case-section" aria-labelledby="gallery-title">
                 <SectionTitle number={number("gallery")} title={tc("gallery")} id="gallery-title" />
                 <p className="mt-3 text-sm leading-relaxed text-muted">{tc("galleryNote")}</p>
                 <CaseStudyGallery images={project.gallery} alt={t("imageAlt", { title })} />
+              </section>
+            ) : null}
+
+            {demoVideo ? (
+              <section id="demo" className="case-section" aria-labelledby="demo-title">
+                <SectionTitle number={number("demo")} title={tc("demo")} id="demo-title" />
+                <video
+                  className="mt-6 w-full rounded-xl border border-border bg-surface-1"
+                  src={demoVideo}
+                  controls
+                  playsInline
+                  preload="metadata"
+                />
               </section>
             ) : null}
 

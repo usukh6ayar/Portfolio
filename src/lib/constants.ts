@@ -3,6 +3,8 @@
  * All user-facing copy lives in /messages/*.json
  */
 
+import { SHOW_CHALLENGE } from "@/lib/challenge";
+
 export const SITE = {
   name: "Usukhbayar",
   email: "usukhbayrgan@gmail.com",
@@ -26,13 +28,16 @@ export const DIRECT_CONTACT = {
 /**
  * Nav hrefs only — labels come from i18n keys `nav.*`. In page order.
  *
- * Five is the ceiling. Skills and Experience remain discoverable in the page
- * and command palette. Challenge takes Experience's slot while the 30-site
- * series runs: it is what visitors arriving from a reel came to see.
+ * Five is the ceiling. Skills remains discoverable in the page and command
+ * palette. Challenge takes Experience's slot once the series is on the page
+ * (SHOW_CHALLENGE): it is what visitors arriving from a reel came to see.
+ * Until then the section does not render, so neither does its link.
  */
 export const NAV_ITEMS = [
   { key: "work" as const, href: "#featured" },
-  { key: "challenge" as const, href: "#challenge" },
+  SHOW_CHALLENGE
+    ? { key: "challenge" as const, href: "#challenge" }
+    : { key: "experience" as const, href: "#experience" },
   { key: "services" as const, href: "#services" },
   { key: "about" as const, href: "#about" },
   { key: "contact" as const, href: "#contact" },

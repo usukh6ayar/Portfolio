@@ -16,6 +16,7 @@ import { useLocaleSwitch } from "@/components/providers/I18nProvider";
 import { scrollToHash } from "@/components/providers/LenisProvider";
 import { SITE, SOCIAL_ITEMS } from "@/lib/constants";
 import { ALL_PROJECT_IDS, PROJECTS } from "@/lib/projects";
+import { SHOW_CHALLENGE } from "@/lib/challenge";
 import { EASE } from "@/lib/easings";
 import { cn } from "@/lib/cn";
 
@@ -100,13 +101,17 @@ export function CommandPalette() {
         group: navigate,
         action: () => go("#work"),
       },
-      {
-        id: "nav-challenge",
-        label: t("challenge"),
-        hint: "#challenge",
-        group: navigate,
-        action: () => go("#challenge"),
-      },
+      ...(SHOW_CHALLENGE
+        ? [
+            {
+              id: "nav-challenge",
+              label: t("challenge"),
+              hint: "#challenge",
+              group: navigate,
+              action: () => go("#challenge"),
+            },
+          ]
+        : []),
       {
         id: "nav-experience",
         label: t("experience"),

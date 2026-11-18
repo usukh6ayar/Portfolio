@@ -31,9 +31,7 @@
     "location": "Ulaanbaatar, Mongolia",
     "loading": "Loading",
     "close": "Close",
-    "skipToContent": "Skip to content",
-    "stickyCta": "Start a project",
-    "stickyCtaLabel": "Start a project — jump to the inquiry form"
+    "skipToContent": "Skip to content"
   },
   "hero": {
     "roleLabel": "Full-Stack Developer · Team Lead",
@@ -43,6 +41,7 @@
       "line2Accent": "build, and ship",
       "line3": "products people actually use."
     },
+    "clientLine": "Websites, apps and systems that actually run your business — from design to production.",
     "subcopy": "Full-stack developer in Ulaanbaatar. I've led the development of two products end to end — web, mobile and the backend systems behind them — from architecture through production.",
     "ctaWork": "See what I've shipped",
     "ctaContact": "Start a project",
@@ -201,7 +200,7 @@
         "overview": "Udshijan is an online store for everyday goods, delivering across Ulaanbaatar. I built the home page, catalog and filters, product pages, search, wishlist, cart, checkout, order pages, wholesale and the admin panel on my own, as one Next.js app.",
         "problem": "The store had to do more than show products: it had to take real payments and keep stock right. An order whose payment was started and abandoned could not hold stock forever, a late payment could not be lost, and cart, checkout and server could not disagree by a single tögrög. The owner also needed to run products, photos and orders without a developer.",
         "solution": "Next.js 16 (Cache Components) on PostgreSQL at Neon, through Drizzle ORM. Prices, coupons, shipping and VAT live in one pure module that cart, checkout and the server-side order all share. Online payment goes through Byl's hosted checkout (QPay, SocialPay, card, Pocket) and is confirmed two ways: an HMAC-signed webhook, and a status check when the customer comes back. Unpaid online orders cancel after 30 minutes and their stock returns. Product photos are cropped square and resized in the browser before they upload to Vercel Blob.",
-        "outcome": "The store is live at udshijan.vercel.app. Vercel functions and the database moved to Asia (Singapore, sin1), and the admin lost its redundant round trips. Real sales figures go here once there are some to report.",
+        "outcome": "The store is live at udshijan.vercel.app. Vercel functions and the database moved to Asia (Singapore, sin1), and the admin lost its redundant round trips.",
         "highlights": [
           "One price calculation: cart, checkout and the server's placeOrder price lines, coupons, shipping and VAT with the same pure function (no DB, no React), so the total on screen is always the total charged.",
           "Byl online payments: the webhook signature is checked with constant-time HMAC-SHA256, and duplicate or out-of-order events are tolerated. In live mode an order is not marked paid unless the amount paid matches its total.",
@@ -225,7 +224,7 @@
         "overview": "SparkXP is a gamified English-learning app for Mongolian students and schools, built to make daily practice feel like play. It is one product across three surfaces — the app students and teachers use, the public landing page, and the admin dashboard the content team works in — all on one NestJS API. I led the build as team lead of three developers.",
         "problem": "English learning in Mongolia is fragmented — static content, thin practice, and little to keep students motivated day to day.",
         "solution": "A React Native app with structured lessons, spaced-repetition vocabulary, XP, streaks and leaderboards, plus an AI buddy for text and voice practice — backed by a NestJS API on PostgreSQL and Redis. Teachers get classes, join codes and assignments; the admin dashboard drives content, the AI generation pipelines, buddy configuration and plan limits.",
-        "outcome": "The API is deployed on Railway and the admin dashboard on Vercel; the student and teacher app is in active development ahead of its store release. Measured results go here once the app is in users' hands — not before.",
+        "outcome": "The API is deployed on Railway and the admin dashboard on Vercel; the student and teacher app is in active development ahead of its store release.",
         "highlights": [
           "Three surfaces, one product: the Expo app for students and teachers, the public landing page, and the admin dashboard — all on a single NestJS API.",
           "Technical leadership: led a three-person team, owning the backend architecture, admin dashboard and production deployment while guiding two mobile developers.",
@@ -307,7 +306,18 @@
       "ownership": "Role & ownership",
       "ownershipRole": "Role",
       "ownershipTeam": "Team",
-      "ownershipOwned": "Owned end to end"
+      "ownershipOwned": "Owned end to end",
+      "architecture": "Architecture",
+      "tradeOffs": "Challenges & trade-offs",
+      "demo": "Demo video",
+      "status": "Status",
+      "tradeOptions": "Options considered",
+      "tradeDecision": "Decision",
+      "tradeWhy": "Why"
+    },
+    "proof": {
+      "results": "Results",
+      "testimonial": "Testimonial"
     },
     "surfaces": {
       "app": "Mobile app",
@@ -402,7 +412,8 @@
           "React Native"
         ]
       }
-    }
+    },
+    "resultLabel": "Result"
   },
   "services": {
     "label": "What I build",
@@ -410,18 +421,16 @@
     "intro": "Five things I've taken all the way to production. If your problem looks like one of these, I can tell you what it takes in a first call.",
     "offers": [
       {
-        "index": "01",
+        "title": "Business web systems",
+        "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
+      },
+      {
         "featured": true,
         "title": "Interactive & Creative Websites",
-        "detail": "Brand sites that come alive as you scroll: 3D, motion and interactions people remember and share. Live examples are in the Challenge section above.",
+        "detail": "Brand sites that come alive as you scroll: 3D, motion and interactions people remember and share. Live examples are at challenge.usukhbayar.dev.",
         "pricesLabel": "Starting prices",
-        "pricesNote": "Final price depends on scope. The first call is free.",
+        "pricesNote": "Prices exclude VAT; the final price depends on scope. The first call is free.",
         "packages": [
-          {
-            "name": "Invitation",
-            "price": "From ₮250K",
-            "detail": "Interactive wedding or event invite with RSVP"
-          },
           {
             "name": "Landing page",
             "price": "From ₮1.5M",
@@ -440,22 +449,14 @@
         ]
       },
       {
-        "index": "02",
-        "title": "Business web systems",
-        "detail": "Admin dashboards, management systems and internal tools: role-based access, real workflows, reporting. NomadKids runs five separate roles against one API, with authorization enforced server-side — per role and per record."
-      },
-      {
-        "index": "03",
         "title": "Mobile products",
         "detail": "Cross-platform iOS and Android with React Native and Expo, built against a backend I design at the same time — so the app and the API fit each other instead of being negotiated later."
       },
       {
-        "index": "04",
         "title": "Backend & API systems",
         "detail": "NestJS and PostgreSQL: schema design, authentication and authorization, background jobs, file storage, third-party integrations. Including integration with Mongolia's national education system."
       },
       {
-        "index": "05",
         "title": "From idea to production",
         "detail": "Discovery, architecture, build and deployment as one engagement. Domains, TLS, CI, backups and monitoring included — a product that is live, not a repository you have to find someone else to ship."
       }
@@ -506,7 +507,8 @@
         ],
         "tech": [
           "JavaScript",
-          "Tailwind CSS"
+          "Tailwind CSS",
+          "Zustand"
         ]
       },
       {
@@ -518,9 +520,7 @@
         ],
         "tech": [
           "Expo",
-          "Redux",
-          "Firebase",
-          "Flutter"
+          "Zustand"
         ]
       },
       {
@@ -697,7 +697,7 @@
     "close": "Close command palette",
     "services": "Services",
     "process": "How I Work",
-    "challenge": "30 Site Challenge"
+    "challenge": "Challenge"
   },
   "social": {
     "github": "GitHub",
@@ -747,21 +747,18 @@
   },
   "challenge": {
     "label": "Challenge",
-    "headline": "30 sites. One month.",
-    "intro": "A public challenge: every few days, one interactive site for a real kind of business, built from scratch and posted as a reel. Each one is live. Open it, scroll it, break it.",
-    "progress": "{done} of {total} live",
+    "headline": "One interactive site for every kind of business.",
+    "intro": "A public challenge: one interactive site for a real kind of business, built from scratch and posted as a reel. Every site shipped so far is live. Open it, scroll it, break it.",
+    "shipped": "{count, plural, one {site shipped} other {sites shipped}}",
     "open": "Open site",
-    "upNext": "Up next",
+    "upNext": "Coming soon",
+    "upNextBody": "The next site is in the works",
     "soonTitle": "The first site drops soon",
     "soonBody": "Follow along on Instagram to see each one the day it goes live.",
-    "follow": "Follow on Instagram",
-    "cta": "Want one like this for your business?",
-    "ctaButton": "Start a project",
-    "sites": {
-      "mdent": {
-        "title": "MDent — Dental clinic",
-        "tagline": "A dental clinic site with online booking: services, doctors, free slots, calendar."
-      }
-    }
+    "follow": "Follow on Instagram"
+  },
+  "latestWork": {
+    "label": "Latest work",
+    "open": "Open site"
   }
 }
