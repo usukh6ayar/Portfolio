@@ -67,16 +67,19 @@ export const MAX_RESULTS = 3;
 
 export const CASE_STUDY_EXTRAS: Record<ProjectId, CaseStudyExtras> = {
   nomadkids: {
-    // TODO(usukh): real results only, e.g. kindergartens onboarded, active
-    // teachers, reports generated. Up to three { value, label: { mn, en } }.
-    results: [],
+    // From the nomadkids.mn platform dashboard, 2026-11-18. Refresh as it grows.
+    results: [
+      { value: "17", label: { mn: "цэцэрлэг", en: "kindergartens" } },
+      { value: "308", label: { mn: "багш", en: "teachers" } },
+      { value: "1,748", label: { mn: "хүүхэд", en: "children" } },
+    ],
     // TODO(usukh): a real quote from a director or teacher, with permission.
     testimonial: undefined,
-    // TODO(usukh): confirm this wording — it replaces "fully in use" so the
-    // page no longer contradicts the ESIS gate described in the outcome.
+    // Platform dashboard, 2026-11-18: one kindergarten connected to ESIS,
+    // syncing normally. Update when more connect.
     status: {
-      mn: "Production-д ашиглагдаж байна · ESIS интеграц: эцсийн зөвшөөрөл хүлээгдэж байна",
-      en: "In production · ESIS integration: awaiting final approval",
+      mn: "Production-д ашиглагдаж байна · ESIS: 1 цэцэрлэг холбогдож, мэдээлэл хэвийн татагдаж байна",
+      en: "In production · ESIS: 1 kindergarten connected and syncing",
     },
     // TODO(usukh): add a short screen recording (mp4) if you want one.
     demoVideo: "",
