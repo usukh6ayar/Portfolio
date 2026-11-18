@@ -67,11 +67,13 @@ export const MAX_RESULTS = 3;
 
 export const CASE_STUDY_EXTRAS: Record<ProjectId, CaseStudyExtras> = {
   nomadkids: {
-    // From the nomadkids.mn platform dashboard, 2026-11-18. Refresh as it grows.
+    // From the nomadkids.mn platform dashboard, 2026-11-18: 17 kindergartens,
+    // 308 teachers, 1,748 children. Rounded down, since the totals include the
+    // demo kindergartens (demo@nomadkids.mn). Refresh as it grows.
     results: [
-      { value: "17", label: { mn: "цэцэрлэг", en: "kindergartens" } },
-      { value: "308", label: { mn: "багш", en: "teachers" } },
-      { value: "1,748", label: { mn: "хүүхэд", en: "children" } },
+      { value: "15+", label: { mn: "цэцэрлэг", en: "kindergartens" } },
+      { value: "300+", label: { mn: "багш", en: "teachers" } },
+      { value: "1,600+", label: { mn: "хүүхэд бүртгэлтэй", en: "children enrolled" } },
     ],
     // TODO(usukh): a real quote from a director or teacher, with permission.
     testimonial: undefined,
@@ -181,8 +183,14 @@ export const CASE_STUDY_EXTRAS: Record<ProjectId, CaseStudyExtras> = {
   },
 
   sparkxp: {
-    // TODO(usukh): real results only, e.g. students, schools, lessons done.
-    results: [],
+    // From the SparkXP admin word bank, 2026-11-18: 21,377 words, 12,351 with
+    // an image, 19,356 with audio. Content, not users: the app is pre-launch.
+    // TODO(usukh): swap in students / schools once there are real numbers.
+    results: [
+      { value: "21,000+", label: { mn: "үгийн сан дахь үг", en: "words in the word bank" } },
+      { value: "12,000+", label: { mn: "зурагтай үг", en: "words with an image" } },
+      { value: "19,000+", label: { mn: "аудиотой үг", en: "words with audio" } },
+    ],
     // TODO(usukh): a real quote from a teacher or school, with permission.
     testimonial: undefined,
     // TODO(usukh): add a short screen recording (mp4) if you want one.
